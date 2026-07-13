@@ -37,17 +37,20 @@ export default function Header() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center flex-shrink-0"
+          className="flex items-center gap-2.5 flex-shrink-0 group"
           aria-label="Mimikids — inicio"
         >
           <Image
             src="/mimikids.jpg"
-            alt="Mimikids · Portachupetes Personalizados"
-            width={44}
-            height={44}
-            className="rounded-full object-cover"
+            alt="Mimikids"
+            width={38}
+            height={38}
+            className="rounded-full object-cover ring-1 ring-[#EDCCD5]/60"
             priority
           />
+          <span className="font-playfair text-[1.25rem] font-bold tracking-tight text-[#2B1A20] group-hover:text-[#C4687D] transition-colors duration-200 hidden sm:block">
+            mimikids
+          </span>
         </Link>
 
         {/* Desktop nav */}
