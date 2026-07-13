@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ShoppingBag, Menu, X } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
 import { useState, useEffect } from 'react'
@@ -36,15 +37,16 @@ export default function Header() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 group flex-shrink-0"
+          className="flex items-center flex-shrink-0"
           aria-label="Mimikids — inicio"
         >
-          <span className="font-playfair text-[1.35rem] font-bold tracking-tight text-[#2B1A20] group-hover:text-[#C4687D] transition-colors duration-200">
-            mimikids
-          </span>
-          <span
-            className="w-1.5 h-1.5 rounded-full bg-[#C4687D] mb-2 opacity-80 group-hover:scale-125 transition-transform duration-200"
-            aria-hidden="true"
+          <Image
+            src="/mimikids.jpg"
+            alt="Mimikids · Portachupetes Personalizados"
+            width={44}
+            height={44}
+            className="rounded-full object-cover"
+            priority
           />
         </Link>
 
