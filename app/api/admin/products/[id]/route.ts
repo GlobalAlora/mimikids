@@ -10,9 +10,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const body = await req.json()
 
   const supabase = createServerClient()
+  const allowed = ['name', 'slug', 'description', 'price', 'images', 'badge', 'materials', 'care_instructions', 'production_days_min', 'production_days_max', 'is_active', 'available_colors']
+  const updates = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)))
   const { error } = await supabase
     .from('products')
-    .update(body)
+    .update(updates)
     .eq('id', id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
