@@ -19,7 +19,7 @@ const MOCK_ORDERS = [
     buyer: { name: 'Valentina Martínez', email: 'vale@mail.com', phone: '11 1234-5678' },
     total: 9300,
     status: 'en_produccion',
-    payment_method: 'mercadopago',
+    payment_method: 'transferencia',
     items: [
       {
         product_name: 'Portachupete Clásico',
@@ -117,7 +117,7 @@ export default function AdminOrdersPage() {
                           Envío: {order.shipping_method.name} ({formatPrice(order.shipping_method.price)})
                         </p>
                         <p className="text-xs text-gray-500">
-                          Pago: {order.payment_method === 'mercadopago' ? 'MercadoPago' : 'Transferencia'}
+                          Pago: Transferencia bancaria
                         </p>
                       </div>
                     </div>

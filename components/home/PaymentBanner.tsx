@@ -1,8 +1,8 @@
-import { ShieldCheck, Truck, CreditCard, Repeat } from 'lucide-react'
+import { ShieldCheck, Truck, Building2, Repeat } from 'lucide-react'
 
 const features = [
-  { icon: CreditCard,   label: 'MercadoPago',    desc: 'Tarjeta y cuotas' },
-  { icon: Repeat,       label: 'Transferencia',   desc: 'Bancaria y alias' },
+  { icon: Building2,    label: 'Transferencia',   desc: 'CBU o alias' },
+  { icon: Repeat,       label: 'Devoluciones',    desc: 'Sin problemas' },
   { icon: Truck,        label: 'Envío nacional',  desc: 'Andreani · Correo Argentino' },
   { icon: ShieldCheck,  label: 'Compra segura',   desc: 'Garantía Mimikids' },
 ]

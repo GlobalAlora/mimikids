@@ -115,7 +115,7 @@ export default function Footer() {
                 <p className="text-white/40 text-xs leading-relaxed">
                   Envíos: Andreani · Correo Argentino
                   <br />
-                  Pago: MercadoPago · Transferencia
+                  Pago: Transferencia bancaria
                 </p>
               </li>
             </ul>

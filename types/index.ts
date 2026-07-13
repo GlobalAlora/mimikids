@@ -67,7 +67,6 @@ export interface Order {
   subtotal: number
   shipping_cost: number
   total: number
-  mp_preference_id?: string
   created_at: string
   updated_at: string
 }

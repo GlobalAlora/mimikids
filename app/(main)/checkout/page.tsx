@@ -89,7 +89,7 @@ export default function CheckoutPage() {
       if (!data.success) throw new Error(data.error || 'Error al crear el pedido')
 
       clearCart()
-      router.push(`/order/${data.order_id}`)
+      router.push(`/order/${data.order_id}?method=transferencia&order_number=${data.order_number}`)
     } catch (err) {
       console.error(err)
       alert('Hubo un error al procesar tu pedido. Por favor intentá de nuevo.')
