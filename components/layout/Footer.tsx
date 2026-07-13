@@ -48,7 +48,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               <a
-                href="https://instagram.com/portachupetes.mimikids"
+                href="https://www.instagram.com/mimikids_arg/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#C4687D] flex items-center justify-center transition-colors duration-200 cursor-pointer"
@@ -57,7 +57,7 @@ export default function Footer() {
                 <InstagramIcon size={16} />
               </a>
               <a
-                href="https://wa.me/5491112345678"
+                href="https://wa.me/5493388673629"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#25D366] flex items-center justify-center transition-colors duration-200 cursor-pointer"
@@ -95,15 +95,7 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm">
               <li>
                 <a
-                  href="mailto:hola@mimikids.com.ar"
-                  className="text-white/60 hover:text-white transition-colors duration-200"
-                >
-                  hola@mimikids.com.ar
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://wa.me/5491112345678"
+                  href="https://wa.me/5493388673629"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-white/60 hover:text-white transition-colors duration-200"
@@ -127,9 +119,14 @@ export default function Footer() {
           <p className="text-xs text-white/30">
             © {new Date().getFullYear()} Mimikids. Todos los derechos reservados.
           </p>
-          <p className="text-xs text-white/30">
-            Hecho con amor en Argentina
-          </p>
+          <a
+            href="https://globalalora.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-white/30 hover:text-white/60 transition-colors"
+          >
+            Desarrollado por Global Alora
+          </a>
         </div>
       </div>
     </footer>
