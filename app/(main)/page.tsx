@@ -1,6 +1,6 @@
 import Hero from '@/components/home/Hero'
 import WhyMimikids from '@/components/home/WhyMimikids'
-import FeaturedProducts from '@/components/home/FeaturedProducts'
+import HomeShopSection from '@/components/home/HomeShopSection'
 import HowItWorks from '@/components/home/HowItWorks'
 import Testimonials from '@/components/home/Testimonials'
 import PaymentBanner from '@/components/home/PaymentBanner'
@@ -10,7 +10,7 @@ export default function HomePage() {
     <>
       <Hero />
       <WhyMimikids />
-      <FeaturedProducts />
+      <HomeShopSection />
       <HowItWorks />
       <Testimonials />
       <PaymentBanner />
