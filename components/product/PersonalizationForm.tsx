@@ -39,7 +39,7 @@ const LETTER_STYLE_COLORS: Record<string, { bg: string; text: string; border: st
   madera:             { bg: '#D4A574',  text: '#5a3a1a', border: '#b8864a', isWood: true },
 }
 
-const WHATSAPP_NUMBER = '5491112345678' // 👈 reemplazar con el número real
+const WHATSAPP_NUMBER = '543388673629'
 
 // ─── LetterBead ───────────────────────────────────────────────────────────────
 

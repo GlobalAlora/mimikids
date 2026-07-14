@@ -62,7 +62,16 @@ export async function POST(req: NextRequest) {
         await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/orders/notify-transfer`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderId, order_number, buyer, total }),
+          body: JSON.stringify({
+            order_number,
+            buyer,
+            items: orderItems,
+            shipping_method,
+            shipping_address,
+            subtotal,
+            shipping_cost,
+            total,
+          }),
         })
       } catch {
         // Email not configured — continue
