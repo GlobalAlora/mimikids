@@ -17,12 +17,15 @@ interface Product {
   is_active: boolean
 }
 
+type ProductCategory = 'portachupete' | 'funda' | 'promo'
+
 interface ProductForm {
   name: string
   slug: string
   description: string
   price: string
   images: string[]
+  category: ProductCategory
   badge: string
   materials: string
   care_instructions: string
@@ -33,9 +36,15 @@ interface ProductForm {
 
 const EMPTY_FORM: ProductForm = {
   name: '', slug: '', description: '', price: '',
-  images: [], badge: '', materials: '', care_instructions: '',
-  production_days_min: '3', production_days_max: '5', is_active: true,
+  images: [], category: 'portachupete', badge: '', materials: '', care_instructions: '',
+  production_days_min: '1', production_days_max: '2', is_active: true,
 }
+
+const CATEGORIES: { value: ProductCategory; label: string }[] = [
+  { value: 'portachupete', label: '🧸 Portachupete' },
+  { value: 'funda', label: '👕 Funda para portachupete' },
+  { value: 'promo', label: '🔥 Combo (Funda + Portachupete)' },
+]
 
 function slugify(str: string) {
   return str
@@ -182,11 +191,12 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       description: '',
       price: String(product.price),
       images: product.images ?? [],
+      category: (product.category as ProductCategory) || 'portachupete',
       badge: product.badge || '',
       materials: '',
       care_instructions: '',
-      production_days_min: '3',
-      production_days_max: '5',
+      production_days_min: String(product.production_days_min ?? 1),
+      production_days_max: String(product.production_days_max ?? 2),
       is_active: product.is_active,
     })
     setEditingId(product.id)
@@ -240,6 +250,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       description: form.description,
       price: form.price,
       images: form.images.filter(Boolean),
+      category: form.category,
       badge: form.badge || null,
       materials: form.materials || null,
       care_instructions: form.care_instructions || null,
@@ -346,9 +357,14 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                         <div>
                           <p className="font-medium text-sm text-gray-800">{product.name}</p>
                           <p className="text-xs text-gray-400">/shop/{product.slug}</p>
-                          {product.images?.length > 1 && (
-                            <p className="text-xs text-gray-400">{product.images.length} imágenes</p>
-                          )}
+                          <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 uppercase tracking-wide">
+                              {product.category === 'portachupete' ? '🧸 Portachupete' : product.category === 'funda' ? '👕 Funda' : product.category === 'promo' ? '🔥 Combo' : product.category}
+                            </span>
+                            {product.images?.length > 1 && (
+                              <span className="text-[10px] text-gray-400">{product.images.length} imgs</span>
+                            )}
+                          </div>
                           {product.badge && <Badge className="mt-1">{product.badge}</Badge>}
                         </div>
                       </div>
@@ -421,6 +437,26 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                   ))}
                 </div>
                 <p className="text-xs text-gray-400 mt-2">JPG, PNG o WebP · máx. 5 MB por imagen · la primera es la principal</p>
+              </div>
+
+              <div>
+                <label className={LABEL}>Categoría *</label>
+                <div className="flex gap-2 flex-wrap">
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.value}
+                      type="button"
+                      onClick={() => updateField('category', cat.value)}
+                      className={`flex-1 min-w-fit px-3 py-2 rounded-lg border text-sm font-medium transition-colors cursor-pointer ${
+                        form.category === cat.value
+                          ? 'border-[#d4768a] bg-pink-50 text-[#d4768a]'
+                          : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div>

@@ -1,10 +1,18 @@
 import Link from 'next/link'
-import { MOCK_PRODUCTS } from '@/lib/data'
+import { createServerClient } from '@/lib/supabase-server'
 import ProductCard from '@/components/shop/ProductCard'
 import { ArrowRight } from 'lucide-react'
 
-export default function FeaturedProducts() {
-  const featured = MOCK_PRODUCTS.slice(0, 4)
+export default async function FeaturedProducts() {
+  const supabase = createServerClient()
+  const { data: products } = await supabase
+    .from('products')
+    .select('*')
+    .eq('is_active', true)
+    .order('created_at', { ascending: false })
+    .limit(4)
+
+  if (!products || products.length === 0) return null
 
   return (
     <section className="bg-[#FFFAF7] py-24">
@@ -30,7 +38,7 @@ export default function FeaturedProducts() {
 
         {/* Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 md:gap-7">
-          {featured.map((product) => (
+          {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

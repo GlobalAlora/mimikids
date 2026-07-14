@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mimikids",
+      "runtimeExecutable": "/Users/bruno/.nvm/versions/node/v22.22.0/bin/node",
+      "runtimeArgs": ["/Users/bruno/Desktop/Cosas/Alora/mimikids/node_modules/next/dist/bin/next", "start", "--port", "3000"],
+      "port": 3000
+    }
+  ]
+}

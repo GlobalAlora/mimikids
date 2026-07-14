@@ -9,7 +9,6 @@ interface ProductCardProps {
   product: Product
 }
 
-// Letter style → background color for the card image area
 const LETTER_STYLE_BG: Record<string, string> = {
   'silicona-blanca':  '#F5F0ED',
   'silicona-beige':   '#F0E6D8',
@@ -19,28 +18,44 @@ const LETTER_STYLE_BG: Record<string, string> = {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const imgBg = (product.letter_style && LETTER_STYLE_BG[product.letter_style]) || '#F6EEE9'
+  const isPromo = product.category === 'promo'
+  const imgBg = (product.letter_style && LETTER_STYLE_BG[product.letter_style]) || (isPromo ? '#FFF8EC' : '#F6EEE9')
 
   return (
-    <Link href={`/shop/${product.slug}`} className="group block cursor-pointer" aria-label={`Ver ${product.name}`}>
+    <Link
+      href={`/shop/${product.slug}`}
+      className={`group block cursor-pointer ${isPromo ? 'ring-2 ring-[#F5CC7A]/60 rounded-2xl' : ''}`}
+      aria-label={`Ver ${product.name}`}
+    >
       {/* Image */}
       <div
-        className="relative rounded-2xl overflow-hidden mb-4 aspect-[4/5]"
+        className={`relative overflow-hidden mb-3 aspect-[4/5] ${isPromo ? 'rounded-t-2xl' : 'rounded-2xl'}`}
         style={{ backgroundColor: imgBg }}
       >
-        <img
-          src={product.images[0]}
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out"
-          loading="lazy"
-        />
-
-        {/* Badge */}
-        {product.badge && (
-          <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[#2B1A20] text-[0.6875rem] font-semibold px-3 py-1 rounded-full border border-[#EDCCD5]/60">
-            {product.badge}
-          </span>
+        {product.images?.[0] ? (
+          <img
+            src={product.images[0]}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-4xl opacity-20">🧸</div>
         )}
+
+        {/* Badges */}
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+          {isPromo && (
+            <span className="bg-[#F5CC7A] text-[#7A5200] text-[0.625rem] font-black px-2.5 py-1 rounded-full tracking-wide uppercase shadow-sm">
+              🔥 COMBO
+            </span>
+          )}
+          {product.badge && (
+            <span className="bg-white/90 backdrop-blur-sm text-[#2B1A20] text-[0.6875rem] font-semibold px-3 py-1 rounded-full border border-[#EDCCD5]/60">
+              {product.badge}
+            </span>
+          )}
+        </div>
 
         {/* Hover CTA */}
         <div className="absolute inset-0 bg-[#2B1A20]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
@@ -51,13 +66,22 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
+      {/* Promo bottom strip */}
+      {isPromo && (
+        <div className="bg-[#FFF8EC] border-x-2 border-[#F5CC7A]/60 px-3 py-1.5 text-center">
+          <p className="text-[0.65rem] font-bold text-[#9A6A00] uppercase tracking-wider">
+            Funda + Portachupete · Combo
+          </p>
+        </div>
+      )}
+
       {/* Info */}
-      <div className="px-0.5">
-        <h3 className="font-playfair font-bold text-[#2B1A20] text-[1.0625rem] leading-snug mb-2 group-hover:text-[#C4687D] transition-colors duration-200">
+      <div className={`px-0.5 pt-1 ${isPromo ? 'bg-white border-x-2 border-b-2 border-[#F5CC7A]/60 rounded-b-2xl px-3 pb-3' : ''}`}>
+        <h3 className={`font-playfair font-bold text-[#2B1A20] text-[1.0625rem] leading-snug mb-1.5 group-hover:text-[#C4687D] transition-colors duration-200 ${isPromo ? 'pt-2' : ''}`}>
           {product.name}
         </h3>
         <div className="flex items-center justify-between">
-          <p className="font-playfair text-lg font-bold text-[#C4687D]">
+          <p className={`font-playfair text-lg font-bold ${isPromo ? 'text-[#D4850A]' : 'text-[#C4687D]'}`}>
             {formatPrice(product.price)}
           </p>
           <p className="text-xs text-[#A58494]">
