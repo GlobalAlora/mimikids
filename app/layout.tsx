@@ -153,7 +153,7 @@ const jsonLd = {
           name: '¿Cuánto tarda la producción de un portachupete personalizado?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'El tiempo de producción es de 3 a 5 días hábiles. Una vez confirmado el pago, comenzamos a fabricar tu portachupete artesanalmente.',
+            text: 'El tiempo de producción es de 1 a 2 días hábiles. Una vez confirmado el pago, comenzamos a fabricar tu portachupete artesanalmente.',
           },
         },
         {
@@ -161,7 +161,7 @@ const jsonLd = {
           name: '¿A qué zonas hacen envíos?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Realizamos envíos a todo Argentina a través de Andreani y Correo Argentino. También ofrecemos retiro en persona en Trenque Lauquen, Buenos Aires.',
+            text: 'Realizamos envíos a todo Argentina a través de Andreani, tanto a domicilio como a sucursal. También ofrecemos retiro en persona en Trenque Lauquen, Buenos Aires.',
           },
         },
         {

@@ -6,7 +6,6 @@ import { formatPrice } from '@/lib/utils'
 import Button from '@/components/ui/Button'
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Truck } from 'lucide-react'
 import { ShippingMethod } from '@/types'
-import { useState } from 'react'
 
 const SHIPPING_OPTIONS: ShippingMethod[] = [
   { id: 'andreani', name: 'Andreani · Envío a domicilio', price: 12000, days_min: 2, days_max: 4 },
@@ -17,8 +16,6 @@ const SHIPPING_OPTIONS: ShippingMethod[] = [
 export default function CartPage() {
   const { items, removeItem, updateQuantity, setShippingMethod, shippingMethod, total, itemCount } =
     useCartStore()
-
-  const [postalCode, setPostalCode] = useState('')
 
   const subtotal = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
 
@@ -127,17 +124,6 @@ export default function CartPage() {
                 <Truck size={16} className="text-[#C4687D]" />
                 Método de envío
               </h3>
-
-              <div className="mb-3">
-                <input
-                  type="text"
-                  value={postalCode}
-                  onChange={(e) => setPostalCode(e.target.value)}
-                  placeholder="Código postal"
-                  maxLength={6}
-                  className="w-full px-3 py-2 rounded-lg border border-[#EDCCD5]/50 text-sm focus:border-[#C4687D] focus:outline-none"
-                />
-              </div>
 
               <div className="space-y-2">
                 {SHIPPING_OPTIONS.map((option) => (
