@@ -265,14 +265,6 @@ export default function PersonalizationForm({ product }: PersonalizationFormProp
         </div>
       </div>
 
-      {/* ── Live preview ────────────────────────────────────────────── */}
-      <div className="bg-gradient-to-br from-[#FFFAF7] to-[#F9EDF1] rounded-2xl p-4 border border-[#EDCCD5]/30">
-        <p className="text-xs font-semibold text-[#A58494] uppercase tracking-wider mb-3">
-          Preview en tiempo real
-        </p>
-        <NameBeads name={nombre} letterStyleId={letterStyleId} />
-      </div>
-
       {/* ── WhatsApp note ────────────────────────────────────────────── */}
       <div className="bg-[#e8f7f0] rounded-2xl p-4 border border-[#C8EFE3]/60">
         <p className="text-sm font-semibold text-[#2d7a5e] mb-1">

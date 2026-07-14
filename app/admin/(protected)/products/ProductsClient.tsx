@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { formatPrice } from '@/lib/utils'
-import { Plus, Edit2, Trash2, Eye, EyeOff, RefreshCw, X } from 'lucide-react'
+import { Plus, Edit2, Trash2, Eye, EyeOff, RefreshCw, X, ImagePlus } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import { useRouter } from 'next/navigation'
@@ -22,7 +22,7 @@ interface ProductForm {
   slug: string
   description: string
   price: string
-  image_url: string
+  images: string[]
   badge: string
   materials: string
   care_instructions: string
@@ -33,7 +33,7 @@ interface ProductForm {
 
 const EMPTY_FORM: ProductForm = {
   name: '', slug: '', description: '', price: '',
-  image_url: '', badge: '', materials: '', care_instructions: '',
+  images: [''], badge: '', materials: '', care_instructions: '',
   production_days_min: '3', production_days_max: '5', is_active: true,
 }
 
@@ -65,7 +65,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       slug: product.slug,
       description: '',
       price: String(product.price),
-      image_url: product.images?.[0] || '',
+      images: product.images?.length ? product.images : [''],
       badge: product.badge || '',
       materials: '',
       care_instructions: '',
@@ -77,7 +77,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
     setShowModal(true)
   }
 
-  function updateField(key: keyof ProductForm, value: string | boolean) {
+  function updateField(key: keyof ProductForm, value: string | boolean | string[]) {
     setForm((prev) => {
       const next = { ...prev, [key]: value }
       if (key === 'name' && typeof value === 'string' && !editingId) {
@@ -87,16 +87,37 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
     })
   }
 
+  function updateImage(index: number, value: string) {
+    setForm((prev) => {
+      const imgs = [...prev.images]
+      imgs[index] = value
+      return { ...prev, images: imgs }
+    })
+  }
+
+  function addImage() {
+    setForm((prev) => ({ ...prev, images: [...prev.images, ''] }))
+  }
+
+  function removeImage(index: number) {
+    setForm((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }))
+  }
+
   async function handleSave() {
     if (!form.name || !form.price || !form.slug) return
     setSaving(true)
+
+    const cleanImages = form.images.filter((u) => u.trim() !== '')
 
     const payload = {
       name: form.name,
       slug: form.slug,
       description: form.description,
       price: form.price,
-      images: form.image_url ? [form.image_url] : [],
+      images: cleanImages,
       badge: form.badge || null,
       materials: form.materials || null,
       care_instructions: form.care_instructions || null,
@@ -115,7 +136,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
         if (res.ok) {
           setProducts((prev) => prev.map((p) =>
             p.id === editingId
-              ? { ...p, name: form.name, slug: form.slug, price: Number(form.price), images: payload.images, badge: form.badge || undefined, is_active: form.is_active }
+              ? { ...p, name: form.name, slug: form.slug, price: Number(form.price), images: cleanImages, badge: form.badge || undefined, is_active: form.is_active }
               : p
           ))
         }
@@ -195,12 +216,17 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                   <tr key={product.id} className="hover:bg-gray-50/50">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        {product.images?.[0] && (
+                        {product.images?.[0] ? (
                           <img src={product.images[0]} alt={product.name} className="w-12 h-12 rounded-xl object-cover flex-shrink-0" />
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl bg-gray-100 flex-shrink-0" />
                         )}
                         <div>
                           <p className="font-medium text-sm text-gray-800">{product.name}</p>
                           <p className="text-xs text-gray-400">/shop/{product.slug}</p>
+                          {product.images?.length > 1 && (
+                            <p className="text-xs text-gray-400">{product.images.length} imágenes</p>
+                          )}
                           {product.badge && <Badge className="mt-1">{product.badge}</Badge>}
                         </div>
                       </div>
@@ -239,7 +265,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowModal(false)} />
           <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div className="sticky top-0 bg-white px-6 py-4 border-b border-gray-100 flex items-center justify-between z-10">
               <h2 className="font-playfair font-bold text-[#6b3d50]">
                 {editingId ? 'Editar producto' : 'Nuevo producto'}
               </h2>
@@ -276,12 +302,49 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                 </div>
               </div>
 
+              {/* Gallery */}
               <div>
-                <label className={LABEL}>URL de imagen</label>
-                <input className={INPUT} value={form.image_url} onChange={(e) => updateField('image_url', e.target.value)} placeholder="https://images.unsplash.com/..." />
-                {form.image_url && (
-                  <img src={form.image_url} alt="preview" className="mt-2 w-20 h-20 rounded-xl object-cover border border-gray-200" />
-                )}
+                <div className="flex items-center justify-between mb-2">
+                  <label className={LABEL + ' mb-0'}>Imágenes (galería)</label>
+                  <button
+                    onClick={addImage}
+                    className="flex items-center gap-1 text-xs text-[#d4768a] hover:text-[#c4587a] font-medium cursor-pointer"
+                  >
+                    <ImagePlus size={13} /> Agregar imagen
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {form.images.map((url, i) => (
+                    <div key={i} className="flex gap-2 items-start">
+                      <div className="flex-1">
+                        <input
+                          className={INPUT}
+                          value={url}
+                          onChange={(e) => updateImage(i, e.target.value)}
+                          placeholder={i === 0 ? 'URL imagen principal' : `URL imagen ${i + 1}`}
+                        />
+                      </div>
+                      {url && (
+                        <img
+                          src={url}
+                          alt=""
+                          className="w-10 h-10 rounded-lg object-cover border border-gray-200 flex-shrink-0"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                        />
+                      )}
+                      {form.images.length > 1 && (
+                        <button
+                          onClick={() => removeImage(i)}
+                          className="p-2 text-gray-300 hover:text-red-400 transition-colors cursor-pointer flex-shrink-0"
+                        >
+                          <X size={14} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400 mt-1.5">La primera imagen es la principal. Pegá URLs de Unsplash, Supabase Storage, etc.</p>
               </div>
 
               <div>
