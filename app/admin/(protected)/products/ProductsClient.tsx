@@ -14,7 +14,10 @@ interface Product {
   price: number
   images: string[]
   badge?: string
+  category?: string
   is_active: boolean
+  production_days_min?: number
+  production_days_max?: number
 }
 
 type ProductCategory = 'portachupete' | 'funda' | 'promo'
@@ -42,7 +45,7 @@ const EMPTY_FORM: ProductForm = {
 
 const CATEGORIES: { value: ProductCategory; label: string }[] = [
   { value: 'portachupete', label: '🧸 Portachupete' },
-  { value: 'funda', label: '👕 Funda para portachupete' },
+  { value: 'funda', label: '🍼 Funda para portachupete' },
   { value: 'promo', label: '🔥 Combo (Funda + Portachupete)' },
 ]
 
@@ -359,7 +362,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                           <p className="text-xs text-gray-400">/shop/{product.slug}</p>
                           <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                             <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 uppercase tracking-wide">
-                              {product.category === 'portachupete' ? '🧸 Portachupete' : product.category === 'funda' ? '👕 Funda' : product.category === 'promo' ? '🔥 Combo' : product.category}
+                              {product.category === 'portachupete' ? '🧸 Portachupete' : product.category === 'funda' ? '🍼 Funda' : product.category === 'promo' ? '🔥 Combo' : product.category}
                             </span>
                             {product.images?.length > 1 && (
                               <span className="text-[10px] text-gray-400">{product.images.length} imgs</span>

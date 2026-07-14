@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Product } from '@/types'
 import ProductCard from '@/components/shop/ProductCard'
-import { Sparkles, Package, Shirt, Gift } from 'lucide-react'
+import { Sparkles, Package, Gift } from 'lucide-react'
 
 type Category = 'all' | 'portachupete' | 'funda' | 'promo'
 
@@ -31,7 +31,7 @@ const TABS: Tab[] = [
   {
     id: 'funda',
     label: 'Fundas',
-    icon: <Shirt size={15} />,
+    icon: <span className="text-[13px] leading-none">🍼</span>,
     description: 'Fundas artesanales para proteger y decorar el portachupete. Van a juego con todos los modelos.',
   },
   {

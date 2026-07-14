@@ -6,7 +6,7 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
 const FROM = process.env.RESEND_FROM_EMAIL || 'pedidos@mimikids.com.ar'
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'somosglobalalora@gmail.com'
+const ADMIN_EMAIL = process.env.NOTIFICATION_EMAIL || 'camilarocioperriello@gmail.com'
 const WA_NUMBER = '543388673629'
 
 function formatARS(n: number) {

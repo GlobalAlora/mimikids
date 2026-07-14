@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       available_colors: body.available_colors || [],
       is_active: body.is_active ?? true,
     })
-    .select('id, slug, name, price, images, badge, is_active')
+    .select('id, slug, name, price, images, badge, is_active, category')
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
