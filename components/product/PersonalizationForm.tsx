@@ -17,15 +17,16 @@ interface BrocheOption {
   material: 'plastico' | 'madera'
   emoji: string
   color?: string
+  image?: string
 }
 
 const BROCHES: BrocheOption[] = [
-  { id: 'plastico-blanco', name: 'Blanco', material: 'plastico', emoji: '🤍', color: '#F5F5F5' },
-  { id: 'plastico-celeste', name: 'Celeste', material: 'plastico', emoji: '💙', color: '#B8DFF5' },
-  { id: 'plastico-rosa', name: 'Rosa', material: 'plastico', emoji: '🩷', color: '#F9C4D2' },
-  { id: 'plastico-menta', name: 'Menta', material: 'plastico', emoji: '💚', color: '#C8EFE3' },
-  { id: 'madera-redondo', name: 'Redondo', material: 'madera', emoji: '🟤' },
-  { id: 'madera-osito', name: 'Osito', material: 'madera', emoji: '🐻' },
+  { id: 'plastico-blanco',  name: 'Blanco',  material: 'plastico', emoji: '🤍', color: '#F5F5F5', image: '/brocheblanco.webp' },
+  { id: 'plastico-celeste', name: 'Celeste', material: 'plastico', emoji: '💙', color: '#B8DFF5', image: '/brocheceleste.webp' },
+  { id: 'plastico-rosa',    name: 'Rosa',    material: 'plastico', emoji: '🩷', color: '#F9C4D2', image: '/brocherosa.webp' },
+  { id: 'plastico-menta',   name: 'Menta',   material: 'plastico', emoji: '💚', color: '#C8EFE3', image: '/brochementa.webp' },
+  { id: 'madera-redondo',   name: 'Redondo', material: 'madera',   emoji: '🟤' },
+  { id: 'madera-osito',     name: 'Osito',   material: 'madera',   emoji: '🐻' },
 ]
 
 // ─── Letter style bead colors ─────────────────────────────────────────────────
@@ -140,15 +141,22 @@ function BrocheCard({
           <Check size={9} className="text-white" />
         </div>
       )}
-      <div
-        className="w-10 h-10 rounded-full flex items-center justify-center text-xl shadow-sm"
-        style={
-          option.color
-            ? { backgroundColor: option.color, border: '2px solid rgba(0,0,0,0.06)' }
-            : { background: 'linear-gradient(135deg, #D4A574, #A0724A)' }
-        }
-      >
-        {option.emoji}
+      <div className="w-10 h-10 rounded-full overflow-hidden shadow-sm flex-shrink-0">
+        {option.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={option.image} alt={option.name} className="w-full h-full object-cover" />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center text-xl"
+            style={
+              option.color
+                ? { backgroundColor: option.color, border: '2px solid rgba(0,0,0,0.06)' }
+                : { background: 'linear-gradient(135deg, #D4A574, #A0724A)' }
+            }
+          >
+            {option.emoji}
+          </div>
+        )}
       </div>
       <span
         className={`text-xs font-semibold text-center leading-tight ${
