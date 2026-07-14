@@ -1,5 +1,7 @@
 -- Inserta los 5 productos del catálogo Mimikids
 -- Seguro para re-ejecutar (usa WHERE NOT EXISTS)
+-- images  → text[]  → ARRAY['url']
+-- available_colors → jsonb → '[]'::jsonb
 
 insert into products (slug, name, description, price, images, category, badge, materials, care_instructions, production_days_min, production_days_max, available_colors, is_active)
 select
@@ -12,7 +14,7 @@ select
   'Más vendido',
   'Cuentas de silicona grado alimentario, letras de silicona blanca, clip de madera de haya',
   'Limpiar con paño húmedo. No sumergir en agua. Revisar regularmente el estado del clip y las cuentas.',
-  3, 5, ARRAY[]::text[], true
+  3, 5, '[]'::jsonb, true
 where not exists (select 1 from products where slug = 'portachupete-letras-blancas');
 
 insert into products (slug, name, description, price, images, category, badge, materials, care_instructions, production_days_min, production_days_max, available_colors, is_active)
@@ -26,7 +28,7 @@ select
   null,
   'Cuentas de silicona grado alimentario, letras de silicona beige, clip de madera de haya',
   'Limpiar con paño húmedo. No sumergir en agua. Revisar regularmente el estado del clip y las cuentas.',
-  3, 5, ARRAY[]::text[], true
+  3, 5, '[]'::jsonb, true
 where not exists (select 1 from products where slug = 'portachupete-letras-beige');
 
 insert into products (slug, name, description, price, images, category, badge, materials, care_instructions, production_days_min, production_days_max, available_colors, is_active)
@@ -40,7 +42,7 @@ select
   '💕 Para nenas',
   'Cuentas de silicona grado alimentario, letras de silicona rosa, clip de madera de haya',
   'Limpiar con paño húmedo. No sumergir en agua. Revisar regularmente el estado del clip y las cuentas.',
-  3, 5, ARRAY[]::text[], true
+  3, 5, '[]'::jsonb, true
 where not exists (select 1 from products where slug = 'portachupete-letras-rosas');
 
 insert into products (slug, name, description, price, images, category, badge, materials, care_instructions, production_days_min, production_days_max, available_colors, is_active)
@@ -54,7 +56,7 @@ select
   '💙 Para nenes',
   'Cuentas de silicona grado alimentario, letras de silicona celeste, clip de madera de haya',
   'Limpiar con paño húmedo. No sumergir en agua. Revisar regularmente el estado del clip y las cuentas.',
-  3, 5, ARRAY[]::text[], true
+  3, 5, '[]'::jsonb, true
 where not exists (select 1 from products where slug = 'portachupete-letras-celeste');
 
 insert into products (slug, name, description, price, images, category, badge, materials, care_instructions, production_days_min, production_days_max, available_colors, is_active)
@@ -68,5 +70,5 @@ select
   '🌿 Premium',
   'Cuentas de silicona grado alimentario, letras de madera de haya natural, clip de madera',
   'Limpiar con paño seco. La madera no debe mojarse. Revisar regularmente el estado de las cuentas.',
-  3, 5, ARRAY[]::text[], true
+  3, 5, '[]'::jsonb, true
 where not exists (select 1 from products where slug = 'portachupete-letras-madera');

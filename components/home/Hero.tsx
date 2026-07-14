@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import Button from '@/components/ui/Button'
 import { ArrowRight, Star } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
@@ -96,23 +95,17 @@ export default function Hero() {
           <div className="relative w-full max-w-[480px]">
 
             {/* Slides */}
-            <div className="relative rounded-[2.5rem] overflow-hidden bg-[#F6EEE9] shadow-[0_24px_80px_rgba(43,26,32,0.12)] aspect-[4/5]">
+            <div className="relative rounded-[2.5rem] overflow-hidden bg-[#F6EEE9] shadow-[0_24px_80px_rgba(43,26,32,0.12)]" style={{ aspectRatio: '4/5' }}>
               {SLIDES.map((slide, i) => (
-                <div
+                <img
                   key={slide.src}
-                  className="absolute inset-0 transition-opacity duration-700"
+                  src={slide.src}
+                  alt={slide.alt}
+                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
                   style={{ opacity: i === current ? 1 : 0 }}
+                  loading={i === 0 ? 'eager' : 'lazy'}
                   aria-hidden={i !== current}
-                >
-                  <Image
-                    src={slide.src}
-                    alt={slide.alt}
-                    fill
-                    className="object-cover"
-                    priority={i === 0}
-                    sizes="(max-width: 1024px) 100vw, 480px"
-                  />
-                </div>
+                />
               ))}
               {/* Gradient overlay */}
               <div
@@ -130,7 +123,7 @@ export default function Hero() {
                   aria-selected={i === current}
                   aria-label={`Imagen ${i + 1}`}
                   onClick={() => setCurrent(i)}
-                  className={`rounded-full transition-all duration-300 cursor-pointer ${
+                  className={`rounded-full transition-all duration-300 cursor-pointer border-0 outline-none ${
                     i === current
                       ? 'w-6 h-2.5 bg-[#C4687D]'
                       : 'w-2.5 h-2.5 bg-[#EDCCD5] hover:bg-[#d4a5b0]'
