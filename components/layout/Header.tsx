@@ -43,8 +43,8 @@ export default function Header() {
           <Image
             src="/mimikids.jpg"
             alt="Mimikids"
-            width={56}
-            height={56}
+            width={72}
+            height={72}
             className="rounded-full object-cover"
             priority
           />

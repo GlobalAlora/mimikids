@@ -1,14 +1,35 @@
+'use client'
+
 import Link from 'next/link'
+import Image from 'next/image'
 import Button from '@/components/ui/Button'
 import { ArrowRight, Star } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+
+const SLIDES = [
+  { src: '/hero1.jpeg', alt: 'Portachupete personalizado Mimikids' },
+  { src: '/hero2.jpeg', alt: 'Portachupete artesanal para bebé' },
+  { src: '/hero3.jpeg', alt: 'Portachupete con nombre personalizado' },
+]
 
 const stats = [
   { value: '+500', label: 'familias felices' },
   { value: '4.9',  label: 'estrellas promedio' },
-  { value: '3-5d', label: 'producción' },
+  { value: '1-2d', label: 'producción' },
 ]
 
 export default function Hero() {
+  const [current, setCurrent] = useState(0)
+
+  const next = useCallback(() => {
+    setCurrent((c) => (c + 1) % SLIDES.length)
+  }, [])
+
+  useEffect(() => {
+    const id = setInterval(next, 4000)
+    return () => clearInterval(id)
+  }, [next])
+
   return (
     <section className="relative bg-[#FFFAF7] overflow-hidden">
       <div className="max-w-6xl mx-auto px-5 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-68px)]">
@@ -70,30 +91,58 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* ── Image ────────────────────────────────────────────────── */}
+        {/* ── Slider ───────────────────────────────────────────────── */}
         <div className="order-1 lg:order-2 flex items-center justify-center lg:justify-end">
           <div className="relative w-full max-w-[480px]">
 
-            {/* Main image */}
-            <div className="relative rounded-[2.5rem] overflow-hidden bg-[#F6EEE9] shadow-[0_24px_80px_rgba(43,26,32,0.12)]">
-              <img
-                src="https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=800&q=85"
-                alt="Portachupete personalizado Mimikids"
-                className="w-full aspect-[4/5] object-cover"
-                loading="eager"
-                fetchPriority="high"
-              />
-              {/* Image overlay gradient */}
+            {/* Slides */}
+            <div className="relative rounded-[2.5rem] overflow-hidden bg-[#F6EEE9] shadow-[0_24px_80px_rgba(43,26,32,0.12)] aspect-[4/5]">
+              {SLIDES.map((slide, i) => (
+                <div
+                  key={slide.src}
+                  className="absolute inset-0 transition-opacity duration-700"
+                  style={{ opacity: i === current ? 1 : 0 }}
+                  aria-hidden={i !== current}
+                >
+                  <Image
+                    src={slide.src}
+                    alt={slide.alt}
+                    fill
+                    className="object-cover"
+                    priority={i === 0}
+                    sizes="(max-width: 1024px) 100vw, 480px"
+                  />
+                </div>
+              ))}
+              {/* Gradient overlay */}
               <div
-                className="absolute inset-0 bg-gradient-to-t from-[#2B1A20]/20 via-transparent to-transparent"
+                className="absolute inset-0 bg-gradient-to-t from-[#2B1A20]/20 via-transparent to-transparent pointer-events-none"
                 aria-hidden="true"
               />
+            </div>
+
+            {/* Dots */}
+            <div className="flex items-center justify-center gap-2 mt-4" role="tablist" aria-label="Slider de imágenes">
+              {SLIDES.map((_, i) => (
+                <button
+                  key={i}
+                  role="tab"
+                  aria-selected={i === current}
+                  aria-label={`Imagen ${i + 1}`}
+                  onClick={() => setCurrent(i)}
+                  className={`rounded-full transition-all duration-300 cursor-pointer ${
+                    i === current
+                      ? 'w-6 h-2.5 bg-[#C4687D]'
+                      : 'w-2.5 h-2.5 bg-[#EDCCD5] hover:bg-[#d4a5b0]'
+                  }`}
+                />
+              ))}
             </div>
 
             {/* Floating name card */}
             <div className="absolute -bottom-5 -left-5 bg-white rounded-2xl shadow-[0_8px_32px_rgba(43,26,32,0.12)] px-5 py-3.5 border border-[#EDCCD5]/40">
               <p className="text-[0.6875rem] font-medium text-[#A58494] uppercase tracking-wide mb-0.5">Para</p>
-              <p className="font-playfair font-bold text-[#2B1A20] text-xl leading-none">Valentina</p>
+              <p className="font-playfair font-bold text-[#2B1A20] text-xl leading-none">Conrado</p>
             </div>
 
             {/* BPA badge */}

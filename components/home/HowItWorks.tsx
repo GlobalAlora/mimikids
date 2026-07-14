@@ -15,7 +15,7 @@ const steps = [
     number: '03',
     title: 'Lo hacemos y enviamos',
     description:
-      'En 3 a 5 días hábiles producimos tu pedido artesanalmente y lo enviamos a todo el país.',
+      'En 1 a 2 días hábiles producimos tu pedido artesanalmente y lo enviamos a todo el país.',
   },
 ]
 
