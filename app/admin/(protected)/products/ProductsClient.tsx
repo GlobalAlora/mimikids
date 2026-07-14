@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { formatPrice } from '@/lib/utils'
-import { Plus, Edit2, Trash2, Eye, EyeOff, RefreshCw, X, ImagePlus } from 'lucide-react'
+import { Plus, Edit2, Trash2, Eye, EyeOff, RefreshCw, X, Upload, ImagePlus } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import { useRouter } from 'next/navigation'
@@ -33,7 +33,7 @@ interface ProductForm {
 
 const EMPTY_FORM: ProductForm = {
   name: '', slug: '', description: '', price: '',
-  images: [''], badge: '', materials: '', care_instructions: '',
+  images: [], badge: '', materials: '', care_instructions: '',
   production_days_min: '3', production_days_max: '5', is_active: true,
 }
 
@@ -44,6 +44,122 @@ function slugify(str: string) {
     .replace(/[^a-z0-9\s-]/g, '')
     .trim().replace(/\s+/g, '-')
 }
+
+// ── Image upload slot ──────────────────────────────────────────────────────────
+
+function ImageSlot({
+  url,
+  index,
+  isMain,
+  onUpload,
+  onRemove,
+}: {
+  url: string
+  index: number
+  isMain: boolean
+  onUpload: (index: number, url: string) => void
+  onRemove: (index: number) => void
+}) {
+  const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  async function handleFile(file: File) {
+    setUploading(true)
+    setError('')
+    const fd = new FormData()
+    fd.append('file', file)
+    try {
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (data.url) {
+        onUpload(index, data.url)
+      } else {
+        setError(data.error || 'Error al subir')
+      }
+    } catch {
+      setError('Error de red')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) handleFile(file)
+    e.target.value = ''
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault()
+    const file = e.dataTransfer.files?.[0]
+    if (file) handleFile(file)
+  }
+
+  return (
+    <div className="relative group">
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/jpeg,image/jpg,image/png,image/webp"
+        className="hidden"
+        onChange={handleChange}
+      />
+
+      {url ? (
+        <div className="relative rounded-xl overflow-hidden border-2 border-gray-200 aspect-square">
+          <img src={url} alt="" className="w-full h-full object-cover" />
+          {isMain && (
+            <span className="absolute top-1 left-1 bg-[#d4768a] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">
+              Principal
+            </span>
+          )}
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+            <button
+              onClick={() => inputRef.current?.click()}
+              className="bg-white text-gray-700 rounded-lg px-2 py-1 text-xs font-medium cursor-pointer hover:bg-gray-100"
+            >
+              Cambiar
+            </button>
+            <button
+              onClick={() => onRemove(index)}
+              className="bg-red-500 text-white rounded-lg px-2 py-1 text-xs font-medium cursor-pointer hover:bg-red-600"
+            >
+              Quitar
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          onDrop={handleDrop}
+          onDragOver={(e) => e.preventDefault()}
+          disabled={uploading}
+          className="w-full aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-1.5 hover:border-[#d4768a] hover:bg-pink-50/30 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {uploading ? (
+            <>
+              <div className="w-5 h-5 border-2 border-[#d4768a] border-t-transparent rounded-full animate-spin" />
+              <span className="text-xs text-gray-400">Subiendo...</span>
+            </>
+          ) : (
+            <>
+              <Upload size={18} className="text-gray-300" />
+              <span className="text-xs text-gray-400 text-center px-1">
+                {isMain ? 'Imagen principal' : `Imagen ${index + 1}`}
+              </span>
+            </>
+          )}
+        </button>
+      )}
+
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+    </div>
+  )
+}
+
+// ── Main component ─────────────────────────────────────────────────────────────
 
 export default function ProductsClient({ initialProducts }: { initialProducts: Product[] }) {
   const [products, setProducts] = useState<Product[]>(initialProducts)
@@ -65,7 +181,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       slug: product.slug,
       description: '',
       price: String(product.price),
-      images: product.images?.length ? product.images : [''],
+      images: product.images ?? [],
       badge: product.badge || '',
       materials: '',
       care_instructions: '',
@@ -87,37 +203,43 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
     })
   }
 
-  function updateImage(index: number, value: string) {
+  function handleImageUpload(index: number, url: string) {
     setForm((prev) => {
       const imgs = [...prev.images]
-      imgs[index] = value
+      if (index < imgs.length) {
+        imgs[index] = url
+      } else {
+        imgs.push(url)
+      }
       return { ...prev, images: imgs }
     })
   }
 
-  function addImage() {
-    setForm((prev) => ({ ...prev, images: [...prev.images, ''] }))
-  }
-
-  function removeImage(index: number) {
+  function handleImageRemove(index: number) {
     setForm((prev) => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }))
   }
 
+  function addSlot() {
+    setForm((prev) => ({ ...prev, images: [...prev.images, ''] }))
+  }
+
+  // Total visible slots: filled images + 1 empty slot (to add next), max 6
+  const slots = [...form.images]
+  if (slots.length < 6) slots.push('')
+
   async function handleSave() {
     if (!form.name || !form.price || !form.slug) return
     setSaving(true)
-
-    const cleanImages = form.images.filter((u) => u.trim() !== '')
 
     const payload = {
       name: form.name,
       slug: form.slug,
       description: form.description,
       price: form.price,
-      images: cleanImages,
+      images: form.images.filter(Boolean),
       badge: form.badge || null,
       materials: form.materials || null,
       care_instructions: form.care_instructions || null,
@@ -136,7 +258,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
         if (res.ok) {
           setProducts((prev) => prev.map((p) =>
             p.id === editingId
-              ? { ...p, name: form.name, slug: form.slug, price: Number(form.price), images: cleanImages, badge: form.badge || undefined, is_active: form.is_active }
+              ? { ...p, ...payload, price: Number(payload.price), badge: payload.badge ?? undefined }
               : p
           ))
         }
@@ -260,7 +382,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
         )}
       </div>
 
-      {/* Modal crear/editar */}
+      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowModal(false)} />
@@ -274,7 +396,33 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
               </button>
             </div>
 
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-5">
+
+              {/* Images */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className={LABEL + ' mb-0'}>Imágenes (galería)</label>
+                  {slots.filter(Boolean).length > 0 && slots.length < 6 && (
+                    <button onClick={addSlot} className="flex items-center gap-1 text-xs text-[#d4768a] font-medium cursor-pointer hover:text-[#c4587a]">
+                      <ImagePlus size={13} /> Agregar
+                    </button>
+                  )}
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {slots.map((url, i) => (
+                    <ImageSlot
+                      key={i}
+                      url={url}
+                      index={i}
+                      isMain={i === 0}
+                      onUpload={handleImageUpload}
+                      onRemove={handleImageRemove}
+                    />
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400 mt-2">JPG, PNG o WebP · máx. 5 MB por imagen · la primera es la principal</p>
+              </div>
+
               <div>
                 <label className={LABEL}>Nombre *</label>
                 <input className={INPUT} value={form.name} onChange={(e) => updateField('name', e.target.value)} placeholder="Portachupete · Letras Blancas" />
@@ -300,51 +448,6 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                   <label className={LABEL}>Badge</label>
                   <input className={INPUT} value={form.badge} onChange={(e) => updateField('badge', e.target.value)} placeholder="Más vendido" />
                 </div>
-              </div>
-
-              {/* Gallery */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className={LABEL + ' mb-0'}>Imágenes (galería)</label>
-                  <button
-                    onClick={addImage}
-                    className="flex items-center gap-1 text-xs text-[#d4768a] hover:text-[#c4587a] font-medium cursor-pointer"
-                  >
-                    <ImagePlus size={13} /> Agregar imagen
-                  </button>
-                </div>
-
-                <div className="space-y-2">
-                  {form.images.map((url, i) => (
-                    <div key={i} className="flex gap-2 items-start">
-                      <div className="flex-1">
-                        <input
-                          className={INPUT}
-                          value={url}
-                          onChange={(e) => updateImage(i, e.target.value)}
-                          placeholder={i === 0 ? 'URL imagen principal' : `URL imagen ${i + 1}`}
-                        />
-                      </div>
-                      {url && (
-                        <img
-                          src={url}
-                          alt=""
-                          className="w-10 h-10 rounded-lg object-cover border border-gray-200 flex-shrink-0"
-                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                        />
-                      )}
-                      {form.images.length > 1 && (
-                        <button
-                          onClick={() => removeImage(i)}
-                          className="p-2 text-gray-300 hover:text-red-400 transition-colors cursor-pointer flex-shrink-0"
-                        >
-                          <X size={14} />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-400 mt-1.5">La primera imagen es la principal. Pegá URLs de Unsplash, Supabase Storage, etc.</p>
               </div>
 
               <div>
@@ -375,9 +478,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
             </div>
 
             <div className="sticky bottom-0 bg-white px-6 py-4 border-t border-gray-100 flex gap-3">
-              <Button variant="outline" className="flex-1" onClick={() => setShowModal(false)}>
-                Cancelar
-              </Button>
+              <Button variant="outline" className="flex-1" onClick={() => setShowModal(false)}>Cancelar</Button>
               <Button
                 className="flex-1"
                 onClick={handleSave}
