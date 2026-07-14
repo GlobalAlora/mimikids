@@ -9,8 +9,8 @@ import { ShippingMethod } from '@/types'
 import { useState } from 'react'
 
 const SHIPPING_OPTIONS: ShippingMethod[] = [
-  { id: 'andreani', name: 'Andreani', price: 3500, days_min: 3, days_max: 5 },
-  { id: 'correo_argentino', name: 'Correo Argentino', price: 2800, days_min: 5, days_max: 7 },
+  { id: 'andreani', name: 'Andreani · Envío a domicilio', price: 12000, days_min: 2, days_max: 4 },
+  { id: 'andreani_sucursal', name: 'Andreani · Envío a sucursal', price: 8000, days_min: 2, days_max: 4 },
   { id: 'pickup', name: 'Retiro en persona (Trenque Lauquen)', price: 0, days_min: 0, days_max: 0 },
 ]
 

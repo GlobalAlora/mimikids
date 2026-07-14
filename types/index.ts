@@ -37,7 +37,7 @@ export interface CartItem {
 }
 
 export interface ShippingMethod {
-  id: 'andreani' | 'correo_argentino' | 'pickup'
+  id: 'andreani' | 'andreani_sucursal' | 'pickup'
   name: string
   price: number
   days_min: number
