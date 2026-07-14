@@ -1,15 +1,32 @@
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import { CheckCircle, Copy, ArrowRight, Building2 } from 'lucide-react'
+import { createServerClient } from '@/lib/supabase-server'
 
 interface Props {
   params: Promise<{ id: string }>
   searchParams: Promise<{ order_number?: string }>
 }
 
+async function getTransferSettings() {
+  try {
+    const supabase = createServerClient()
+    const { data } = await supabase.from('settings').select('key, value')
+    return Object.fromEntries((data ?? []).map(({ key, value }: { key: string; value: string }) => [key, value]))
+  } catch {
+    return {}
+  }
+}
+
 export default async function OrderConfirmationPage({ params, searchParams }: Props) {
   const { id } = await params
   const { order_number } = await searchParams
+  const settings = await getTransferSettings()
+
+  const cbu = settings.transfer_cbu || '—'
+  const alias = settings.transfer_alias || '—'
+  const bank = settings.transfer_bank || ''
+  const holder = settings.transfer_holder || '—'
 
   return (
     <div className="min-h-screen bg-[#FFFAF7] flex items-center justify-center px-5 py-20">
@@ -52,15 +69,21 @@ export default async function OrderConfirmationPage({ params, searchParams }: Pr
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-[#A58494]">CBU</span>
-              <span className="font-mono font-semibold text-[#2d6b50]">0000000000000000000000</span>
+              <span className="font-mono font-semibold text-[#2d6b50]">{cbu}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-[#A58494]">Alias</span>
-              <span className="font-semibold text-[#2d6b50]">MIMIKIDS.SHOP</span>
+              <span className="font-semibold text-[#2d6b50]">{alias}</span>
             </div>
+            {bank && (
+              <div className="flex justify-between">
+                <span className="text-[#A58494]">Banco</span>
+                <span className="font-semibold text-[#2d6b50]">{bank}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-[#A58494]">Titular</span>
-              <span className="font-semibold text-[#2d6b50]">Mimikids Baby Shop</span>
+              <span className="font-semibold text-[#2d6b50]">{holder}</span>
             </div>
           </div>
           <div className="mt-4 p-3 bg-white/70 rounded-xl">
@@ -82,7 +105,7 @@ export default async function OrderConfirmationPage({ params, searchParams }: Pr
             <li className="flex gap-2">
               <span className="text-[#C4687D] font-bold">2.</span>
               Confirmamos tu pago y comenzamos a producir tu portachupete artesanalmente
-              (3–5 días hábiles)
+              (1–2 días hábiles)
             </li>
             <li className="flex gap-2">
               <span className="text-[#C4687D] font-bold">3.</span>
