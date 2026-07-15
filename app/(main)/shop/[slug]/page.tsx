@@ -35,18 +35,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
   if (!product) notFound()
 
-  // Modelos para el picker (top 12 activos)
-  const { data: modelsData } = await supabase
-    .from('models')
-    .select('id, name, photo')
-    .eq('is_active', true)
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false })
-    .limit(12)
-
-  const models: Model[] = modelsData ?? []
-
-  // Modelo pre-seleccionado desde la página /modelos
+  // Modelo pre-seleccionado si el cliente viene desde /modelos
   const preselectedModel: Model | null =
     sp.modeloFoto
       ? { id: sp.modelo ?? '', name: decodeURIComponent(sp.modeloNombre ?? ''), photo: decodeURIComponent(sp.modeloFoto) }
@@ -120,7 +109,6 @@ export default async function ProductPage({ params, searchParams }: Props) {
               </h2>
               <PersonalizationForm
                 product={p}
-                models={models}
                 preselectedModel={preselectedModel}
               />
             </div>

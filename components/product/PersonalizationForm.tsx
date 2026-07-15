@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Product, CartItemPersonalization, Model } from '@/types'
 import { useCartStore } from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
 import { getLetterImage } from '@/lib/letter-images'
 import Button from '@/components/ui/Button'
-import { ShoppingBag, Minus, Plus, Check, ShieldCheck, MessageCircle, X } from 'lucide-react'
+import { ShoppingBag, Minus, Plus, Check, ShieldCheck, MessageCircle, X, Images } from 'lucide-react'
 
 // ─── Broche options ───────────────────────────────────────────────────────────
 
@@ -173,11 +174,10 @@ function BrocheCard({
 
 interface PersonalizationFormProps {
   product: Product
-  models?: Model[]
   preselectedModel?: Model | null
 }
 
-export default function PersonalizationForm({ product, models = [], preselectedModel = null }: PersonalizationFormProps) {
+export default function PersonalizationForm({ product, preselectedModel = null }: PersonalizationFormProps) {
   const router = useRouter()
   const addItem = useCartStore((s) => s.addItem)
 
@@ -186,7 +186,6 @@ export default function PersonalizationForm({ product, models = [], preselectedM
   const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
   const [selectedModel, setSelectedModel] = useState<Model | null>(preselectedModel ?? null)
-  const [showAllModels, setShowAllModels] = useState(false)
 
   const letterStyleId = product.letter_style
   const nombreValido = nombre.trim().length > 0 && nombre.trim().length <= 12
@@ -222,75 +221,62 @@ export default function PersonalizationForm({ product, models = [], preselectedM
     madera: BROCHES.filter((b) => b.material === 'madera'),
   }
 
-  const visibleModels = showAllModels ? models : models.slice(0, 6)
-
   return (
     <div className="space-y-5">
       <BpaBadge />
 
       {/* ── Modelo de referencia ────────────────────────────────────── */}
-      {models.length > 0 && (
-        <div>
-          <p className="text-sm font-semibold text-[#2B1A20] mb-2">
-            1. ¿Tenés un modelo favorito?
-            <span className="text-xs font-normal text-[#A58494] ml-1.5">opcional</span>
-          </p>
+      <div>
+        <p className="text-sm font-semibold text-[#2B1A20] mb-2">
+          ¿Tenés un modelo favorito?
+          <span className="text-xs font-normal text-[#A58494] ml-1.5">opcional</span>
+        </p>
 
-          {/* Modelo seleccionado */}
-          {selectedModel ? (
-            <div className="flex items-center gap-3 p-3 rounded-xl border-2 border-[#C4687D] bg-[#FAF0F3]">
-              <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={selectedModel.photo} alt="" className="w-full h-full object-cover" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-[#A58494]">Modelo de referencia</p>
-                <p className="text-sm font-semibold text-[#2B1A20] truncate">
-                  {selectedModel.name || 'Modelo seleccionado'}
-                </p>
-                <p className="text-xs text-[#A58494] mt-0.5">Podemos coordinar el resto por WhatsApp</p>
-              </div>
-              <button
-                onClick={() => setSelectedModel(null)}
-                className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0 hover:bg-gray-100 cursor-pointer"
-              >
-                <X size={13} className="text-gray-400" />
-              </button>
+        {selectedModel ? (
+          <div className="flex items-center gap-3 p-3 rounded-xl border-2 border-[#C4687D] bg-[#FAF0F3]">
+            <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={selectedModel.photo} alt="" className="w-full h-full object-cover" />
             </div>
-          ) : (
-            <div>
-              <div className="grid grid-cols-3 gap-2">
-                {visibleModels.map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => setSelectedModel(m)}
-                    className="relative aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-[#C4687D] transition-all cursor-pointer group"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={m.photo} alt={m.name} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                  </button>
-                ))}
-              </div>
-              {models.length > 6 && (
-                <button
-                  onClick={() => setShowAllModels((v) => !v)}
-                  className="mt-2 text-xs text-[#C4687D] font-semibold hover:underline cursor-pointer"
-                >
-                  {showAllModels ? 'Ver menos' : `Ver los ${models.length} modelos`}
-                </button>
-              )}
-              <p className="text-xs text-[#A58494] mt-1.5">
-                Elegí uno como referencia, o saltá este paso y coordinamos el diseño por WhatsApp.
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-[#A58494]">Modelo de referencia</p>
+              <p className="text-sm font-semibold text-[#2B1A20] truncate">
+                {selectedModel.name || 'Modelo seleccionado'}
               </p>
+              <Link
+                href="/modelos"
+                className="text-xs text-[#C4687D] hover:underline font-medium"
+              >
+                Cambiar modelo
+              </Link>
             </div>
-          )}
-        </div>
-      )}
+            <button
+              onClick={() => setSelectedModel(null)}
+              className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0 hover:bg-gray-100 cursor-pointer"
+            >
+              <X size={13} className="text-gray-400" />
+            </button>
+          </div>
+        ) : (
+          <Link
+            href="/modelos"
+            className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-[#EDCCD5] hover:border-[#C4687D] hover:bg-[#FFFAF7] transition-all group"
+          >
+            <div className="w-10 h-10 rounded-lg bg-[#F9EDF1] flex items-center justify-center flex-shrink-0 group-hover:bg-[#F0D4DC] transition-colors">
+              <Images size={18} className="text-[#C4687D]" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-[#2B1A20]">Ver galería de modelos</p>
+              <p className="text-xs text-[#A58494]">Elegí uno como referencia para tu pedido</p>
+            </div>
+            <span className="text-[#C4687D] text-xs font-semibold">Ver →</span>
+          </Link>
+        )}
+      </div>
 
       {/* ── Broche ─────────────────────────────────────────────────── */}
       <div>
-        <p className="text-sm font-semibold text-[#2B1A20] mb-3">{models.length > 0 ? '2' : '1'}. Elegí el broche</p>
+        <p className="text-sm font-semibold text-[#2B1A20] mb-3">1. Elegí el broche</p>
         <div className="space-y-3">
           <div>
             <p className="text-xs font-bold text-[#A58494] uppercase tracking-widest mb-2">Plástico</p>
@@ -324,7 +310,7 @@ export default function PersonalizationForm({ product, models = [], preselectedM
       {/* ── Nombre ─────────────────────────────────────────────────── */}
       <div>
         <label className="block text-sm font-semibold text-[#2B1A20] mb-2">
-          {models.length > 0 ? '3' : '2'}. Nombre del bebé
+          2. Nombre del bebé
         </label>
         <input
           type="text"
