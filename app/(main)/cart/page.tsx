@@ -83,6 +83,21 @@ export default function CartPage() {
                             </span>
                           </p>
                         )}
+                        {item.personalization.modelRef && (
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <img
+                              src={item.personalization.modelRef}
+                              alt="Modelo"
+                              className="w-7 h-7 rounded-md object-cover border border-[#EDCCD5]"
+                            />
+                            <p className="text-xs text-[#A58494]">
+                              Modelo:{' '}
+                              <span className="font-semibold text-[#6D4D5A]">
+                                {item.personalization.modelNombre || 'Seleccionado'}
+                              </span>
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <button

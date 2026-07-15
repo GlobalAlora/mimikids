@@ -18,7 +18,7 @@ interface OrderItem {
   product_name: string
   quantity: number
   unit_price: number
-  personalization?: { nombre?: string; brocheName?: string }
+  personalization?: { nombre?: string; brocheName?: string; modelNombre?: string; modelRef?: string }
 }
 
 interface Order {
@@ -159,6 +159,18 @@ export default function OrdersClient({ initialOrders }: { initialOrders: Order[]
                             <p className="text-xs text-gray-400">
                               Broche: <span className="font-semibold text-gray-600">{item.personalization.brocheName}</span>
                             </p>
+                          )}
+                          {item.personalization?.modelRef && (
+                            <div className="flex items-center gap-2 mt-1">
+                              <img
+                                src={item.personalization.modelRef}
+                                alt="Modelo"
+                                className="w-10 h-10 rounded-lg object-cover border border-gray-200 flex-shrink-0"
+                              />
+                              <p className="text-xs text-gray-400">
+                                Modelo: <span className="font-semibold text-gray-600">{item.personalization.modelNombre || '—'}</span>
+                              </p>
+                            </div>
                           )}
                         </div>
                       ))}
