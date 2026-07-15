@@ -285,9 +285,11 @@ export default function CheckoutPage() {
                       />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-[#2B1A20] truncate">{item.product.name}</p>
-                        <p className="text-xs text-[#A58494]">
-                          {item.personalization.nombre} · {item.personalization.brocheName}
-                        </p>
+                        {(item.personalization.nombre || item.personalization.brocheName) && (
+                          <p className="text-xs text-[#A58494]">
+                            {[item.personalization.nombre, item.personalization.brocheName].filter(Boolean).join(' · ')}
+                          </p>
+                        )}
                         <p className="text-xs text-[#A58494]">x{item.quantity}</p>
                       </div>
                       <p className="font-bold text-[#C4687D] text-xs flex-shrink-0">

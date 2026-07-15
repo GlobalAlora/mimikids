@@ -24,11 +24,11 @@ export interface ColorOption {
 }
 
 export interface CartItemPersonalization {
-  broche: string
-  brocheName: string
-  nombre: string
-  modelRef?: string    // URL de la foto del modelo elegido
-  modelNombre?: string // Nombre del modelo elegido
+  broche?: string
+  brocheName?: string
+  nombre?: string
+  modelRef?: string
+  modelNombre?: string
 }
 
 export interface Model {

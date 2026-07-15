@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase-server'
 import PersonalizationForm from '@/components/product/PersonalizationForm'
+import SimpleAddToCart from '@/components/product/SimpleAddToCart'
 import Badge from '@/components/ui/Badge'
 import { formatPrice } from '@/lib/utils'
 import { Clock, Shield, Truck } from 'lucide-react'
@@ -102,15 +103,25 @@ export default async function ProductPage({ params, searchParams }: Props) {
               </div>
             </div>
 
-            {/* Formulario con modelo picker integrado */}
             <div className="bg-white rounded-2xl p-6 border border-[#EDCCD5]/40 shadow-[0_2px_16px_rgba(43,26,32,0.05)]">
-              <h2 className="font-playfair text-lg font-bold text-[#2B1A20] mb-5">
-                Personalizar tu pedido
-              </h2>
-              <PersonalizationForm
-                product={p}
-                preselectedModel={preselectedModel}
-              />
+              {p.category === 'funda' ? (
+                <>
+                  <h2 className="font-playfair text-lg font-bold text-[#2B1A20] mb-5">
+                    Agregar al carrito
+                  </h2>
+                  <SimpleAddToCart product={p} />
+                </>
+              ) : (
+                <>
+                  <h2 className="font-playfair text-lg font-bold text-[#2B1A20] mb-5">
+                    Personalizar tu pedido
+                  </h2>
+                  <PersonalizationForm
+                    product={p}
+                    preselectedModel={preselectedModel}
+                  />
+                </>
+              )}
             </div>
 
             {p.materials && (

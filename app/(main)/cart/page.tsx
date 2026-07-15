@@ -67,18 +67,22 @@ export default function CartPage() {
                         {item.product.name}
                       </h3>
                       <div className="mt-1 space-y-0.5">
-                        <p className="text-xs text-[#A58494]">
-                          Nombre:{' '}
-                          <span className="font-semibold text-[#6D4D5A]">
-                            {item.personalization.nombre}
-                          </span>
-                        </p>
-                        <p className="text-xs text-[#A58494]">
-                          Broche:{' '}
-                          <span className="font-semibold text-[#6D4D5A]">
-                            {item.personalization.brocheName}
-                          </span>
-                        </p>
+                        {item.personalization.nombre && (
+                          <p className="text-xs text-[#A58494]">
+                            Nombre:{' '}
+                            <span className="font-semibold text-[#6D4D5A]">
+                              {item.personalization.nombre}
+                            </span>
+                          </p>
+                        )}
+                        {item.personalization.brocheName && (
+                          <p className="text-xs text-[#A58494]">
+                            Broche:{' '}
+                            <span className="font-semibold text-[#6D4D5A]">
+                              {item.personalization.brocheName}
+                            </span>
+                          </p>
+                        )}
                       </div>
                     </div>
                     <button
