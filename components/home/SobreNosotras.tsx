@@ -9,19 +9,22 @@ const TEXTO = {
   eyebrow: 'Quiénes somos',
   titulo: 'Hecho con amor, desde Trenque Lauquen',
   parrafo1:
-    'Somos Camila y Rocío, dos mamás que un día decidieron que los portachupetes del mercado no tenían la ternura que merecían los bebés de sus amigas. Así nació Mimikids: desde casa, con hilos, cuentas y mucho amor.',
+    'Somos dos mamás que un día se dieron cuenta de que los portachupetes del mercado no tenían la ternura que merecían los bebés. Así nació Mimikids: desde casa, con hilo, cuentas, y muchísimo amor en cada nudo.',
   parrafo2:
-    'Cada portachupete lo armamos a mano, uno por uno, cuando llega tu pedido. Por eso podés elegir cada detalle: el nombre, los colores, el broche. No hay dos iguales.',
-  firma: '— Camila & Rocío',
+    'Cada portachupete lo armamos a mano, uno por uno, cuando llega tu pedido. Por eso podés elegir cada detalle: el nombre del bebé, los colores, el broche. No hay dos iguales — igual que ellos.',
+  firma: '— El equipo Mimikids 🤍',
 }
 
-// Las imágenes van en /public/. Cambiar los nombres cuando estén las fotos reales.
-const FOTOS: { src: string; alt: string }[] = [
-  { src: '/sobre-1.jpg', alt: 'Camila armando un portachupete' },
-  { src: '/sobre-2.jpg', alt: 'Materiales y cuentas coloridas' },
-  { src: '/sobre-3.jpg', alt: 'Portachupete terminado con nombre' },
-  { src: '/sobre-4.jpg', alt: 'Empaquetado listo para enviar' },
+// ── Slides: color de fondo como placeholder hasta tener fotos reales ──────────
+const FOTOS: { src: string; alt: string; gradient: string }[] = [
+  { src: '/sobre-1.jpg', alt: 'Armando portachupetes a mano', gradient: 'from-[#F9E0E8] to-[#F2C6D4]' },
+  { src: '/sobre-2.jpg', alt: 'Cuentas y materiales de colores', gradient: 'from-[#D4EBF8] to-[#B8DFF5]' },
+  { src: '/sobre-3.jpg', alt: 'Portachupete terminado con nombre', gradient: 'from-[#D4F0E5] to-[#B0E0CC]' },
+  { src: '/sobre-4.jpg', alt: 'Empaquetado listo para enviar',    gradient: 'from-[#F5E6D3] to-[#E8D0B0]' },
 ]
+
+// Íconos decorativos para cada slide placeholder
+const SLIDE_ICONS = ['🧸', '✨', '🤍', '🎀']
 
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -70,20 +73,18 @@ export default function SobreNosotras() {
                     i === current ? 'opacity-100' : 'opacity-0'
                   }`}
                 >
-                  {/* Placeholder mientras carga */}
-                  {!loaded[i] && (
-                    <div className="absolute inset-0 bg-[#EDCCD5]/40 animate-pulse" />
-                  )}
+                  {/* Fondo gradiente siempre visible (placeholder o base) */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${foto.gradient} flex items-center justify-center`}>
+                    <span className="text-6xl opacity-30 select-none">{SLIDE_ICONS[i]}</span>
+                  </div>
+                  {/* Imagen real encima, si existe */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={foto.src}
                     alt={foto.alt}
-                    className="w-full h-full object-cover"
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${loaded[i] ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={() => markLoaded(i)}
-                    onError={(e) => {
-                      // Fallback a color si la imagen no existe todavía
-                      ;(e.target as HTMLImageElement).style.display = 'none'
-                    }}
+                    onError={() => {/* imagen no existe aún, muestra gradiente */}}
                   />
                 </div>
               ))}
