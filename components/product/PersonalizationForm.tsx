@@ -244,7 +244,7 @@ export default function PersonalizationForm({ product, preselectedModel = null }
                 {selectedModel.name || 'Modelo seleccionado'}
               </p>
               <Link
-                href="/modelos"
+                href={`/modelos?returnTo=/shop/${product.slug}`}
                 className="text-xs text-[#C4687D] hover:underline font-medium"
               >
                 Cambiar modelo
@@ -259,7 +259,7 @@ export default function PersonalizationForm({ product, preselectedModel = null }
           </div>
         ) : (
           <Link
-            href="/modelos"
+            href={`/modelos?returnTo=/shop/${product.slug}`}
             className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-[#EDCCD5] hover:border-[#C4687D] hover:bg-[#FFFAF7] transition-all group"
           >
             <div className="w-10 h-10 rounded-lg bg-[#F9EDF1] flex items-center justify-center flex-shrink-0 group-hover:bg-[#F0D4DC] transition-colors">

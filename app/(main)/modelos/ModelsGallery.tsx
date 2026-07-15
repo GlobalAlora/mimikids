@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Model } from '@/types'
 import { Search, ArrowRight } from 'lucide-react'
 
-export default function ModelsGallery({ models }: { models: Model[] }) {
+export default function ModelsGallery({ models, returnTo = '/shop' }: { models: Model[]; returnTo?: string }) {
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<Model | null>(null)
 
@@ -124,7 +124,7 @@ export default function ModelsGallery({ models }: { models: Model[] }) {
                     </p>
                   </div>
                   <Link
-                    href={`/shop?modelo=${selected.id}&modeloFoto=${encodeURIComponent(selected.photo)}&modeloNombre=${encodeURIComponent(selected.name)}`}
+                    href={`${returnTo}?modelo=${selected.id}&modeloFoto=${encodeURIComponent(selected.photo)}&modeloNombre=${encodeURIComponent(selected.name)}`}
                     className="bg-[#C4687D] text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-[#A8546A] transition-colors whitespace-nowrap flex items-center gap-1.5"
                   >
                     Quiero este <ArrowRight size={13} />
