@@ -1,18 +1,24 @@
 const steps = [
   {
     number: '01',
-    title: 'Elegí tu portachupete',
+    title: 'Explorá los modelos',
     description:
-      'Navegá nuestra tienda y encontrá el modelo que más te guste. Cada uno tiene su propio color de letras y estilo.',
+      'Visitá nuestra galería de modelos reales y elegí el que más te gusta como referencia para el tuyo.',
   },
   {
     number: '02',
-    title: 'Personalizalo',
+    title: 'Elegí tu portachupete',
     description:
-      'Elegí el broche, escribí el nombre de tu bebé y coordinamos el diseño completo por WhatsApp.',
+      'Navegá la tienda, elegí el estilo y el broche, y escribí el nombre de tu bebé.',
   },
   {
     number: '03',
+    title: 'Coordinamos por WhatsApp',
+    description:
+      'Te contactamos para confirmar colores, cuentas y detalles del diseño antes de producirlo.',
+  },
+  {
+    number: '04',
     title: 'Lo hacemos y enviamos',
     description:
       'En 1 a 2 días hábiles producimos tu pedido artesanalmente y lo enviamos a todo el país.',
@@ -31,10 +37,10 @@ export default function HowItWorks() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-0 relative">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-0 relative">
           {/* Connecting line — desktop only */}
           <div
-            className="hidden md:block absolute top-[3.25rem] left-[calc(16.67%+1rem)] right-[calc(16.67%+1rem)] h-px bg-gradient-to-r from-[#EDCCD5] via-[#E2D3F2] to-[#BDE8D6]"
+            className="hidden md:block absolute top-[3.25rem] left-[calc(12.5%+1rem)] right-[calc(12.5%+1rem)] h-px bg-gradient-to-r from-[#EDCCD5] via-[#E2D3F2] to-[#BDE8D6]"
             aria-hidden="true"
           />
 

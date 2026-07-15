@@ -40,7 +40,7 @@ function buyerEmailHtml({
 }: {
   order_number: string
   buyer: { name: string; email: string; phone: string }
-  items: { product_name: string; quantity: number; unit_price: number; personalization: { nombre?: string; brocheName?: string } }[]
+  items: { product_name: string; quantity: number; unit_price: number; personalization: { nombre?: string; brocheName?: string; modelNombre?: string; modelRef?: string } }[]
   shipping_method: { name: string; price: number }
   subtotal: number
   shipping_cost: number
@@ -58,6 +58,7 @@ function buyerEmailHtml({
       <td style="padding:10px 0;border-bottom:1px solid #f5e6ec;">
         <div style="${value}">${item.product_name} × ${item.quantity}</div>
         ${item.personalization?.nombre ? `<div style="${label}">Nombre: ${item.personalization.nombre}${item.personalization?.brocheName ? ` · Broche: ${item.personalization.brocheName}` : ''}</div>` : ''}
+        ${item.personalization?.modelNombre ? `<div style="${label}">Modelo de referencia: <strong style="color:#6b3d50">${item.personalization.modelNombre}</strong></div>` : ''}
       </td>
       <td style="padding:10px 0;border-bottom:1px solid #f5e6ec;text-align:right;${value}">${formatARS(item.unit_price * item.quantity)}</td>
     </tr>
@@ -157,7 +158,7 @@ function adminEmailHtml({
 }: {
   order_number: string
   buyer: { name: string; email: string; phone: string }
-  items: { product_name: string; quantity: number; unit_price: number; personalization: { nombre?: string; brocheName?: string } }[]
+  items: { product_name: string; quantity: number; unit_price: number; personalization: { nombre?: string; brocheName?: string; modelNombre?: string; modelRef?: string } }[]
   shipping_method: { name: string; price: number }
   shipping_address: { street: string; number: string; floor?: string; city: string; province: string; postal_code: string }
   subtotal: number
@@ -169,6 +170,8 @@ function adminEmailHtml({
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px;color:#333;">
         ${item.product_name} × ${item.quantity}
         ${item.personalization?.nombre ? `<br><span style="font-size:12px;color:#888;">Nombre: ${item.personalization.nombre}${item.personalization?.brocheName ? ` · Broche: ${item.personalization.brocheName}` : ''}</span>` : ''}
+        ${item.personalization?.modelNombre ? `<br><span style="font-size:12px;color:#888;">Modelo ref: <strong style="color:#c4687d;">${item.personalization.modelNombre}</strong></span>` : ''}
+        ${item.personalization?.modelRef ? `<br><img src="${item.personalization.modelRef}" alt="Modelo" style="width:48px;height:48px;border-radius:6px;object-fit:cover;margin-top:4px;border:1px solid #edccd5;" />` : ''}
       </td>
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:600;color:#333;">${formatARS(item.unit_price * item.quantity)}</td>
     </tr>
