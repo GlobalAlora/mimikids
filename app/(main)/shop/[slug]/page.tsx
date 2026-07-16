@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase-server'
 import PersonalizationForm from '@/components/product/PersonalizationForm'
 import SimpleAddToCart from '@/components/product/SimpleAddToCart'
-import Badge from '@/components/ui/Badge'
+import ProductGallery from '@/components/product/ProductGallery'
 import { formatPrice } from '@/lib/utils'
 import { Clock, Shield, Truck } from 'lucide-react'
 import type { Product, Model } from '@/types'
@@ -50,30 +50,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
 
           {/* Galería de imágenes */}
-          <div className="space-y-3">
-            <div className="relative bg-[#F6EEE9] rounded-2xl overflow-hidden aspect-[4/5]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" />
-              {p.badge && (
-                <div className="absolute top-4 left-4">
-                  <Badge>{p.badge}</Badge>
-                </div>
-              )}
-            </div>
-            {p.images.length > 1 && (
-              <div className="flex gap-2.5 overflow-x-auto pb-1">
-                {p.images.map((img, i) => (
-                  <div
-                    key={i}
-                    className="w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 border-[#EDCCD5] hover:border-[#C4687D] transition-colors"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img} alt="" className="w-full h-full object-cover" />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ProductGallery images={p.images} name={p.name} badge={p.badge} />
 
           {/* Info + formulario */}
           <div className="space-y-6">

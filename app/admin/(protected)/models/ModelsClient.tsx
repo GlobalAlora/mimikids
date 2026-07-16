@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Plus, Trash2, Eye, EyeOff, Upload, RefreshCw, X, Check } from 'lucide-react'
+import { Plus, Trash2, Eye, EyeOff, Upload, X, Check } from 'lucide-react'
 import Button from '@/components/ui/Button'
 
 interface Model {
@@ -12,103 +12,186 @@ interface Model {
   sort_order: number
 }
 
-// ── Upload slot ────────────────────────────────────────────────────────────────
+// ── Multi-upload ───────────────────────────────────────────────────────────────
 
-function PhotoUploader({
-  onUploaded,
+interface UploadItem {
+  file: File
+  preview: string   // local object URL
+  status: 'pending' | 'uploading' | 'done' | 'error'
+  url?: string
+  error?: string
+}
+
+function MultiUploader({
+  onDone,
   onCancel,
 }: {
-  onUploaded: (url: string) => void
+  onDone: (urls: string[]) => void
   onCancel: () => void
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const [items, setItems] = useState<UploadItem[]>([])
   const [uploading, setUploading] = useState(false)
-  const [preview, setPreview] = useState('')
-  const [error, setError] = useState('')
 
-  async function handleFile(file: File) {
-    setUploading(true)
-    setError('')
-    const fd = new FormData()
-    fd.append('file', file)
-    try {
-      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
-      const data = await res.json()
-      if (data.url) {
-        setPreview(data.url)
-      } else {
-        setError(data.error || 'Error al subir')
-      }
-    } catch {
-      setError('Error de red')
-    } finally {
-      setUploading(false)
-    }
+  function addFiles(files: FileList) {
+    const newItems: UploadItem[] = Array.from(files).map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+      status: 'pending',
+    }))
+    setItems((prev) => [...prev, ...newItems])
   }
+
+  function removeItem(i: number) {
+    setItems((prev) => {
+      URL.revokeObjectURL(prev[i].preview)
+      return prev.filter((_, idx) => idx !== i)
+    })
+  }
+
+  async function uploadAll() {
+    setUploading(true)
+    const updated = [...items]
+
+    await Promise.all(
+      updated.map(async (item, i) => {
+        if (item.status === 'done') return
+        updated[i] = { ...item, status: 'uploading' }
+        setItems([...updated])
+        try {
+          const fd = new FormData()
+          fd.append('file', item.file)
+          const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+          const data = await res.json()
+          if (data.url) {
+            updated[i] = { ...updated[i], status: 'done', url: data.url }
+          } else {
+            updated[i] = { ...updated[i], status: 'error', error: data.error || 'Error' }
+          }
+        } catch {
+          updated[i] = { ...updated[i], status: 'error', error: 'Error de red' }
+        }
+        setItems([...updated])
+      })
+    )
+
+    setUploading(false)
+    const urls = updated.filter((it) => it.status === 'done' && it.url).map((it) => it.url!)
+    if (urls.length > 0) onDone(urls)
+  }
+
+  const pending = items.filter((it) => it.status === 'pending').length
+  const done = items.filter((it) => it.status === 'done').length
+  const errors = items.filter((it) => it.status === 'error').length
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onCancel} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-playfair font-bold text-[#6b3d50]">Subir foto del modelo</h3>
-          <button onClick={onCancel} className="p-1 rounded-lg hover:bg-gray-100 cursor-pointer">
-            <X size={18} className="text-gray-400" />
-          </button>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={!uploading ? onCancel : undefined} />
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 flex flex-col gap-4 max-h-[90vh]">
+
+        <div className="flex items-center justify-between flex-shrink-0">
+          <div>
+            <h3 className="font-playfair font-bold text-[#6b3d50]">Subir modelos</h3>
+            {items.length > 0 && (
+              <p className="text-xs text-gray-400 mt-0.5">
+                {items.length} foto{items.length !== 1 ? 's' : ''} seleccionada{items.length !== 1 ? 's' : ''}
+                {done > 0 && ` · ${done} subida${done !== 1 ? 's' : ''}`}
+                {errors > 0 && ` · ${errors} con error`}
+              </p>
+            )}
+          </div>
+          {!uploading && (
+            <button onClick={onCancel} className="p-1 rounded-lg hover:bg-gray-100 cursor-pointer">
+              <X size={18} className="text-gray-400" />
+            </button>
+          )}
         </div>
 
-        {/* Preview */}
-        {preview ? (
-          <div className="relative aspect-square rounded-xl overflow-hidden border-2 border-[#d4768a]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={preview} alt="preview" className="w-full h-full object-cover" />
-            <button
-              onClick={() => setPreview('')}
-              className="absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center shadow cursor-pointer hover:bg-white"
-            >
-              <X size={14} className="text-gray-600" />
-            </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={uploading}
-            className="w-full aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 hover:border-[#d4768a] hover:bg-pink-50/30 transition-colors cursor-pointer disabled:opacity-50"
-          >
-            {uploading ? (
-              <>
-                <div className="w-6 h-6 border-2 border-[#d4768a] border-t-transparent rounded-full animate-spin" />
-                <span className="text-sm text-gray-400">Subiendo...</span>
-              </>
-            ) : (
-              <>
-                <Upload size={24} className="text-gray-300" />
-                <span className="text-sm text-gray-400">Tocá para elegir una foto</span>
-                <span className="text-xs text-gray-300">JPG, PNG o WebP · máx. 5 MB</span>
-              </>
-            )}
-          </button>
-        )}
+        {/* Drop zone / selector */}
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="w-full py-8 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 hover:border-[#d4768a] hover:bg-pink-50/30 transition-colors cursor-pointer disabled:opacity-40 flex-shrink-0"
+        >
+          <Upload size={22} className="text-gray-300" />
+          <span className="text-sm text-gray-400 font-medium">Tocá para agregar fotos</span>
+          <span className="text-xs text-gray-300">Podés seleccionar varias a la vez · JPG, PNG o WebP</span>
+        </button>
 
         <input
           ref={inputRef}
           type="file"
           accept="image/jpeg,image/jpg,image/png,image/webp"
+          multiple
           className="hidden"
-          onChange={(e) => {
-            const f = e.target.files?.[0]
-            if (f) handleFile(f)
-            e.target.value = ''
-          }}
+          onChange={(e) => { if (e.target.files?.length) addFiles(e.target.files); e.target.value = '' }}
         />
 
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {/* Preview grid */}
+        {items.length > 0 && (
+          <div className="overflow-y-auto flex-1 -mx-1 px-1">
+            <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+              {items.map((item, i) => (
+                <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={item.preview} alt="" className="w-full h-full object-cover" />
 
-        {preview && (
-          <Button className="w-full" onClick={() => onUploaded(preview)}>
-            <Check size={16} className="mr-2" /> Usar esta foto
-          </Button>
+                  {/* Status overlay */}
+                  {item.status === 'uploading' && (
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  )}
+                  {item.status === 'done' && (
+                    <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
+                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                        <Check size={13} className="text-white" />
+                      </div>
+                    </div>
+                  )}
+                  {item.status === 'error' && (
+                    <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
+                      <span className="text-red-600 text-lg font-bold">!</span>
+                    </div>
+                  )}
+
+                  {/* Remove (solo pending) */}
+                  {item.status === 'pending' && !uploading && (
+                    <button
+                      onClick={() => removeItem(i)}
+                      className="absolute top-1 right-1 w-5 h-5 bg-black/50 rounded-full flex items-center justify-center cursor-pointer hover:bg-black/70"
+                    >
+                      <X size={10} className="text-white" />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Actions */}
+        {items.length > 0 && (
+          <div className="flex gap-2 flex-shrink-0">
+            {!uploading && (
+              <button
+                onClick={onCancel}
+                className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-sm text-gray-500 hover:bg-gray-50 cursor-pointer"
+              >
+                Cancelar
+              </button>
+            )}
+            <Button
+              className="flex-1"
+              onClick={uploadAll}
+              disabled={uploading || pending === 0}
+            >
+              {uploading
+                ? `Subiendo ${done}/${items.length}...`
+                : `Subir ${pending} foto${pending !== 1 ? 's' : ''}`}
+            </Button>
+          </div>
         )}
       </div>
     </div>
@@ -165,30 +248,24 @@ function NameModal({
 export default function ModelsClient({ initialModels }: { initialModels: Model[] }) {
   const [models, setModels] = useState<Model[]>(initialModels)
   const [showUploader, setShowUploader] = useState(false)
-  const [pendingPhoto, setPendingPhoto] = useState('')
-  const [saving, setSaving] = useState(false)
 
-  async function handlePhotoUploaded(url: string) {
+  async function handleUploadsDone(urls: string[]) {
     setShowUploader(false)
-    setPendingPhoto(url)
-  }
-
-  async function handleNameSaved(name: string) {
-    if (!pendingPhoto) return
-    setSaving(true)
-    try {
-      const res = await fetch('/api/admin/models', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ photo: pendingPhoto, name }),
-      })
-      const data = await res.json()
-      if (data.success && data.data) {
-        setModels((prev) => [data.data, ...prev])
-      }
-    } finally {
-      setSaving(false)
-      setPendingPhoto('')
+    // Crear todos los modelos en paralelo con nombre vacío
+    const results = await Promise.all(
+      urls.map((url) =>
+        fetch('/api/admin/models', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ photo: url, name: '' }),
+        }).then((r) => r.json())
+      )
+    )
+    const newModels = results
+      .filter((d) => d.success && d.data)
+      .map((d) => d.data)
+    if (newModels.length > 0) {
+      setModels((prev) => [...newModels.reverse(), ...prev])
     }
   }
 
@@ -256,18 +333,9 @@ export default function ModelsClient({ initialModels }: { initialModels: Model[]
       </div>
 
       {showUploader && (
-        <PhotoUploader
-          onUploaded={handlePhotoUploaded}
+        <MultiUploader
+          onDone={handleUploadsDone}
           onCancel={() => setShowUploader(false)}
-        />
-      )}
-
-      {pendingPhoto && (
-        <NameModal
-          initial=""
-          photo={pendingPhoto}
-          onSave={handleNameSaved}
-          onCancel={() => setPendingPhoto('')}
         />
       )}
     </>

@@ -26,8 +26,9 @@ const BROCHES: BrocheOption[] = [
   { id: 'plastico-celeste', name: 'Celeste', material: 'plastico', emoji: '💙', color: '#B8DFF5', image: '/brocheceleste.webp' },
   { id: 'plastico-rosa',    name: 'Rosa',    material: 'plastico', emoji: '🩷', color: '#F9C4D2', image: '/brocherosa.webp' },
   { id: 'plastico-menta',   name: 'Menta',   material: 'plastico', emoji: '💚', color: '#C8EFE3', image: '/brochementa.webp' },
-  { id: 'madera-redondo',   name: 'Redondo', material: 'madera',   emoji: '🟤' },
-  { id: 'madera-osito',     name: 'Osito',   material: 'madera',   emoji: '🐻' },
+  { id: 'madera-circular',  name: 'Circular', material: 'madera', emoji: '🟤', image: '/broche-circular.jpg' },
+  { id: 'madera-osito',     name: 'Osito',    material: 'madera', emoji: '🐻', image: '/broche-oso.jpeg' },
+  { id: 'madera-osito2',    name: 'Osito 2',  material: 'madera', emoji: '🐻', image: '/broche-oso2.jpg' },
 ]
 
 // ─── Letter style bead colors ─────────────────────────────────────────────────
@@ -293,7 +294,7 @@ export default function PersonalizationForm({ product, preselectedModel = null }
           </div>
           <div>
             <p className="text-xs font-bold text-[#A58494] uppercase tracking-widest mb-2">Madera</p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               {brochesByMaterial.madera.map((b) => (
                 <BrocheCard
                   key={b.id}
