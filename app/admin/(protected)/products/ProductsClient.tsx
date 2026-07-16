@@ -15,6 +15,7 @@ interface Product {
   images: string[]
   badge?: string
   category?: string
+  letter_style?: string | null
   is_active: boolean
   production_days_min?: number
   production_days_max?: number
@@ -30,6 +31,7 @@ interface ProductForm {
   price: string
   images: string[]
   category: ProductCategory
+  letter_style: string
   badge: string
   materials: string
   care_instructions: string
@@ -41,7 +43,7 @@ interface ProductForm {
 
 const EMPTY_FORM: ProductForm = {
   name: '', slug: '', description: '', price: '',
-  images: [], category: 'portachupete', badge: '', materials: '', care_instructions: '',
+  images: [], category: 'portachupete', letter_style: '', badge: '', materials: '', care_instructions: '',
   production_days_min: '1', production_days_max: '2', stock: '', is_active: true,
 }
 
@@ -197,6 +199,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       price: String(product.price),
       images: product.images ?? [],
       category: (product.category as ProductCategory) || 'portachupete',
+      letter_style: product.letter_style || '',
       badge: product.badge || '',
       materials: '',
       care_instructions: '',
@@ -257,6 +260,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       price: form.price,
       images: form.images.filter(Boolean),
       category: form.category,
+      letter_style: form.letter_style || null,
       badge: form.badge || null,
       materials: form.materials || null,
       care_instructions: form.care_instructions || null,
@@ -477,6 +481,27 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                   ))}
                 </div>
               </div>
+
+              {form.category === 'portachupete' && (
+                <div>
+                  <label className={LABEL}>Estilo de letras (letter_style)</label>
+                  <select
+                    className={INPUT}
+                    value={form.letter_style}
+                    onChange={(e) => updateField('letter_style', e.target.value)}
+                  >
+                    <option value="">— Sin estilo asignado —</option>
+                    <option value="silicona-blanca">Silicona blanca</option>
+                    <option value="silicona-beige">Silicona beige</option>
+                    <option value="silicona-rosa">Silicona rosa</option>
+                    <option value="silicona-celeste">Silicona celeste</option>
+                    <option value="madera">Madera</option>
+                  </select>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Conecta este portachupete con los modelos de ese color en /modelos.
+                  </p>
+                </div>
+              )}
 
               <div>
                 <label className={LABEL}>Nombre *</label>

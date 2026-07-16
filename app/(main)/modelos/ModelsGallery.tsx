@@ -160,7 +160,8 @@ export default function ModelsGallery({ models, products = [] }: { models: Model
       {lightbox && (() => {
         const targetStyle = lightbox.color ? COLOR_TO_STYLE[lightbox.color] : null
         const targetProduct = targetStyle
-          ? products.find((p) => p.letter_style === targetStyle)
+          ? (products.find((p) => p.letter_style === targetStyle) ??
+             products.find((p) => lightbox.color && p.slug.includes(lightbox.color)))
           : null
         const modelQuery = `modelo=${lightbox.id}&modeloFoto=${encodeURIComponent(lightbox.photo)}&modeloNombre=${encodeURIComponent(lightbox.name)}`
         const ctaHref = targetProduct
