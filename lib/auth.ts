@@ -17,7 +17,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (credentials.email !== adminEmail) return null
 
         const isValid = adminPassword
-          ? await bcrypt.compare(credentials.password as string, adminPassword)
+          ? (adminPassword.startsWith('$2')
+              ? await bcrypt.compare(credentials.password as string, adminPassword)
+              : credentials.password === adminPassword)
           : credentials.password === 'admin123'
 
         if (!isValid) return null
