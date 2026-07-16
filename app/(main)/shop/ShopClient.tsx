@@ -100,6 +100,26 @@ export default function ShopClient({ initialProducts, modelParams }: { initialPr
       {/* Content */}
       <div className="max-w-6xl mx-auto px-5 py-10">
 
+        {/* Promo banner */}
+        {(activeTab === 'all' || activeTab === 'portachupete') && (
+          <div className="mb-6 rounded-2xl bg-gradient-to-r from-[#FAE8EC] to-[#FFF0F3] border border-[#EDCCD5]/60 px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <span className="text-xl flex-shrink-0">🏷️</span>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-[#2B1A20]">
+                  20% OFF en portachupetes · 25% OFF si agregás una funda
+                </p>
+                <p className="text-xs text-[#A58494] mt-0.5 hidden sm:block">
+                  El descuento se aplica automáticamente en el carrito. ¡Armá el combo y ahorrá más!
+                </p>
+              </div>
+            </div>
+            <span className="flex-shrink-0 text-[0.65rem] font-black text-[#C4687D] bg-white border border-[#EDCCD5] px-2.5 py-1 rounded-full uppercase tracking-wide whitespace-nowrap">
+              Descuento automático
+            </span>
+          </div>
+        )}
+
         {/* Category description */}
         {activeTabData.description ? (
           <p className="text-[#6D4D5A] text-sm mb-8 max-w-lg">{activeTabData.description}</p>

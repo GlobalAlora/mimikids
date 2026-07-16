@@ -62,6 +62,11 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
               🔥 COMBO
             </span>
           )}
+          {product.category === 'portachupete' && (
+            <span className="bg-[#C4687D] text-white text-[0.625rem] font-black px-2.5 py-1 rounded-full tracking-wide uppercase shadow-sm">
+              20% OFF
+            </span>
+          )}
           {product.badge && (
             <span className="bg-white/90 backdrop-blur-sm text-[#2B1A20] text-[0.6875rem] font-semibold px-3 py-1 rounded-full border border-[#EDCCD5]/60">
               {product.badge}
@@ -89,7 +94,7 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
 
       {/* Info */}
       <div className={`px-0.5 pt-1 ${isPromo ? 'bg-white border-x-2 border-b-2 border-[#F5CC7A]/60 rounded-b-2xl px-3 pb-3' : ''}`}>
-        <h3 className={`font-playfair font-bold text-[#2B1A20] text-[1.0625rem] leading-snug mb-1.5 group-hover:text-[#C4687D] transition-colors duration-200 ${isPromo ? 'pt-2' : ''}`}>
+        <h3 className={`font-playfair font-bold text-[#2B1A20] text-[0.875rem] md:text-[1.0625rem] leading-snug mb-1.5 group-hover:text-[#C4687D] transition-colors duration-200 ${isPromo ? 'pt-2' : ''}`}>
           {product.name}
         </h3>
         <div className="flex items-center justify-between">

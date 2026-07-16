@@ -4,7 +4,7 @@ import OrdersClient from './OrdersClient'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminOrdersPage() {
-  let orders = []
+  let orders: unknown[] = []
 
   try {
     const supabase = createServerClient()
@@ -15,8 +15,8 @@ export default async function AdminOrdersPage() {
 
     if (!error && data) orders = data
   } catch {
-    // DB not configured yet — show empty state
+    // DB not configured yet
   }
 
-  return <OrdersClient initialOrders={orders} />
+  return <OrdersClient initialOrders={orders as never} />
 }

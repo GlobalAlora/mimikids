@@ -54,7 +54,7 @@ export default function Hero() {
 
           <div className="flex flex-wrap gap-3 mb-12">
             <Link href="/shop">
-              <Button size="lg" className="group">
+              <Button size="md" className="group md:text-lg md:px-8 md:py-4">
                 Ver la tienda
                 <ArrowRight
                   size={16}
@@ -63,7 +63,7 @@ export default function Hero() {
               </Button>
             </Link>
             <Link href="/#como-funciona">
-              <Button variant="outline" size="lg">
+              <Button variant="outline" size="md" className="md:text-lg md:px-8 md:py-4">
                 Cómo funciona
               </Button>
             </Link>
