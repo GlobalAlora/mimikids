@@ -43,7 +43,13 @@ const TABS: Tab[] = [
   },
 ]
 
-export default function ShopClient({ initialProducts }: { initialProducts: Product[] }) {
+interface ModelParams {
+  modelo: string
+  modeloFoto: string
+  modeloNombre: string
+}
+
+export default function ShopClient({ initialProducts, modelParams }: { initialProducts: Product[]; modelParams?: ModelParams }) {
   const [activeTab, setActiveTab] = useState<Category>('all')
 
   const filtered = activeTab === 'all'
@@ -126,7 +132,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
         {filtered.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-7">
             {filtered.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} modelParams={modelParams} />
             ))}
           </div>
         ) : (

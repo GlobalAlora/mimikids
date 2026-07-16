@@ -5,8 +5,15 @@ import { Product } from '@/types'
 import { formatPrice } from '@/lib/utils'
 import { ArrowUpRight } from 'lucide-react'
 
+interface ModelParams {
+  modelo: string
+  modeloFoto: string
+  modeloNombre: string
+}
+
 interface ProductCardProps {
   product: Product
+  modelParams?: ModelParams
 }
 
 const LETTER_STYLE_BG: Record<string, string> = {
@@ -17,13 +24,18 @@ const LETTER_STYLE_BG: Record<string, string> = {
   madera:             '#EDE3D5',
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, modelParams }: ProductCardProps) {
   const isPromo = product.category === 'promo'
   const imgBg = (product.letter_style && LETTER_STYLE_BG[product.letter_style]) || (isPromo ? '#FFF8EC' : '#F6EEE9')
 
+  const canUseModel = product.category !== 'funda' && modelParams?.modeloFoto
+  const modelQuery = canUseModel
+    ? `?modelo=${modelParams!.modelo}&modeloFoto=${encodeURIComponent(modelParams!.modeloFoto)}&modeloNombre=${encodeURIComponent(modelParams!.modeloNombre)}`
+    : ''
+
   return (
     <Link
-      href={`/shop/${product.slug}`}
+      href={`/shop/${product.slug}${modelQuery}`}
       className={`group block cursor-pointer ${isPromo ? 'ring-2 ring-[#F5CC7A]/60 rounded-2xl' : ''}`}
       aria-label={`Ver ${product.name}`}
     >

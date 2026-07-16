@@ -8,7 +8,12 @@ export const metadata = {
   description: 'Portachupetes, fundas y combos artesanales personalizables para tu bebé',
 }
 
-export default async function ShopPage() {
+interface Props {
+  searchParams: Promise<{ modelo?: string; modeloFoto?: string; modeloNombre?: string }>
+}
+
+export default async function ShopPage({ searchParams }: Props) {
+  const sp = await searchParams
   const supabase = createServerClient()
   const { data: products, error } = await supabase
     .from('products')
@@ -18,5 +23,14 @@ export default async function ShopPage() {
 
   if (error) console.error('[shop] Supabase error:', error.message)
 
-  return <ShopClient initialProducts={products ?? []} />
+  return (
+    <ShopClient
+      initialProducts={products ?? []}
+      modelParams={sp.modeloFoto ? {
+        modelo: sp.modelo ?? '',
+        modeloFoto: sp.modeloFoto,
+        modeloNombre: sp.modeloNombre ?? '',
+      } : undefined}
+    />
+  )
 }
