@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Product } from '@/types'
 import { formatPrice } from '@/lib/utils'
+import { PORTACHUPETE_DISCOUNT_PCT } from '@/lib/discounts'
 import { ArrowUpRight } from 'lucide-react'
 
 interface ModelParams {
@@ -97,10 +98,21 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
         <h3 className={`font-playfair font-bold text-[#2B1A20] text-[0.875rem] md:text-[1.0625rem] leading-snug mb-1.5 group-hover:text-[#C4687D] transition-colors duration-200 ${isPromo ? 'pt-2' : ''}`}>
           {product.name}
         </h3>
-        <div className="flex items-center justify-between">
-          <p className={`font-playfair text-lg font-bold ${isPromo ? 'text-[#D4850A]' : 'text-[#C4687D]'}`}>
-            {formatPrice(product.price)}
-          </p>
+        <div className="flex items-center justify-between gap-2">
+          {product.category === 'portachupete' ? (
+            <div className="flex items-baseline gap-1.5">
+              <p className="font-playfair text-lg font-bold text-[#C4687D]">
+                {formatPrice(Math.round(product.price * (1 - PORTACHUPETE_DISCOUNT_PCT)))}
+              </p>
+              <p className="text-xs text-[#A58494] line-through">
+                {formatPrice(product.price)}
+              </p>
+            </div>
+          ) : (
+            <p className={`font-playfair text-lg font-bold ${isPromo ? 'text-[#D4850A]' : 'text-[#C4687D]'}`}>
+              {formatPrice(product.price)}
+            </p>
+          )}
           {product.category !== 'funda' && (
             <p className="text-xs text-[#A58494]">
               {product.production_days_min}–{product.production_days_max}d hábiles

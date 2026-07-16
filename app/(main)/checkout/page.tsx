@@ -47,6 +47,28 @@ export default function CheckoutPage() {
     setBuyer((prev) => ({ ...prev, [field]: value }))
   }
 
+  function saveAbandonedCart(email: string) {
+    if (!email || !items.length) return
+    fetch('/api/cart/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        buyer_name: buyer.name || null,
+        items: items.map((i) => ({
+          product: {
+            name: i.product.name,
+            price: i.product.price,
+            images: i.product.images,
+            category: i.product.category,
+          },
+          quantity: i.quantity,
+        })),
+        total: total(),
+      }),
+    }).catch(() => {})
+  }
+
   function updateAddress(field: keyof ShippingAddress, value: string) {
     setAddress((prev) => ({ ...prev, [field]: value }))
   }
@@ -157,6 +179,7 @@ export default function CheckoutPage() {
                       required
                       value={buyer.email}
                       onChange={(e) => updateBuyer('email', e.target.value)}
+                      onBlur={(e) => saveAbandonedCart(e.target.value)}
                       className={INPUT_CLS}
                       placeholder="maria@ejemplo.com"
                     />

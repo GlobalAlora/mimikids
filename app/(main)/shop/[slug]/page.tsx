@@ -7,6 +7,7 @@ import { formatPrice } from '@/lib/utils'
 import { Clock, Shield, Truck, Gift } from 'lucide-react'
 import Link from 'next/link'
 import type { Product, Model } from '@/types'
+import { PORTACHUPETE_DISCOUNT_PCT } from '@/lib/discounts'
 
 export const dynamic = 'force-dynamic'
 
@@ -112,9 +113,23 @@ export default async function ProductPage({ params, searchParams }: Props) {
               <h1 className="font-playfair text-[2rem] md:text-[2.5rem] font-bold text-[#2B1A20] leading-[1.15] mb-3">
                 {p.name}
               </h1>
-              <p className="font-playfair text-2xl font-bold text-[#C4687D] mb-4">
-                {formatPrice(p.price)}
-              </p>
+              {p.category === 'portachupete' ? (
+                <div className="flex items-baseline gap-3 mb-4">
+                  <p className="font-playfair text-2xl font-bold text-[#C4687D]">
+                    {formatPrice(Math.round(p.price * (1 - PORTACHUPETE_DISCOUNT_PCT)))}
+                  </p>
+                  <p className="text-base text-[#A58494] line-through">
+                    {formatPrice(p.price)}
+                  </p>
+                  <span className="text-xs font-bold text-white bg-[#C4687D] px-2 py-0.5 rounded-full">
+                    20% OFF
+                  </span>
+                </div>
+              ) : (
+                <p className="font-playfair text-2xl font-bold text-[#C4687D] mb-4">
+                  {formatPrice(p.price)}
+                </p>
+              )}
               <p className="text-[#6D4D5A] leading-relaxed text-sm">{p.description}</p>
             </div>
 
