@@ -3,16 +3,15 @@
 import { useState } from 'react'
 import { Product } from '@/types'
 import ProductCard from '@/components/shop/ProductCard'
-import { Sparkles, Package, Gift } from 'lucide-react'
+import { Sparkles, Package } from 'lucide-react'
 
-type Category = 'all' | 'portachupete' | 'funda' | 'promo'
+type Category = 'all' | 'portachupete' | 'funda'
 
 interface Tab {
   id: Category
   label: string
   icon: React.ReactNode
   description: string
-  badge?: string
 }
 
 const TABS: Tab[] = [
@@ -32,14 +31,7 @@ const TABS: Tab[] = [
     id: 'funda',
     label: 'Fundas',
     icon: <span className="text-[13px] leading-none">🍼</span>,
-    description: 'Fundas artesanales para proteger y decorar el portachupete. Van a juego con todos los modelos.',
-  },
-  {
-    id: 'promo',
-    label: 'Combos',
-    icon: <Gift size={15} />,
-    description: '',
-    badge: '🔥',
+    description: 'Fundas para proteger y decorar el portachupete. Van a juego con todos los modelos.',
   },
 ]
 
@@ -109,22 +101,7 @@ export default function ShopClient({ initialProducts, modelParams }: { initialPr
       <div className="max-w-6xl mx-auto px-5 py-10">
 
         {/* Category description */}
-        {activeTab === 'promo' ? (
-          <div className="mb-8 rounded-2xl bg-gradient-to-r from-[#FFF3E0] to-[#FFF8EC] border border-[#F5CC7A]/40 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="text-3xl">🎁</div>
-            <div className="flex-1">
-              <h2 className="font-playfair font-bold text-[#7A5200] text-lg mb-0.5">
-                Combos · Funda + Portachupete
-              </h2>
-              <p className="text-sm text-[#9A6A00]">
-                El regalo perfecto a precio de combo. Ambas piezas personalizadas juntas, listas para regalar.
-              </p>
-            </div>
-            <div className="shrink-0 bg-[#F5CC7A]/30 text-[#7A5200] font-bold text-sm px-4 py-2 rounded-xl border border-[#F5CC7A]/50">
-              Mejor precio
-            </div>
-          </div>
-        ) : activeTabData.description ? (
+        {activeTabData.description ? (
           <p className="text-[#6D4D5A] text-sm mb-8 max-w-lg">{activeTabData.description}</p>
         ) : null}
 
