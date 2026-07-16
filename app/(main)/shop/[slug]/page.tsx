@@ -14,12 +14,22 @@ interface Props {
   searchParams: Promise<{ modelo?: string; modeloFoto?: string; modeloNombre?: string }>
 }
 
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
+
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const supabase = createServerClient()
-  const { data } = await supabase.from('products').select('name, description').eq('slug', slug).single()
+  const { data } = await supabase.from('products').select('name, description, price, images').eq('slug', slug).single()
   if (!data) return {}
-  return { title: `${data.name} · Mimikids`, description: data.description }
+  return {
+    title: `${data.name} · Mimikids`,
+    description: data.description,
+    openGraph: {
+      title: `${data.name} · Mimikids`,
+      description: data.description,
+      images: data.images?.[0] ? [{ url: data.images[0] }] : [],
+    },
+  }
 }
 
 export default async function ProductPage({ params, searchParams }: Props) {
@@ -36,15 +46,53 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
   if (!product) notFound()
 
+  const p = product as Product
+
+  // JSON-LD Product schema for Google Shopping / SEO
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: p.name,
+    description: p.description,
+    image: p.images ?? [],
+    brand: { '@type': 'Brand', name: 'Mimikids' },
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'ARS',
+      price: p.price,
+      availability: 'https://schema.org/InStock',
+      seller: { '@type': 'Organization', name: 'Mimikids' },
+      url: `${SITE_URL}/shop/${slug}`,
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: { '@type': 'MonetaryAmount', currency: 'ARS' },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          businessDays: {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+          },
+          cutoffTime: '18:00:00-03:00',
+          handlingTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 2, unitCode: 'DAY' },
+          transitTime: { '@type': 'QuantitativeValue', minValue: 2, maxValue: 7, unitCode: 'DAY' },
+        },
+        shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'AR' },
+      },
+    },
+  }
+
   // Modelo pre-seleccionado si el cliente viene desde /modelos
   const preselectedModel: Model | null =
     sp.modeloFoto
       ? { id: sp.modelo ?? '', name: decodeURIComponent(sp.modeloNombre ?? ''), photo: decodeURIComponent(sp.modeloFoto) }
       : null
 
-  const p = product as Product
-
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
     <div className="min-h-screen bg-[#FFFAF7]">
       <div className="max-w-6xl mx-auto px-5 py-10 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
@@ -117,5 +165,6 @@ export default async function ProductPage({ params, searchParams }: Props) {
         </div>
       </div>
     </div>
+    </>
   )
 }
