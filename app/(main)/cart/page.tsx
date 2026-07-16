@@ -23,6 +23,7 @@ export default function CartPage() {
   const hasPortachupete = items.some(i => i.product.category === 'portachupete')
   const hasFunda = items.some(i => i.product.category === 'funda')
   const showComboUpsell = hasPortachupete && !hasFunda
+  const showFundaUpsell = hasFunda && !hasPortachupete
 
   if (items.length === 0) {
     return (
@@ -56,7 +57,28 @@ export default function CartPage() {
           {/* Items list */}
           <div className="lg:col-span-2 space-y-4">
 
-            {/* Combo upsell */}
+            {/* Upsell: solo funda → agregar portachupete */}
+            {showFundaUpsell && (
+              <div className="bg-gradient-to-r from-[#FFF0F3] to-[#FFF8F5] border border-[#EDCCD5] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#C4687D]/15 flex items-center justify-center flex-shrink-0">
+                  <Gift size={20} className="text-[#C4687D]" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-[#2B1A20]">¡Sumá un portachupete y ahorrá 25%!</p>
+                  <p className="text-xs text-[#6D4D5A] mt-0.5">
+                    Al agregar un portachupete personalizado se activa el combo y obtenés <strong>25% de descuento en todo el pedido</strong>.
+                  </p>
+                </div>
+                <Link
+                  href="/shop?cat=portachupete"
+                  className="flex-shrink-0 inline-flex items-center gap-1.5 bg-[#C4687D] text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-[#A8546A] transition-colors whitespace-nowrap"
+                >
+                  Ver portachupetes <ArrowRight size={12} />
+                </Link>
+              </div>
+            )}
+
+            {/* Combo upsell: portachupete sin funda */}
             {showComboUpsell && (
               <div className="bg-gradient-to-r from-[#FFF0F3] to-[#FFF8F5] border border-[#EDCCD5] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[#C4687D]/15 flex items-center justify-center flex-shrink-0">
