@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Model } from '@/types'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, X } from 'lucide-react'
 
 const COLORS: { value: string; label: string; hex: string; border?: boolean }[] = [
   { value: 'blanco',  label: 'Blanco',  hex: '#F5EFEA', border: true },
@@ -105,7 +105,7 @@ export default function ModelsGallery({ models, returnTo = '/shop' }: { models: 
               {filtered.map((model) => (
                 <button
                   key={model.id}
-                  onClick={() => setSelected(model)}
+                  onClick={() => setSelected(selected?.id === model.id ? null : model)}
                   className={`group relative rounded-2xl overflow-hidden border-2 transition-all duration-200 cursor-pointer text-left ${
                     selected?.id === model.id
                       ? 'border-[#C4687D] shadow-lg scale-[1.02]'
@@ -157,7 +157,7 @@ export default function ModelsGallery({ models, returnTo = '/shop' }: { models: 
             {/* CTA flotante cuando hay selección */}
             {selected && (
               <div className="fixed bottom-6 inset-x-0 flex justify-center z-40 px-5">
-                <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(43,26,32,0.18)] border border-[#EDCCD5]/60 p-4 flex items-center gap-4 max-w-sm w-full">
+                <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(43,26,32,0.18)] border border-[#EDCCD5]/60 p-4 flex items-center gap-3 max-w-sm w-full">
                   <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={selected.photo} alt="" className="w-full h-full object-cover" />
@@ -174,6 +174,13 @@ export default function ModelsGallery({ models, returnTo = '/shop' }: { models: 
                   >
                     Quiero este <ArrowRight size={13} />
                   </Link>
+                  <button
+                    onClick={() => setSelected(null)}
+                    className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                    title="Cancelar selección"
+                  >
+                    <X size={15} className="text-gray-400" />
+                  </button>
                 </div>
               </div>
             )}
