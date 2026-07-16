@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
 import Script from 'next/script'
+import LeadCapturePopup from '@/components/ui/LeadCapturePopup'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -205,6 +206,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen flex flex-col antialiased">
         {children}
+        <LeadCapturePopup />
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-PMEMN74TZY" strategy="afterInteractive" />
         <Script id="ga4" strategy="afterInteractive">{`
           window.dataLayer = window.dataLayer || [];
