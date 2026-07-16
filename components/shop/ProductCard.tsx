@@ -60,7 +60,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Hover CTA */}
         <div className="absolute inset-0 bg-[#2B1A20]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
           <span className="inline-flex items-center gap-1.5 bg-white text-[#2B1A20] text-xs font-semibold px-4 py-2 rounded-full translate-y-3 group-hover:translate-y-0 transition-transform duration-300 shadow-lg">
-            Personalizar
+            {product.category === 'funda' ? 'Agregar al carrito' : 'Personalizar'}
             <ArrowUpRight size={13} strokeWidth={2} />
           </span>
         </div>
