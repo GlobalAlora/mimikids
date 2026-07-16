@@ -14,7 +14,18 @@ const COLORS: { value: string; label: string; hex: string; border?: boolean }[] 
   { value: 'madera',  label: 'Madera',  hex: '#B8804A' },
 ]
 
-export default function ModelsGallery({ models, returnTo = '/shop' }: { models: Model[]; returnTo?: string }) {
+// Maps model color → product letter_style to find the right portachupete
+const COLOR_TO_STYLE: Record<string, string> = {
+  blanco:  'silicona-blanca',
+  beige:   'silicona-beige',
+  rosa:    'silicona-rosa',
+  celeste: 'silicona-celeste',
+  madera:  'madera',
+}
+
+interface ProductRef { slug: string; letter_style?: string | null }
+
+export default function ModelsGallery({ models, products = [] }: { models: Model[]; products?: ProductRef[] }) {
   const [activeColor, setActiveColor] = useState<string | null>(null)
   const [lightbox, setLightbox] = useState<Model | null>(null)
 
@@ -146,21 +157,32 @@ export default function ModelsGallery({ models, returnTo = '/shop' }: { models: 
       </div>
 
       {/* Lightbox */}
-      {lightbox && (
-        <ModelLightbox
-          photo={lightbox.photo}
-          name={lightbox.name}
-          onClose={() => setLightbox(null)}
-          cta={
-            <Link
-              href={`${returnTo}?modelo=${lightbox.id}&modeloFoto=${encodeURIComponent(lightbox.photo)}&modeloNombre=${encodeURIComponent(lightbox.name)}`}
-              className="flex-shrink-0 bg-[#C4687D] text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-[#A8546A] transition-colors whitespace-nowrap flex items-center gap-1.5"
-            >
-              Quiero este <ArrowRight size={13} />
-            </Link>
-          }
-        />
-      )}
+      {lightbox && (() => {
+        const targetStyle = lightbox.color ? COLOR_TO_STYLE[lightbox.color] : null
+        const targetProduct = targetStyle
+          ? products.find((p) => p.letter_style === targetStyle)
+          : null
+        const modelQuery = `modelo=${lightbox.id}&modeloFoto=${encodeURIComponent(lightbox.photo)}&modeloNombre=${encodeURIComponent(lightbox.name)}`
+        const ctaHref = targetProduct
+          ? `/shop/${targetProduct.slug}?${modelQuery}`
+          : `/shop?${modelQuery}`
+
+        return (
+          <ModelLightbox
+            photo={lightbox.photo}
+            name={lightbox.name}
+            onClose={() => setLightbox(null)}
+            cta={
+              <Link
+                href={ctaHref}
+                className="flex-shrink-0 bg-[#C4687D] text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-[#A8546A] transition-colors whitespace-nowrap flex items-center gap-1.5"
+              >
+                Quiero este <ArrowRight size={13} />
+              </Link>
+            }
+          />
+        )
+      })()}
     </div>
   )
 }

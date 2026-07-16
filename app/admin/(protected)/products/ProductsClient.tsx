@@ -18,6 +18,7 @@ interface Product {
   is_active: boolean
   production_days_min?: number
   production_days_max?: number
+  stock?: number | null
 }
 
 type ProductCategory = 'portachupete' | 'funda' | 'promo'
@@ -34,13 +35,14 @@ interface ProductForm {
   care_instructions: string
   production_days_min: string
   production_days_max: string
+  stock: string  // '' = unlimited (null), number = limited
   is_active: boolean
 }
 
 const EMPTY_FORM: ProductForm = {
   name: '', slug: '', description: '', price: '',
   images: [], category: 'portachupete', badge: '', materials: '', care_instructions: '',
-  production_days_min: '1', production_days_max: '2', is_active: true,
+  production_days_min: '1', production_days_max: '2', stock: '', is_active: true,
 }
 
 const CATEGORIES: { value: ProductCategory; label: string }[] = [
@@ -200,6 +202,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       care_instructions: '',
       production_days_min: String(product.production_days_min ?? 1),
       production_days_max: String(product.production_days_max ?? 2),
+      stock: product.stock != null ? String(product.stock) : '',
       is_active: product.is_active,
     })
     setEditingId(product.id)
@@ -259,6 +262,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       care_instructions: form.care_instructions || null,
       production_days_min: form.production_days_min,
       production_days_max: form.production_days_max,
+      stock: form.stock !== '' ? Number(form.stock) : null,
       is_active: form.is_active,
     }
 
@@ -343,6 +347,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                 <tr className="border-b border-gray-100">
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Producto</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Precio</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden sm:table-cell">Stock</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Estado</th>
                   <th className="px-6 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Acciones</th>
                 </tr>
@@ -374,6 +379,17 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-bold text-[#d4768a]">{formatPrice(product.price)}</p>
+                    </td>
+                    <td className="px-6 py-4 hidden sm:table-cell">
+                      {product.stock === 0 ? (
+                        <span className="text-xs font-semibold px-2 py-1 rounded-full bg-red-100 text-red-600">Sin stock</span>
+                      ) : product.stock != null ? (
+                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${product.stock <= 3 ? 'bg-orange-100 text-orange-600' : 'bg-blue-50 text-blue-600'}`}>
+                          {product.stock} unid.
+                        </span>
+                      ) : (
+                        <span className="text-xs text-gray-400">∞</span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${product.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
@@ -508,6 +524,21 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                   <label className={LABEL}>Días producción máx.</label>
                   <input className={INPUT} type="number" value={form.production_days_max} onChange={(e) => updateField('production_days_max', e.target.value)} />
                 </div>
+              </div>
+
+              <div>
+                <label className={LABEL}>Stock disponible</label>
+                <input
+                  className={INPUT}
+                  type="number"
+                  min="0"
+                  value={form.stock}
+                  onChange={(e) => updateField('stock', e.target.value)}
+                  placeholder="Dejar vacío = sin límite (portachupetes)"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  Para fundas: ponés la cantidad real. Cuando llega a 0 se muestra "Sin stock".
+                </p>
               </div>
 
               <label className="flex items-center gap-2 cursor-pointer">

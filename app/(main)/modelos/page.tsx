@@ -8,22 +8,27 @@ export const metadata = {
   description: 'Explorá todos los modelos de portachupetes disponibles. Elegí el que más te guste y lo personalizamos con el nombre de tu bebé.',
 }
 
-interface Props {
-  searchParams: Promise<{ returnTo?: string }>
-}
-
-export default async function ModelosPage({ searchParams }: Props) {
-  const { returnTo } = await searchParams
+export default async function ModelosPage() {
   const supabase = createServerClient()
-  const { data: models } = await supabase
-    .from('models')
-    .select('id, name, photo, color')
-    .eq('is_active', true)
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false })
 
-  // Solo aceptar returnTo relativas al dominio para evitar open redirect
-  const safeReturnTo = returnTo?.startsWith('/') ? returnTo : '/shop'
+  const [modelsResult, productsResult] = await Promise.all([
+    supabase
+      .from('models')
+      .select('id, name, photo, color')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('products')
+      .select('slug, letter_style')
+      .eq('is_active', true)
+      .eq('category', 'portachupete'),
+  ])
 
-  return <ModelsGallery models={models ?? []} returnTo={safeReturnTo} />
+  return (
+    <ModelsGallery
+      models={modelsResult.data ?? []}
+      products={productsResult.data ?? []}
+    />
+  )
 }

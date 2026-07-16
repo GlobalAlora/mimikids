@@ -13,6 +13,7 @@ export interface Product {
   production_days_max: number
   available_colors: ColorOption[]
   letter_style?: string // e.g. 'silicona-blanca' | 'silicona-beige' | 'silicona-rosa' | 'silicona-celeste' | 'madera'
+  stock?: number | null  // null = unlimited (portachupetes); number = limited stock (fundas)
   is_active: boolean
   created_at: string
 }
