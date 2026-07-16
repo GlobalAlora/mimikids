@@ -8,9 +8,18 @@ interface Model {
   id: string
   name: string
   photo: string
+  color?: string | null
   is_active: boolean
   sort_order: number
 }
+
+const COLORS = [
+  { value: 'blanco',  label: 'Blanco',  hex: '#F5EFEA', border: true },
+  { value: 'beige',   label: 'Beige',   hex: '#D4B896' },
+  { value: 'celeste', label: 'Celeste', hex: '#8EC9E0' },
+  { value: 'rosa',    label: 'Rosa',    hex: '#E8A0B0' },
+  { value: 'madera',  label: 'Madera',  hex: '#B8804A' },
+] as const
 
 // ── Multi-upload ───────────────────────────────────────────────────────────────
 
@@ -198,25 +207,28 @@ function MultiUploader({
   )
 }
 
-// ── Name editor modal ──────────────────────────────────────────────────────────
+// ── Name + color editor modal ──────────────────────────────────────────────────
 
 function NameModal({
   initial,
+  initialColor,
   photo,
   onSave,
   onCancel,
 }: {
   initial: string
+  initialColor?: string | null
   photo: string
-  onSave: (name: string) => void
+  onSave: (name: string, color: string | null) => void
   onCancel: () => void
 }) {
   const [name, setName] = useState(initial)
+  const [color, setColor] = useState<string | null>(initialColor ?? null)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onCancel} />
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
-        <h3 className="font-playfair font-bold text-[#6b3d50]">Nombrar modelo</h3>
+        <h3 className="font-playfair font-bold text-[#6b3d50]">Editar modelo</h3>
         <div className="aspect-video rounded-xl overflow-hidden bg-gray-100">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={photo} alt="" className="w-full h-full object-cover" />
@@ -226,15 +238,46 @@ function NameModal({
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && onSave(name)}
+          onKeyDown={(e) => e.key === 'Enter' && onSave(name, color)}
           placeholder='Ej: "Rosado con estrella y cuentas blancas"'
           className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#d4768a]"
         />
+
+        {/* Color picker */}
+        <div>
+          <p className="text-xs text-gray-400 mb-2">Color predominante</p>
+          <div className="flex gap-2 flex-wrap">
+            {COLORS.map((c) => (
+              <button
+                key={c.value}
+                type="button"
+                onClick={() => setColor(color === c.value ? null : c.value)}
+                title={c.label}
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer ${
+                  color === c.value
+                    ? 'ring-2 ring-[#d4768a] ring-offset-1 font-semibold text-[#6b3d50]'
+                    : 'text-gray-500 hover:bg-gray-50'
+                }`}
+                style={{ border: '1px solid #e5e7eb' }}
+              >
+                <span
+                  className="w-3.5 h-3.5 rounded-full"
+                  style={{
+                    background: c.hex,
+                    border: c.border ? '1px solid #D4B8C0' : 'none',
+                  }}
+                />
+                {c.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="flex gap-2">
           <button onClick={onCancel} className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-sm text-gray-500 hover:bg-gray-50 cursor-pointer">
             Cancelar
           </button>
-          <Button className="flex-1" onClick={() => onSave(name)}>
+          <Button className="flex-1" onClick={() => onSave(name, color)}>
             Guardar
           </Button>
         </div>
@@ -285,12 +328,12 @@ export default function ModelsClient({ initialModels }: { initialModels: Model[]
     await fetch(`/api/admin/models/${id}`, { method: 'DELETE' })
   }
 
-  async function renameModel(model: Model, name: string) {
-    setModels((prev) => prev.map((m) => m.id === model.id ? { ...m, name } : m))
+  async function updateModel(model: Model, name: string, color: string | null) {
+    setModels((prev) => prev.map((m) => m.id === model.id ? { ...m, name, color } : m))
     await fetch(`/api/admin/models/${model.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name, color }),
     })
   }
 
@@ -325,7 +368,7 @@ export default function ModelsClient({ initialModels }: { initialModels: Model[]
                 model={model}
                 onToggle={() => toggleActive(model)}
                 onDelete={() => deleteModel(model.id)}
-                onRename={(name) => renameModel(model, name)}
+                onUpdate={(name, color) => updateModel(model, name, color)}
               />
             ))}
           </div>
@@ -348,14 +391,15 @@ function ModelCard({
   model,
   onToggle,
   onDelete,
-  onRename,
+  onUpdate,
 }: {
   model: Model
   onToggle: () => void
   onDelete: () => void
-  onRename: (name: string) => void
+  onUpdate: (name: string, color: string | null) => void
 }) {
-  const [editingName, setEditingName] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const colorMeta = COLORS.find((c) => c.value === model.color)
 
   return (
     <>
@@ -383,7 +427,16 @@ function ModelCard({
             </button>
           </div>
 
-          {/* Active badge */}
+          {/* Color dot */}
+          {colorMeta && (
+            <div
+              className="absolute top-2 right-2 w-4 h-4 rounded-full shadow ring-1 ring-white/60"
+              style={{ background: colorMeta.hex, border: colorMeta.border ? '1px solid #D4B8C0' : 'none' }}
+              title={colorMeta.label}
+            />
+          )}
+
+          {/* Inactive badge */}
           {!model.is_active && (
             <div className="absolute top-2 left-2 bg-gray-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
               Inactivo
@@ -391,25 +444,28 @@ function ModelCard({
           )}
         </div>
 
-        {/* Name */}
+        {/* Name + color */}
         <div
           className="p-2 bg-white cursor-pointer hover:bg-gray-50 transition-colors"
-          onClick={() => setEditingName(true)}
-          title="Clic para renombrar"
+          onClick={() => setEditing(true)}
+          title="Clic para editar"
         >
           <p className="text-xs text-gray-600 font-medium leading-tight truncate">
             {model.name || <span className="text-gray-300 italic">Sin nombre</span>}
           </p>
-          <p className="text-[10px] text-gray-300 mt-0.5">clic para renombrar</p>
+          <p className="text-[10px] text-gray-300 mt-0.5">
+            {colorMeta ? colorMeta.label : 'clic para editar'}
+          </p>
         </div>
       </div>
 
-      {editingName && (
+      {editing && (
         <NameModal
           initial={model.name}
+          initialColor={model.color}
           photo={model.photo}
-          onSave={(name) => { onRename(name); setEditingName(false) }}
-          onCancel={() => setEditingName(false)}
+          onSave={(name, color) => { onUpdate(name, color); setEditing(false) }}
+          onCancel={() => setEditing(false)}
         />
       )}
     </>

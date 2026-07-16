@@ -10,7 +10,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const body = await req.json()
   const supabase = createServerClient()
 
-  const allowed = ['name', 'photo', 'is_active', 'sort_order']
+  const allowed = ['name', 'photo', 'is_active', 'sort_order', 'color']
   const updates = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)))
 
   const { error } = await supabase.from('models').update(updates).eq('id', id)

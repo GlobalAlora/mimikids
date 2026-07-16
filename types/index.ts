@@ -35,6 +35,7 @@ export interface Model {
   id: string
   name: string
   photo: string
+  color?: string
 }
 
 export interface CartItem {

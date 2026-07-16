@@ -17,7 +17,7 @@ export default async function ModelosPage({ searchParams }: Props) {
   const supabase = createServerClient()
   const { data: models } = await supabase
     .from('models')
-    .select('id, name, photo')
+    .select('id, name, photo, color')
     .eq('is_active', true)
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false })
