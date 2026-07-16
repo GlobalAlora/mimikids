@@ -96,9 +96,11 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
           <p className={`font-playfair text-lg font-bold ${isPromo ? 'text-[#D4850A]' : 'text-[#C4687D]'}`}>
             {formatPrice(product.price)}
           </p>
-          <p className="text-xs text-[#A58494]">
-            {product.production_days_min}–{product.production_days_max}d hábiles
-          </p>
+          {product.category !== 'funda' && (
+            <p className="text-xs text-[#A58494]">
+              {product.production_days_min}–{product.production_days_max}d hábiles
+            </p>
+          )}
         </div>
       </div>
     </Link>

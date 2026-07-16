@@ -114,10 +114,12 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
             {/* Trust pills */}
             <div className="flex flex-wrap gap-2">
-              <div className="flex items-center gap-1.5 bg-white rounded-full px-3 py-1.5 text-xs text-[#6D4D5A] border border-[#EDCCD5]/60">
-                <Clock size={12} className="text-[#C4687D]" strokeWidth={1.75} />
-                {p.production_days_min}–{p.production_days_max} días hábiles
-              </div>
+              {p.category !== 'funda' && (
+                <div className="flex items-center gap-1.5 bg-white rounded-full px-3 py-1.5 text-xs text-[#6D4D5A] border border-[#EDCCD5]/60">
+                  <Clock size={12} className="text-[#C4687D]" strokeWidth={1.75} />
+                  {p.production_days_min}–{p.production_days_max} días hábiles
+                </div>
+              )}
               <div className="flex items-center gap-1.5 bg-white rounded-full px-3 py-1.5 text-xs text-[#6D4D5A] border border-[#EDCCD5]/60">
                 <Truck size={12} className="text-[#C4687D]" strokeWidth={1.75} />
                 Envío a todo el país
