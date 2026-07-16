@@ -13,13 +13,13 @@ interface Model {
   sort_order: number
 }
 
-const COLORS = [
+const COLORS: { value: string; label: string; hex: string; border?: boolean }[] = [
   { value: 'blanco',  label: 'Blanco',  hex: '#F5EFEA', border: true },
   { value: 'beige',   label: 'Beige',   hex: '#D4B896' },
   { value: 'celeste', label: 'Celeste', hex: '#8EC9E0' },
   { value: 'rosa',    label: 'Rosa',    hex: '#E8A0B0' },
   { value: 'madera',  label: 'Madera',  hex: '#B8804A' },
-] as const
+]
 
 // ── Multi-upload ───────────────────────────────────────────────────────────────
 

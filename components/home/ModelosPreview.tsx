@@ -4,15 +4,24 @@ import { ArrowRight } from 'lucide-react'
 
 export default async function ModelosPreview() {
   const supabase = createServerClient()
-  const { data: models } = await supabase
-    .from('models')
-    .select('id, name, photo')
-    .eq('is_active', true)
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false })
-    .limit(10)
+  const [{ data: models }, { count }] = await Promise.all([
+    supabase
+      .from('models')
+      .select('id, name, photo')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false })
+      .limit(20),
+    supabase
+      .from('models')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true),
+  ])
 
   if (!models || models.length === 0) return null
+
+  const total = count ?? models.length
+  const countLabel = total >= 100 ? '+100' : total >= 10 ? `+${total}` : String(total)
 
   // Distribuir en 2 filas visuales con alturas intercaladas
   const row1 = models.filter((_, i) => i % 2 === 0)
@@ -27,7 +36,7 @@ export default async function ModelosPreview() {
           <div>
             <p className="label-caps mb-2">Galería de inspiración</p>
             <h2 className="font-playfair text-[2rem] md:text-[2.75rem] font-bold text-[#2B1A20] leading-[1.1]">
-              {models.length >= 10 ? '+' : ''}{models.length} modelos<br className="hidden sm:block" /> para elegir
+              {countLabel} modelos<br className="hidden sm:block" /> para elegir
             </h2>
             <p className="text-[#6D4D5A] text-sm mt-3 max-w-xs leading-relaxed">
               Cada portachupete es único. Elegí uno como referencia y lo hacemos con el nombre de tu bebé.

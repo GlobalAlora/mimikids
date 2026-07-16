@@ -14,7 +14,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const updates = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)))
 
   const { error } = await supabase.from('models').update(updates).eq('id', id)
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) {
+    if ('color' in updates) {
+      const fallback = Object.fromEntries(Object.entries(updates).filter(([k]) => k !== 'color'))
+      const { error: e2 } = await supabase.from('models').update(fallback).eq('id', id)
+      if (e2) return NextResponse.json({ error: e2.message }, { status: 500 })
+    } else {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+  }
   return NextResponse.json({ success: true })
 }
 
