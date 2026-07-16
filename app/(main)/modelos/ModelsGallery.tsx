@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Model } from '@/types'
-import { ArrowRight, X } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
+import ModelLightbox from '@/components/modelos/ModelLightbox'
 
 const COLORS: { value: string; label: string; hex: string; border?: boolean }[] = [
   { value: 'blanco',  label: 'Blanco',  hex: '#F5EFEA', border: true },
@@ -15,7 +16,7 @@ const COLORS: { value: string; label: string; hex: string; border?: boolean }[] 
 
 export default function ModelsGallery({ models, returnTo = '/shop' }: { models: Model[]; returnTo?: string }) {
   const [activeColor, setActiveColor] = useState<string | null>(null)
-  const [selected, setSelected] = useState<Model | null>(null)
+  const [lightbox, setLightbox] = useState<Model | null>(null)
 
   const filtered = activeColor
     ? models.filter((m) => m.color === activeColor)
@@ -105,30 +106,17 @@ export default function ModelsGallery({ models, returnTo = '/shop' }: { models: 
               {filtered.map((model) => (
                 <button
                   key={model.id}
-                  onClick={() => setSelected(selected?.id === model.id ? null : model)}
-                  className={`group relative rounded-2xl overflow-hidden border-2 transition-all duration-200 cursor-pointer text-left ${
-                    selected?.id === model.id
-                      ? 'border-[#C4687D] shadow-lg scale-[1.02]'
-                      : 'border-transparent hover:border-[#EDCCD5] hover:shadow-md'
-                  }`}
+                  onClick={() => setLightbox(model)}
+                  className="group relative rounded-2xl overflow-hidden border-2 border-transparent hover:border-[#EDCCD5] hover:shadow-md transition-all duration-200 cursor-pointer text-left"
                 >
                   <div className="aspect-square bg-[#F6EEE9]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={model.photo}
                       alt={model.name || 'Modelo Mimikids'}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
-
-                  {selected?.id === model.id && (
-                    <div className="absolute top-2 right-2 w-6 h-6 bg-[#C4687D] rounded-full flex items-center justify-center shadow">
-                      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
-                        <path d="M1 4L4 7L10 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                  )}
-
                   {model.name && (
                     <div className="p-2 bg-white">
                       <p className="text-xs font-medium text-[#6D4D5A] leading-tight line-clamp-2">
@@ -153,40 +141,26 @@ export default function ModelsGallery({ models, returnTo = '/shop' }: { models: 
                 </button>
               </div>
             )}
-
-            {/* CTA flotante cuando hay selección */}
-            {selected && (
-              <div className="fixed bottom-6 inset-x-0 flex justify-center z-40 px-5">
-                <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(43,26,32,0.18)] border border-[#EDCCD5]/60 p-4 flex items-center gap-3 max-w-sm w-full">
-                  <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={selected.photo} alt="" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-[#A58494]">Modelo elegido</p>
-                    <p className="text-sm font-semibold text-[#2B1A20] truncate">
-                      {selected.name || 'Modelo seleccionado'}
-                    </p>
-                  </div>
-                  <Link
-                    href={`${returnTo}?modelo=${selected.id}&modeloFoto=${encodeURIComponent(selected.photo)}&modeloNombre=${encodeURIComponent(selected.name)}`}
-                    className="bg-[#C4687D] text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-[#A8546A] transition-colors whitespace-nowrap flex items-center gap-1.5"
-                  >
-                    Quiero este <ArrowRight size={13} />
-                  </Link>
-                  <button
-                    onClick={() => setSelected(null)}
-                    className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
-                    title="Cancelar selección"
-                  >
-                    <X size={15} className="text-gray-400" />
-                  </button>
-                </div>
-              </div>
-            )}
           </>
         )}
       </div>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <ModelLightbox
+          photo={lightbox.photo}
+          name={lightbox.name}
+          onClose={() => setLightbox(null)}
+          cta={
+            <Link
+              href={`${returnTo}?modelo=${lightbox.id}&modeloFoto=${encodeURIComponent(lightbox.photo)}&modeloNombre=${encodeURIComponent(lightbox.name)}`}
+              className="flex-shrink-0 bg-[#C4687D] text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-[#A8546A] transition-colors whitespace-nowrap flex items-center gap-1.5"
+            >
+              Quiero este <ArrowRight size={13} />
+            </Link>
+          }
+        />
+      )}
     </div>
   )
 }

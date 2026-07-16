@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createServerClient } from '@/lib/supabase-server'
 import { ArrowRight } from 'lucide-react'
+import ModelosPreviewGrid from './ModelosPreviewGrid'
 
 export default async function ModelosPreview() {
   const supabase = createServerClient()
@@ -22,10 +23,6 @@ export default async function ModelosPreview() {
 
   const total = count ?? models.length
   const countLabel = total >= 100 ? '+100' : total >= 10 ? `+${total}` : String(total)
-
-  // Distribuir en 2 filas visuales con alturas intercaladas
-  const row1 = models.filter((_, i) => i % 2 === 0)
-  const row2 = models.filter((_, i) => i % 2 === 1)
 
   return (
     <section className="py-16 md:py-24 bg-[#FFF8F5] overflow-hidden">
@@ -50,68 +47,8 @@ export default async function ModelosPreview() {
           </Link>
         </div>
 
-        {/* Grid escalonado — horizontal scroll en mobile */}
-        <div className="space-y-3 overflow-x-auto pb-2 -mx-5 px-5 sm:mx-0 sm:px-0">
-          {/* Fila 1 — fotos más altas */}
-          <div className="flex gap-3" style={{ width: 'max-content' }}>
-            {row1.map((m) => (
-              <Link
-                key={m.id}
-                href={`/modelos`}
-                className="group relative flex-shrink-0 overflow-hidden rounded-2xl bg-[#F6EEE9]"
-                style={{ width: 160, height: 200 }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={m.photo}
-                  alt={m.name || 'Modelo Mimikids'}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                {m.name && (
-                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/50 to-transparent px-2 pb-2 pt-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <p className="text-white text-xs font-medium leading-tight line-clamp-2">{m.name}</p>
-                  </div>
-                )}
-              </Link>
-            ))}
-          </div>
-
-          {/* Fila 2 — fotos más bajas, desplazadas */}
-          <div className="flex gap-3 pl-[86px]" style={{ width: 'max-content' }}>
-            {row2.map((m) => (
-              <Link
-                key={m.id}
-                href={`/modelos`}
-                className="group relative flex-shrink-0 overflow-hidden rounded-2xl bg-[#F6EEE9]"
-                style={{ width: 160, height: 160 }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={m.photo}
-                  alt={m.name || 'Modelo Mimikids'}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                {m.name && (
-                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/50 to-transparent px-2 pb-2 pt-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <p className="text-white text-xs font-medium leading-tight line-clamp-2">{m.name}</p>
-                  </div>
-                )}
-              </Link>
-            ))}
-
-            {/* Tile CTA al final */}
-            <Link
-              href="/modelos"
-              className="flex-shrink-0 rounded-2xl border-2 border-dashed border-[#EDCCD5] flex flex-col items-center justify-center gap-2 hover:border-[#C4687D] hover:bg-[#FFF0F3] transition-all group"
-              style={{ width: 160, height: 160 }}
-            >
-              <span className="text-2xl">✨</span>
-              <span className="text-xs font-semibold text-[#C4687D] text-center px-3 leading-tight group-hover:underline">
-                Ver todos los modelos
-              </span>
-            </Link>
-          </div>
-        </div>
+        {/* Grid escalonado con lightbox */}
+        <ModelosPreviewGrid models={models} />
 
       </div>
     </section>
