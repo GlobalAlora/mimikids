@@ -3,8 +3,9 @@
 import Link from 'next/link'
 import { useCartStore } from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
+import { calcDiscount } from '@/lib/discounts'
 import Button from '@/components/ui/Button'
-import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Truck } from 'lucide-react'
+import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Truck, Tag, Gift } from 'lucide-react'
 import { ShippingMethod } from '@/types'
 
 const SHIPPING_OPTIONS: ShippingMethod[] = [
@@ -18,6 +19,10 @@ export default function CartPage() {
     useCartStore()
 
   const subtotal = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+  const discountInfo = calcDiscount(items)
+  const hasPortachupete = items.some(i => i.product.category === 'portachupete')
+  const hasFunda = items.some(i => i.product.category === 'funda')
+  const showComboUpsell = hasPortachupete && !hasFunda
 
   if (items.length === 0) {
     return (
@@ -50,6 +55,38 @@ export default function CartPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Items list */}
           <div className="lg:col-span-2 space-y-4">
+
+            {/* Combo upsell */}
+            {showComboUpsell && (
+              <div className="bg-gradient-to-r from-[#FFF0F3] to-[#FFF8F5] border border-[#EDCCD5] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#C4687D]/15 flex items-center justify-center flex-shrink-0">
+                  <Gift size={20} className="text-[#C4687D]" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-[#2B1A20]">¡Armá el combo y ahorrá 25%!</p>
+                  <p className="text-xs text-[#6D4D5A] mt-0.5">
+                    Tenés 20% de desc. en portachupetes. Agregá una funda y el descuento sube al <strong>25% en todo el pedido</strong>.
+                  </p>
+                </div>
+                <Link
+                  href="/shop"
+                  className="flex-shrink-0 inline-flex items-center gap-1.5 bg-[#C4687D] text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-[#A8546A] transition-colors whitespace-nowrap"
+                >
+                  Ver fundas <ArrowRight size={12} />
+                </Link>
+              </div>
+            )}
+
+            {/* Combo active badge */}
+            {discountInfo.type === 'combo' && (
+              <div className="bg-green-50 border border-green-200 rounded-2xl px-4 py-3 flex items-center gap-2.5">
+                <Gift size={16} className="text-green-600 flex-shrink-0" />
+                <p className="text-sm font-semibold text-green-700">
+                  ¡Combo activado! Descuento del 25% aplicado en todo el pedido 🎉
+                </p>
+              </div>
+            )}
+
             {items.map((item) => (
               <div
                 key={item.id}
@@ -188,6 +225,15 @@ export default function CartPage() {
                   <span>Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
+                {discountInfo.amount > 0 && (
+                  <div className="flex justify-between items-start text-green-600 font-medium">
+                    <span className="flex items-center gap-1">
+                      <Tag size={12} />
+                      {discountInfo.type === 'combo' ? 'Descuento combo (25%)' : 'Desc. portachupetes (20%)'}
+                    </span>
+                    <span>-{formatPrice(discountInfo.amount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-[#A58494]">
                   <span>Envío</span>
                   <span>

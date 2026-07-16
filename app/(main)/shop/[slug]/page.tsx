@@ -4,7 +4,8 @@ import PersonalizationForm from '@/components/product/PersonalizationForm'
 import SimpleAddToCart from '@/components/product/SimpleAddToCart'
 import ProductGallery from '@/components/product/ProductGallery'
 import { formatPrice } from '@/lib/utils'
-import { Clock, Shield, Truck } from 'lucide-react'
+import { Clock, Shield, Truck, Gift } from 'lucide-react'
+import Link from 'next/link'
 import type { Product, Model } from '@/types'
 
 export const dynamic = 'force-dynamic'
@@ -81,6 +82,11 @@ export default async function ProductPage({ params, searchParams }: Props) {
     },
   }
 
+  // Fundas para upsell en portachupetes
+  const fundas = p.category === 'portachupete'
+    ? (await supabase.from('products').select('id, name, slug, price, images').eq('category', 'funda').eq('is_active', true).limit(3)).data ?? []
+    : []
+
   // Modelo pre-seleccionado si el cliente viene desde /modelos
   const preselectedModel: Model | null =
     sp.modeloFoto
@@ -150,6 +156,37 @@ export default async function ProductPage({ params, searchParams }: Props) {
                 </>
               )}
             </div>
+
+            {/* Upsell combo para portachupetes */}
+            {p.category === 'portachupete' && fundas.length > 0 && (
+              <div className="bg-gradient-to-br from-[#FFF0F3] to-[#FFF8F5] rounded-2xl p-5 border border-[#EDCCD5]/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <Gift size={16} className="text-[#C4687D]" />
+                  <h3 className="font-semibold text-sm text-[#2B1A20]">¡Armá el combo y ahorrá 25%!</h3>
+                </div>
+                <p className="text-xs text-[#6D4D5A] mb-4 leading-relaxed">
+                  Agregá una funda a tu pedido y el descuento en portachupetes sube de 20% a <strong>25% en todo el carrito</strong>.
+                </p>
+                <div className="space-y-2">
+                  {fundas.map((funda) => (
+                    <Link
+                      key={funda.id}
+                      href={`/shop/${funda.slug}`}
+                      className="flex items-center gap-3 bg-white rounded-xl p-2.5 border border-[#EDCCD5]/40 hover:border-[#C4687D]/40 transition-colors group"
+                    >
+                      {funda.images?.[0] && (
+                        <img src={funda.images[0]} alt={funda.name} className="w-12 h-12 object-cover rounded-lg flex-shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-[#2B1A20] truncate group-hover:text-[#C4687D] transition-colors">{funda.name}</p>
+                        <p className="text-xs text-[#A58494]">{formatPrice(funda.price)}</p>
+                      </div>
+                      <span className="text-[10px] font-bold text-[#C4687D] bg-[#EDCCD5]/50 px-2 py-1 rounded-full whitespace-nowrap">+ combo</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {p.materials && (
               <div className="bg-[#FFFAF7] rounded-xl p-5 border border-[#EDCCD5]/30">

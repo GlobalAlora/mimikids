@@ -48,7 +48,7 @@ export default function Hero() {
           </h1>
 
           <p className="text-[1.0625rem] text-[#6D4D5A] leading-relaxed max-w-[440px] mb-9">
-            Portachupetes artesanales personalizados con el nombre de tu bebé.
+            Portachupetes personalizados con el nombre de tu bebé.
             Materiales seguros, diseño único, hecho con amor en Argentina.
           </p>
 

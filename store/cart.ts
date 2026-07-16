@@ -3,6 +3,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { CartItem, CartItemPersonalization, Product, ShippingMethod } from '@/types'
+import { calcDiscount, DiscountInfo } from '@/lib/discounts'
 
 interface CartState {
   items: CartItem[]
@@ -12,6 +13,7 @@ interface CartState {
   updateQuantity: (id: string, quantity: number) => void
   setShippingMethod: (method: ShippingMethod) => void
   clearCart: () => void
+  discount: () => DiscountInfo
   total: () => number
   itemCount: () => number
 }
@@ -55,13 +57,16 @@ export const useCartStore = create<CartState>()(
         set({ items: [], shippingMethod: null })
       },
 
+      discount: () => calcDiscount(get().items),
+
       total: () => {
         const { items, shippingMethod } = get()
         const subtotal = items.reduce(
           (acc, item) => acc + item.product.price * item.quantity,
           0
         )
-        return subtotal + (shippingMethod?.price ?? 0)
+        const discountAmount = calcDiscount(items).amount
+        return subtotal - discountAmount + (shippingMethod?.price ?? 0)
       },
 
       itemCount: () => {

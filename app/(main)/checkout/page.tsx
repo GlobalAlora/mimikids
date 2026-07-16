@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCartStore } from '@/store/cart'
 import { formatPrice, generateOrderNumber } from '@/lib/utils'
+import { calcDiscount } from '@/lib/discounts'
 import { PROVINCES } from '@/lib/data'
 import Button from '@/components/ui/Button'
 import Link from 'next/link'
@@ -40,6 +41,7 @@ export default function CheckoutPage() {
   })
 
   const subtotal = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+  const discountInfo = calcDiscount(items)
 
   function updateBuyer(field: keyof BuyerInfo, value: string) {
     setBuyer((prev) => ({ ...prev, [field]: value }))
@@ -74,6 +76,8 @@ export default function CheckoutPage() {
         shipping_method: shippingMethod,
         payment_method: paymentMethod,
         subtotal,
+        discount_amount: discountInfo.amount,
+        discount_label: discountInfo.label || null,
         shipping_cost: shippingMethod.price,
         total: total(),
       }
@@ -304,6 +308,12 @@ export default function CheckoutPage() {
                     <span>Subtotal</span>
                     <span>{formatPrice(subtotal)}</span>
                   </div>
+                  {discountInfo.amount > 0 && (
+                    <div className="flex justify-between text-green-600 font-medium">
+                      <span>{discountInfo.type === 'combo' ? '🎁 Combo (25% off)' : '🏷️ Portachupetes (20% off)'}</span>
+                      <span>-{formatPrice(discountInfo.amount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-[#A58494]">
                     <span>Envío</span>
                     <span>

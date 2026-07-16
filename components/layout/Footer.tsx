@@ -44,7 +44,7 @@ export default function Footer() {
               <span className="w-1.5 h-1.5 rounded-full bg-[#C4687D] mb-2" aria-hidden="true" />
             </div>
             <p className="text-sm text-white/55 leading-relaxed max-w-[260px] mb-6">
-              Portachupetes artesanales personalizados, hechos con amor para los más pequeños de la familia.
+              Portachupetes personalizados con el nombre de tu bebé, hechos con amor para los más pequeños de la familia.
             </p>
             <div className="flex gap-3">
               <a
