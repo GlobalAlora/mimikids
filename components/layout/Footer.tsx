@@ -24,6 +24,8 @@ function InstagramIcon({ size = 16 }: { size?: number }) {
 const navLinks = [
   { href: '/',               label: 'Inicio' },
   { href: '/shop',           label: 'Tienda' },
+  { href: '/modelos',        label: 'Modelos' },
+  { href: '/guia',           label: 'Guía de portachupetes' },
   { href: '/#como-funciona', label: 'Cómo funciona' },
   { href: '/#testimonios',   label: 'Testimonios' },
 ]

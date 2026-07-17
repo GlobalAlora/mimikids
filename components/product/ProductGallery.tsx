@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import Badge from '@/components/ui/Badge'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 
@@ -36,11 +37,13 @@ export default function ProductGallery({
           className="relative bg-[#F6EEE9] rounded-2xl overflow-hidden aspect-[4/5] cursor-zoom-in"
           onClick={() => setLightbox(true)}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={images[active]}
-            alt={name}
-            className="w-full h-full object-cover transition-opacity duration-200"
+            alt={`${name} — portachupete personalizado Mimikids`}
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            priority
+            className="object-cover transition-opacity duration-200"
           />
           {badge && (
             <div className="absolute top-4 left-4">
@@ -61,14 +64,13 @@ export default function ProductGallery({
               <button
                 key={i}
                 onClick={() => setActive(i)}
-                className={`w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all duration-200 cursor-pointer ${
+                className={`relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all duration-200 cursor-pointer ${
                   i === active
                     ? 'border-[#C4687D] shadow-md scale-[1.04]'
                     : 'border-[#EDCCD5] hover:border-[#C4687D]/60'
                 }`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img} alt="" className="w-full h-full object-cover" />
+                  <Image src={img} alt="" fill sizes="80px" className="object-cover" />
               </button>
             ))}
           </div>

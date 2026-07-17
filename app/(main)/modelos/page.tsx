@@ -3,9 +3,26 @@ import ModelsGallery from './ModelsGallery'
 
 export const dynamic = 'force-dynamic'
 
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
+
 export const metadata = {
-  title: 'Modelos · Mimikids',
-  description: 'Explorá todos los modelos de portachupetes disponibles. Elegí el que más te guste y lo personalizamos con el nombre de tu bebé.',
+  title: 'Modelos de Portachupetes · Inspirate · Mimikids',
+  description: 'Explorá todos los modelos y combinaciones de colores disponibles. Elegí el diseño de portachupete que más te guste y lo personalizamos con el nombre de tu bebé.',
+  keywords: [
+    'modelos portachupete',
+    'colores portachupete personalizado',
+    'diseños portachupete bebé',
+    'portachupete celeste niño',
+    'portachupete rosa niña',
+    'portachupete neutro',
+  ],
+  alternates: { canonical: `${SITE_URL}/modelos` },
+  openGraph: {
+    title: 'Modelos de Portachupetes · Mimikids',
+    description: 'Explorá combinaciones y elegí el diseño perfecto. Personalizamos con el nombre de tu bebé.',
+    url: `${SITE_URL}/modelos`,
+    images: [{ url: `${SITE_URL}/mimikids.jpg`, width: 1080, height: 1080, alt: 'Modelos Mimikids' }],
+  },
 }
 
 export default async function ModelosPage() {

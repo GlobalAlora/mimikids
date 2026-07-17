@@ -1,11 +1,31 @@
 import { createServerClient } from '@/lib/supabase-server'
 import ShopClient from './ShopClient'
+import type { Metadata } from 'next'
+import type { Product } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = {
-  title: 'Tienda · Mimikids',
-  description: 'Portachupetes, fundas y combos artesanales personalizables para tu bebé',
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
+
+export const metadata: Metadata = {
+  title: 'Tienda de Portachupetes Personalizados · Mimikids',
+  description: 'Comprá portachupetes personalizados con el nombre de tu bebé. Letras en silicona o madera, 100% artesanales, con 20% OFF. Envíos a todo Argentina.',
+  keywords: [
+    'portachupete personalizado',
+    'portachupete con nombre',
+    'comprar portachupete',
+    'portachupete artesanal',
+    'portachupete bebé Argentina',
+    'funda guardachupete',
+    'regalo baby shower personalizado',
+  ],
+  alternates: { canonical: `${SITE_URL}/shop` },
+  openGraph: {
+    title: 'Tienda · Portachupetes Personalizados · Mimikids',
+    description: 'Portachupetes artesanales personalizados con el nombre de tu bebé. 20% OFF. Envíos a todo Argentina.',
+    url: `${SITE_URL}/shop`,
+    images: [{ url: `${SITE_URL}/mimikids.jpg`, width: 1080, height: 1080, alt: 'Tienda Mimikids' }],
+  },
 }
 
 interface Props {
@@ -23,14 +43,34 @@ export default async function ShopPage({ searchParams }: Props) {
 
   if (error) console.error('[shop] Supabase error:', error.message)
 
+  const productList = (products ?? []) as Product[]
+
+  const itemListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Portachupetes personalizados Mimikids',
+    description: 'Catálogo completo de portachupetes y fundas guardachupete artesanales personalizadas',
+    url: `${SITE_URL}/shop`,
+    numberOfItems: productList.length,
+    itemListElement: productList.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `${SITE_URL}/shop/${p.slug}`,
+      name: p.name,
+    })),
+  }
+
   return (
-    <ShopClient
-      initialProducts={products ?? []}
-      modelParams={sp.modeloFoto ? {
-        modelo: sp.modelo ?? '',
-        modeloFoto: sp.modeloFoto,
-        modeloNombre: sp.modeloNombre ?? '',
-      } : undefined}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
+      <ShopClient
+        initialProducts={productList}
+        modelParams={sp.modeloFoto ? {
+          modelo: sp.modelo ?? '',
+          modeloFoto: sp.modeloFoto,
+          modeloNombre: sp.modeloNombre ?? '',
+        } : undefined}
+      />
+    </>
   )
 }

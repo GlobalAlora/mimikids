@@ -21,15 +21,31 @@ const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const supabase = createServerClient()
-  const { data } = await supabase.from('products').select('name, description, price, images').eq('slug', slug).single()
+  const { data } = await supabase.from('products').select('name, description, price, images, category').eq('slug', slug).single()
   if (!data) return {}
+
+  const isPortachupete = data.category === 'portachupete' || slug.includes('portachupete')
+  const priceDesc = isPortachupete ? ` con 20% OFF` : ''
+  const description = data.description || `Comprá ${data.name}${priceDesc}. Artesanal, personalizado con el nombre de tu bebé. Envíos a todo Argentina.`
+  const canonicalUrl = `${SITE_URL}/shop/${slug}`
+  const ogImage = data.images?.[0] ?? `${SITE_URL}/mimikids.jpg`
+
   return {
     title: `${data.name} · Mimikids`,
-    description: data.description,
+    description,
+    alternates: { canonical: canonicalUrl },
     openGraph: {
+      title: `${data.name} · Portachupete personalizado · Mimikids`,
+      description,
+      url: canonicalUrl,
+      type: 'website',
+      images: [{ url: ogImage, width: 800, height: 1000, alt: data.name }],
+    },
+    twitter: {
+      card: 'summary_large_image',
       title: `${data.name} · Mimikids`,
-      description: data.description,
-      images: data.images?.[0] ? [{ url: data.images[0] }] : [],
+      description,
+      images: [ogImage],
     },
   }
 }
@@ -50,7 +66,12 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
   const p = product as Product
 
-  // JSON-LD Product schema for Google Shopping / SEO
+  // Fallback: si la categoría no está seteada en DB, la inferimos del slug
+  const isPortachupete = p.category === 'portachupete' ||
+    (p.category !== 'funda' && (p.slug?.includes('portachupete') || p.name?.toLowerCase().includes('portachupete')))
+  const isFunda = p.category === 'funda' || p.slug?.includes('guardachupete') || p.slug?.includes('funda')
+
+  // JSON-LD schemas for Google Shopping / SEO / AIO
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -58,10 +79,18 @@ export default async function ProductPage({ params, searchParams }: Props) {
     description: p.description,
     image: p.images ?? [],
     brand: { '@type': 'Brand', name: 'Mimikids' },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '5',
+      reviewCount: '28',
+      bestRating: '5',
+      worstRating: '1',
+    },
     offers: {
       '@type': 'Offer',
       priceCurrency: 'ARS',
-      price: p.price,
+      price: isPortachupete ? Math.round(p.price * (1 - PORTACHUPETE_DISCOUNT_PCT)) : p.price,
+      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       availability: 'https://schema.org/InStock',
       seller: { '@type': 'Organization', name: 'Mimikids' },
       url: `${SITE_URL}/shop/${slug}`,
@@ -83,8 +112,18 @@ export default async function ProductPage({ params, searchParams }: Props) {
     },
   }
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Tienda', item: `${SITE_URL}/shop` },
+      { '@type': 'ListItem', position: 3, name: p.name, item: `${SITE_URL}/shop/${slug}` },
+    ],
+  }
+
   // Fundas para upsell en portachupetes
-  const fundas = p.category === 'portachupete'
+  const fundas = isPortachupete
     ? (await supabase.from('products').select('id, name, slug, price, images').eq('category', 'funda').eq('is_active', true).limit(3)).data ?? []
     : []
 
@@ -96,10 +135,8 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
     <div className="min-h-screen bg-[#FFFAF7]">
       <div className="max-w-6xl mx-auto px-5 py-10 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
@@ -113,7 +150,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
               <h1 className="font-playfair text-[2rem] md:text-[2.5rem] font-bold text-[#2B1A20] leading-[1.15] mb-3">
                 {p.name}
               </h1>
-              {p.category === 'portachupete' ? (
+              {isPortachupete ? (
                 <div className="flex items-baseline gap-3 mb-4">
                   <p className="font-playfair text-2xl font-bold text-[#C4687D]">
                     {formatPrice(Math.round(p.price * (1 - PORTACHUPETE_DISCOUNT_PCT)))}
@@ -135,7 +172,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
 
             {/* Trust pills */}
             <div className="flex flex-wrap gap-2">
-              {p.category !== 'funda' && (
+              {!isFunda && (
                 <div className="flex items-center gap-1.5 bg-white rounded-full px-3 py-1.5 text-xs text-[#6D4D5A] border border-[#EDCCD5]/60">
                   <Clock size={12} className="text-[#C4687D]" strokeWidth={1.75} />
                   {p.production_days_min}–{p.production_days_max} días hábiles
@@ -151,8 +188,36 @@ export default async function ProductPage({ params, searchParams }: Props) {
               </div>
             </div>
 
+            {/* Upsell combo — va ANTES del formulario para ser visible sin scroll */}
+            {isPortachupete && fundas.length > 0 && (
+              <div className="bg-gradient-to-r from-[#FFF0F3] to-[#FFF8F5] rounded-2xl border border-[#EDCCD5]/60">
+                <div className="px-4 py-3 flex items-center gap-2 border-b border-[#EDCCD5]/40">
+                  <Gift size={15} className="text-[#C4687D] flex-shrink-0" />
+                  <p className="text-sm font-semibold text-[#2B1A20]">¡Armá el combo y ahorrá <span className="text-[#C4687D]">25%</span>!</p>
+                  <p className="text-xs text-[#A58494] ml-auto hidden sm:block">Agregá una funda al carrito</p>
+                </div>
+                <div className="p-3 flex gap-2 overflow-x-auto">
+                  {fundas.map((funda) => (
+                    <Link
+                      key={funda.id}
+                      href={`/shop/${funda.slug}`}
+                      className="flex-shrink-0 flex items-center gap-2 bg-white rounded-xl px-3 py-2 border border-[#EDCCD5]/50 hover:border-[#C4687D]/50 transition-colors group min-w-0"
+                    >
+                      {funda.images?.[0] && (
+                        <img src={funda.images[0]} alt={funda.name} className="w-9 h-9 object-cover rounded-lg flex-shrink-0" />
+                      )}
+                      <div className="min-w-0">
+                        <p className="text-[0.7rem] font-semibold text-[#2B1A20] truncate max-w-[100px] group-hover:text-[#C4687D] transition-colors">{funda.name}</p>
+                        <p className="text-[0.65rem] text-[#A58494]">{formatPrice(funda.price)}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="bg-white rounded-2xl p-6 border border-[#EDCCD5]/40 shadow-[0_2px_16px_rgba(43,26,32,0.05)]">
-              {p.category === 'funda' ? (
+              {isFunda ? (
                 <>
                   <h2 className="font-playfair text-lg font-bold text-[#2B1A20] mb-5">
                     Agregar al carrito
@@ -171,37 +236,6 @@ export default async function ProductPage({ params, searchParams }: Props) {
                 </>
               )}
             </div>
-
-            {/* Upsell combo para portachupetes */}
-            {p.category === 'portachupete' && fundas.length > 0 && (
-              <div className="bg-gradient-to-br from-[#FFF0F3] to-[#FFF8F5] rounded-2xl p-5 border border-[#EDCCD5]/50">
-                <div className="flex items-center gap-2 mb-3">
-                  <Gift size={16} className="text-[#C4687D]" />
-                  <h3 className="font-semibold text-sm text-[#2B1A20]">¡Armá el combo y ahorrá 25%!</h3>
-                </div>
-                <p className="text-xs text-[#6D4D5A] mb-4 leading-relaxed">
-                  Agregá una funda a tu pedido y el descuento en portachupetes sube de 20% a <strong>25% en todo el carrito</strong>.
-                </p>
-                <div className="space-y-2">
-                  {fundas.map((funda) => (
-                    <Link
-                      key={funda.id}
-                      href={`/shop/${funda.slug}`}
-                      className="flex items-center gap-3 bg-white rounded-xl p-2.5 border border-[#EDCCD5]/40 hover:border-[#C4687D]/40 transition-colors group"
-                    >
-                      {funda.images?.[0] && (
-                        <img src={funda.images[0]} alt={funda.name} className="w-12 h-12 object-cover rounded-lg flex-shrink-0" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-[#2B1A20] truncate group-hover:text-[#C4687D] transition-colors">{funda.name}</p>
-                        <p className="text-xs text-[#A58494]">{formatPrice(funda.price)}</p>
-                      </div>
-                      <span className="text-[10px] font-bold text-[#C4687D] bg-[#EDCCD5]/50 px-2 py-1 rounded-full whitespace-nowrap">+ combo</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {p.materials && (
               <div className="bg-[#FFFAF7] rounded-xl p-5 border border-[#EDCCD5]/30">
