@@ -280,7 +280,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
         if (res.ok) {
           setProducts((prev) => prev.map((p) =>
             p.id === editingId
-              ? { ...p, ...payload, price: Number(payload.price), badge: payload.badge ?? undefined }
+              ? { ...p, ...payload, price: Number(payload.price), badge: payload.badge ?? undefined, production_days_min: Number(payload.production_days_min), production_days_max: Number(payload.production_days_max) }
               : p
           ))
         }

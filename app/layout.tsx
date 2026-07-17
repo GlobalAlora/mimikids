@@ -79,9 +79,6 @@ export const metadata: Metadata = {
     icon: '/mimikids.jpg',
     apple: '/mimikids.jpg',
   },
-  verification: {
-    google: undefined,
-  },
 }
 
 const jsonLd = {

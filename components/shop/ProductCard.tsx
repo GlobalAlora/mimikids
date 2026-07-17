@@ -28,7 +28,7 @@ const LETTER_STYLE_BG: Record<string, string> = {
 
 export default function ProductCard({ product, modelParams }: ProductCardProps) {
   const isPromo = product.category === 'promo'
-  const isPortachupete = isPortachupete ||
+  const isPortachupete = product.category === 'portachupete' ||
     (!isPromo && product.category !== 'funda' &&
       (product.slug?.includes('portachupete') || product.name?.toLowerCase().includes('portachupete')))
   const imgBg = (product.letter_style && LETTER_STYLE_BG[product.letter_style]) || (isPromo ? '#FFF8EC' : '#F6EEE9')

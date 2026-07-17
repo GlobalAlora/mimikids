@@ -12,6 +12,7 @@ interface Tab {
   label: string
   icon: React.ReactNode
   description: string
+  badge?: string
 }
 
 const TABS: Tab[] = [
