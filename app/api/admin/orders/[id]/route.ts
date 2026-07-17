@@ -13,7 +13,7 @@ const STATUS_INFO: Record<string, { label: string; emoji: string; message: strin
   pagado:          { label: 'Pago confirmado',  emoji: '✅', message: '¡Confirmamos tu pago! Ya arrancamos a fabricar tu pedido con mucho cariño 🤍' },
   en_produccion:   { label: 'En producción',    emoji: '🔨', message: 'Tu pedido está siendo fabricado. Te avisamos cuando esté listo para enviar.' },
   enviado:         { label: 'Enviado',          emoji: '📦', message: 'Tu pedido fue despachado y está en camino. ¡Ya falta poco!' },
-  entregado:       { label: 'Entregado',        emoji: '🎉', message: '¡Tu pedido llegó! Esperamos que lo amen. Gracias por elegirnos 🤍' },
+  entregado:       { label: 'Entregado',        emoji: '🎉', message: '¡Tu pedido llegó! Esperamos que lo amen tanto como nosotras lo hicimos con cariño 🤍 ¿Te animás a mandarnos una foto del bebé con el portachupete? La compartimos en Instagram y le ponemos tu @.' },
   cancelado:       { label: 'Cancelado',        emoji: '❌', message: 'Tu pedido fue cancelado. Si tenés alguna duda, escribinos por WhatsApp.' },
 }
 
