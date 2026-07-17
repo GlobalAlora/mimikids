@@ -28,6 +28,9 @@ const LETTER_STYLE_BG: Record<string, string> = {
 
 export default function ProductCard({ product, modelParams }: ProductCardProps) {
   const isPromo = product.category === 'promo'
+  const isPortachupete = isPortachupete ||
+    (!isPromo && product.category !== 'funda' &&
+      (product.slug?.includes('portachupete') || product.name?.toLowerCase().includes('portachupete')))
   const imgBg = (product.letter_style && LETTER_STYLE_BG[product.letter_style]) || (isPromo ? '#FFF8EC' : '#F6EEE9')
 
   const canUseModel = product.category !== 'funda' && modelParams?.modeloFoto
@@ -65,7 +68,7 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
               🔥 COMBO
             </span>
           )}
-          {product.category === 'portachupete' && (
+          {isPortachupete && (
             <span className="bg-[#C4687D] text-white text-[0.625rem] font-black px-2.5 py-1 rounded-full tracking-wide uppercase shadow-sm">
               20% OFF
             </span>
@@ -101,7 +104,7 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
           {product.name}
         </h3>
         <div className="flex items-center justify-between gap-2">
-          {product.category === 'portachupete' ? (
+          {isPortachupete ? (
             <div className="flex items-baseline gap-1.5">
               <p className="font-playfair text-lg font-bold text-[#C4687D]">
                 {formatPrice(Math.round(product.price * (1 - PORTACHUPETE_DISCOUNT_PCT)))}
