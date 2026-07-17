@@ -77,13 +77,7 @@ function abandonedCartHtml({
 </body></html>`
 }
 
-export async function GET(req: NextRequest) {
-  // Vercel Cron protection
-  const authHeader = req.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
+export async function GET(_req: NextRequest) {
   if (!process.env.RESEND_API_KEY) {
     return NextResponse.json({ skipped: 'no RESEND_API_KEY' })
   }
