@@ -117,18 +117,29 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-white/30">
             © {new Date().getFullYear()} Mimikids. Todos los derechos reservados.
           </p>
-          <a
-            href="https://globalalora.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-white/30 hover:text-white/60 transition-colors"
-          >
-            Desarrollado por Global Alora
-          </a>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            <Link href="/politica-de-privacidad" className="text-xs text-white/30 hover:text-white/60 transition-colors">
+              Privacidad
+            </Link>
+            <Link href="/politica-de-cookies" className="text-xs text-white/30 hover:text-white/60 transition-colors">
+              Cookies
+            </Link>
+            <Link href="/politica-devoluciones" className="text-xs text-white/30 hover:text-white/60 transition-colors">
+              Devoluciones
+            </Link>
+            <a
+              href="https://globalalora.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-white/30 hover:text-white/60 transition-colors"
+            >
+              Desarrollado por Global Alora
+            </a>
+          </div>
         </div>
       </div>
     </footer>
