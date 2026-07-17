@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCartStore } from '@/store/cart'
 import { formatPrice, generateOrderNumber } from '@/lib/utils'
-import { calcDiscount } from '@/lib/discounts'
+import { calcDiscount, COUPON_STORAGE_KEY } from '@/lib/discounts'
 import { PROVINCES } from '@/lib/data'
 import Button from '@/components/ui/Button'
 import Link from 'next/link'
@@ -19,7 +19,7 @@ const LABEL_CLS =
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { items, shippingMethod, total, clearCart } = useCartStore()
+  const { items, shippingMethod, total, clearCart, coupon, couponAmount } = useCartStore()
 
   const [paymentMethod] = useState<PaymentMethod>('transferencia')
   const [loading, setLoading] = useState(false)
@@ -42,6 +42,7 @@ export default function CheckoutPage() {
 
   const subtotal = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
   const discountInfo = calcDiscount(items)
+  const couponDiscount = couponAmount()
 
   function updateBuyer(field: keyof BuyerInfo, value: string) {
     setBuyer((prev) => ({ ...prev, [field]: value }))
@@ -98,8 +99,10 @@ export default function CheckoutPage() {
         shipping_method: shippingMethod,
         payment_method: paymentMethod,
         subtotal,
-        discount_amount: discountInfo.amount,
-        discount_label: discountInfo.label || null,
+        discount_amount: discountInfo.amount + couponDiscount,
+        discount_label: [discountInfo.label, coupon ? `Cupón ${coupon} (10%)` : null].filter(Boolean).join(' + ') || null,
+        coupon_code: coupon ?? null,
+        coupon_discount: couponDiscount,
         shipping_cost: shippingMethod.price,
         total: total(),
       }
@@ -113,6 +116,9 @@ export default function CheckoutPage() {
       const data = await res.json()
 
       if (!data.success) throw new Error(data.error || 'Error al crear el pedido')
+
+      // Marcar cupón como usado — nunca más disponible en este navegador
+      if (coupon) localStorage.setItem(COUPON_STORAGE_KEY, '1')
 
       clearCart()
       router.push(`/order/${data.order_id}?method=transferencia&order_number=${data.order_number}`)
@@ -335,6 +341,12 @@ export default function CheckoutPage() {
                     <div className="flex justify-between text-green-600 font-medium">
                       <span>{discountInfo.type === 'combo' ? '🎁 Combo (25% off)' : '🏷️ Portachupetes (20% off)'}</span>
                       <span>-{formatPrice(discountInfo.amount)}</span>
+                    </div>
+                  )}
+                  {couponDiscount > 0 && (
+                    <div className="flex justify-between text-green-600 font-medium">
+                      <span>🎟️ Cupón {coupon} (10% off)</span>
+                      <span>-{formatPrice(couponDiscount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-[#A58494]">

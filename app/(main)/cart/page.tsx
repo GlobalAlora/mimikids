@@ -1,11 +1,12 @@
 'use client'
 
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import { useCartStore } from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
-import { calcDiscount } from '@/lib/discounts'
+import { calcDiscount, COUPON_ACTIVE, COUPON_STORAGE_KEY } from '@/lib/discounts'
 import Button from '@/components/ui/Button'
-import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Truck, Tag, Gift } from 'lucide-react'
+import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Truck, Tag, Gift, X, Check } from 'lucide-react'
 import { ShippingMethod } from '@/types'
 
 const SHIPPING_OPTIONS: ShippingMethod[] = [
@@ -15,11 +16,32 @@ const SHIPPING_OPTIONS: ShippingMethod[] = [
 ]
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity, setShippingMethod, shippingMethod, total, itemCount } =
-    useCartStore()
+  const { items, removeItem, updateQuantity, setShippingMethod, shippingMethod, total, itemCount,
+    coupon, applyCoupon, removeCoupon, couponAmount } = useCartStore()
+
+  const [couponInput, setCouponInput] = useState('')
+  const [couponError, setCouponError] = useState('')
+  const [couponUsed, setCouponUsed] = useState(false)
+
+  useEffect(() => {
+    setCouponUsed(localStorage.getItem(COUPON_STORAGE_KEY) === '1')
+  }, [])
+
+  function handleApplyCoupon() {
+    setCouponError('')
+    const result = applyCoupon(couponInput, couponUsed)
+    if (!result.success) setCouponError(result.error ?? 'Código inválido')
+    else setCouponInput('')
+  }
+
+  function handleRemoveCoupon() {
+    removeCoupon()
+    setCouponError('')
+  }
 
   const subtotal = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
   const discountInfo = calcDiscount(items)
+  const couponDiscount = couponAmount()
   const hasPortachupete = items.some(i => i.product.category === 'portachupete')
   const hasFunda = items.some(i => i.product.category === 'funda')
   const showComboUpsell = hasPortachupete && !hasFunda
@@ -242,6 +264,53 @@ export default function CartPage() {
             {/* Summary */}
             <div className="bg-white rounded-2xl p-5 border border-[#EDCCD5]/30 shadow-[0_2px_12px_rgba(43,26,32,0.05)]">
               <h3 className="font-semibold text-[#2B1A20] mb-4">Resumen</h3>
+
+              {/* Cupón de descuento — visible solo si NEXT_PUBLIC_COUPON_ACTIVE=true y no fue usado */}
+              {COUPON_ACTIVE && !couponUsed && (
+                <div className="mb-4">
+                  {coupon ? (
+                    <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-3 py-2.5">
+                      <Check size={14} className="text-green-600 flex-shrink-0" />
+                      <span className="text-sm font-semibold text-green-700 flex-1">
+                        {coupon} · 10% OFF aplicado
+                      </span>
+                      <button
+                        onClick={handleRemoveCoupon}
+                        className="text-green-500 hover:text-green-700 transition-colors cursor-pointer"
+                        aria-label="Quitar cupón"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={couponInput}
+                          onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError('') }}
+                          onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                          placeholder="Cupón de descuento"
+                          className="flex-1 px-3 py-2 text-sm border-2 border-[#EDCCD5]/60 focus:border-[#C4687D] rounded-xl outline-none text-[#2B1A20] placeholder-[#A58494] transition-colors"
+                        />
+                        <button
+                          onClick={handleApplyCoupon}
+                          disabled={!couponInput.trim()}
+                          className="px-3 py-2 text-xs font-bold bg-[#2B1A20] text-white rounded-xl hover:bg-[#3d2530] transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                        >
+                          Aplicar
+                        </button>
+                      </div>
+                      {couponError && (
+                        <p className="text-xs text-red-500 flex items-center gap-1">
+                          <X size={11} /> {couponError}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between text-[#A58494]">
                   <span>Subtotal</span>
@@ -254,6 +323,15 @@ export default function CartPage() {
                       {discountInfo.type === 'combo' ? 'Descuento combo (25%)' : 'Desc. portachupetes (20%)'}
                     </span>
                     <span>-{formatPrice(discountInfo.amount)}</span>
+                  </div>
+                )}
+                {couponDiscount > 0 && (
+                  <div className="flex justify-between items-center text-green-600 font-medium">
+                    <span className="flex items-center gap-1">
+                      <Tag size={12} />
+                      Cupón {coupon} (10%)
+                    </span>
+                    <span>-{formatPrice(couponDiscount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-[#A58494]">
