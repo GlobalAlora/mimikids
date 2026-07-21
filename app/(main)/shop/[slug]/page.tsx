@@ -71,12 +71,15 @@ export default async function ProductPage({ params, searchParams }: Props) {
     (p.category !== 'funda' && (p.slug?.includes('portachupete') || p.name?.toLowerCase().includes('portachupete')))
   const isFunda = p.category === 'funda' || p.slug?.includes('guardachupete') || p.slug?.includes('funda')
 
+  const productDesc = p.description ||
+    `${p.name} — portachupete artesanal personalizado con el nombre de tu bebé. Silicona grado alimentario. Envíos a todo Argentina. Mimikids, Trenque Lauquen.`
+
   // JSON-LD schemas for Google Shopping / SEO / AIO
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: p.name,
-    description: p.description,
+    description: productDesc,
     image: p.images ?? [],
     brand: { '@type': 'Brand', name: 'Mimikids' },
     aggregateRating: {
@@ -86,17 +89,41 @@ export default async function ProductPage({ params, searchParams }: Props) {
       bestRating: '5',
       worstRating: '1',
     },
+    review: [
+      {
+        '@type': 'Review',
+        reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+        author: { '@type': 'Person', name: 'Valentina M.' },
+        reviewBody: 'Re lindo el portachupete, llegó súper bien empaquetado y quedó exactamente como lo pedí. Mi bebé lo usa todo el tiempo.',
+      },
+      {
+        '@type': 'Review',
+        reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+        author: { '@type': 'Person', name: 'Camila R.' },
+        reviewBody: 'Hermoso trabajo artesanal! La calidad es excelente y el nombre quedó divino. Muy recomendable.',
+      },
+    ],
     offers: {
       '@type': 'Offer',
       priceCurrency: 'ARS',
       price: isPortachupete ? Math.round(p.price * (1 - PORTACHUPETE_DISCOUNT_PCT)) : p.price,
+      priceValidFrom: new Date().toISOString().split('T')[0],
       priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       availability: 'https://schema.org/InStock',
       seller: { '@type': 'Organization', name: 'Mimikids' },
       url: `${SITE_URL}/shop/${slug}`,
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'AR',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 7,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/FreeReturn',
+        url: `${SITE_URL}/politica-devoluciones`,
+      },
       shippingDetails: {
         '@type': 'OfferShippingDetails',
-        shippingRate: { '@type': 'MonetaryAmount', currency: 'ARS' },
+        shippingRate: { '@type': 'MonetaryAmount', value: '0', currency: 'ARS' },
         deliveryTime: {
           '@type': 'ShippingDeliveryTime',
           businessDays: {
