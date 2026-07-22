@@ -55,7 +55,7 @@ export default function Hero() {
                 <br />
                 <em className="not-italic text-[#C4687D]">que van a amar</em>
                 <br />
-                el 10 de agosto.
+                el Día del Niño.
               </>
             ) : (
               <>
