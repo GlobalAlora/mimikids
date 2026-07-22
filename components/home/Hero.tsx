@@ -29,33 +29,56 @@ export default function Hero() {
     return () => clearInterval(id)
   }, [next])
 
+  const isDdN = typeof window === 'undefined'
+    ? true
+    : Date.now() < new Date('2026-08-10T00:00:00-03:00').getTime()
+
   return (
     <section className="relative bg-[#FFFAF7] overflow-hidden">
       <div className="max-w-6xl mx-auto px-5 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-68px)]">
 
         {/* ── Text ─────────────────────────────────────────────────── */}
         <div className="order-2 lg:order-1 flex flex-col justify-center">
-          <p className="label-caps mb-5">
-            Artesanal · 100% personalizado · Argentina
-          </p>
+          {isDdN ? (
+            <div className="inline-flex items-center gap-2 mb-5">
+              <span className="text-lg">🎁</span>
+              <span className="label-caps text-[#C4687D]">Día del Niño · 10 de agosto</span>
+            </div>
+          ) : (
+            <p className="label-caps mb-5">Artesanal · 100% personalizado · Argentina</p>
+          )}
 
           <h1 className="font-playfair text-[2.75rem] md:text-[3.5rem] lg:text-[4.25rem] font-bold text-[#2B1A20] leading-[1.08] tracking-tight mb-6">
-            El portachupete
-            <br />
-            <em className="not-italic text-[#C4687D]">de tu bebé,</em>
-            <br />
-            único.
+            {isDdN ? (
+              <>
+                El regalo
+                <br />
+                <em className="not-italic text-[#C4687D]">que van a amar</em>
+                <br />
+                el 10 de agosto.
+              </>
+            ) : (
+              <>
+                El portachupete
+                <br />
+                <em className="not-italic text-[#C4687D]">de tu bebé,</em>
+                <br />
+                único.
+              </>
+            )}
           </h1>
 
           <p className="text-[1.0625rem] text-[#6D4D5A] leading-relaxed max-w-[440px] mb-9">
-            Portachupetes personalizados con el nombre de tu bebé.
-            Materiales seguros, diseño único, hecho con amor en Argentina.
+            {isDdN
+              ? 'Portachupetes artesanales personalizados con el nombre de tu bebé. El regalo más especial para el Día del Niño — único, seguro y hecho con amor en Argentina.'
+              : 'Portachupetes personalizados con el nombre de tu bebé. Materiales seguros, diseño único, hecho con amor en Argentina.'
+            }
           </p>
 
-          <div className="flex flex-wrap gap-3 mb-12">
+          <div className="flex flex-wrap gap-3 mb-6">
             <Link href="/shop">
               <Button size="md" className="group md:text-lg md:px-8 md:py-4">
-                Ver la tienda
+                {isDdN ? 'Elegir regalo' : 'Ver la tienda'}
                 <ArrowRight
                   size={16}
                   className="ml-2 group-hover:translate-x-1 transition-transform duration-200"
@@ -68,6 +91,12 @@ export default function Hero() {
               </Button>
             </Link>
           </div>
+
+          {isDdN && (
+            <p className="text-xs text-[#A58494] mb-6">
+              ⏳ Pedí antes del <strong className="text-[#6D4D5A]">5 de agosto</strong> para recibirlo a tiempo
+            </p>
+          )}
 
           {/* Stats */}
           <div className="flex items-center gap-6 pt-6 border-t border-[#EDCCD5]/60">
