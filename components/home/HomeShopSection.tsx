@@ -10,7 +10,10 @@ export default async function HomeShopSection() {
       .select('*')
       .eq('is_active', true)
       .order('created_at', { ascending: false })
-    products = data ?? []
+    const CATEGORY_ORDER: Record<string, number> = { portachupete: 0, llavero: 1, promo: 2, funda: 3 }
+    products = (data ?? []).sort(
+      (a: any, b: any) => (CATEGORY_ORDER[a.category] ?? 10) - (CATEGORY_ORDER[b.category] ?? 10)
+    )
   } catch {
     // fallback vacío si Supabase no responde
   }
