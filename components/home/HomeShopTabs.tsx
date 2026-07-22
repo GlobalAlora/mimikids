@@ -6,11 +6,12 @@ import { Product } from '@/types'
 import ProductCard from '@/components/shop/ProductCard'
 import { ArrowRight } from 'lucide-react'
 
-type Category = 'all' | 'portachupete' | 'funda' | 'promo'
+type Category = 'all' | 'portachupete' | 'llavero' | 'funda' | 'promo'
 
 const TABS: { id: Category; label: string }[] = [
   { id: 'all',          label: 'Todo' },
   { id: 'portachupete', label: 'Portachupetes' },
+  { id: 'llavero',      label: '🔑 Llaveros' },
   { id: 'funda',        label: 'Fundas' },
   { id: 'promo',        label: '🔥 Combos' },
 ]
