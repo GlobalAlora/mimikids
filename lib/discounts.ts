@@ -25,17 +25,19 @@ export interface DiscountInfo {
 export function calcDiscount(items: CartItem[]): DiscountInfo {
   const hasPortachupete = items.some(i => i.product.category === 'portachupete')
   const hasFunda = items.some(i => i.product.category === 'funda')
+  const hasLlavero = items.some(i => i.product.category === 'llavero')
 
   if (!hasPortachupete) return { amount: 0, pct: 0, type: null, label: '' }
 
   const subtotal = items.reduce((acc, i) => acc + i.product.price * i.quantity, 0)
 
-  if (hasFunda) {
+  if (hasFunda || hasLlavero) {
+    const parts = [hasFunda && 'funda', hasLlavero && 'llavero'].filter(Boolean).join(' + ')
     return {
       amount: Math.round(subtotal * COMBO_DISCOUNT_PCT),
       pct: COMBO_DISCOUNT_PCT,
       type: 'combo',
-      label: 'Descuento combo funda + portachupete (25%)',
+      label: `Descuento combo ${parts} + portachupete (25%)`,
     }
   }
 

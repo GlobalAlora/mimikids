@@ -188,9 +188,10 @@ export default function PersonalizationForm({ product, preselectedModel = null }
   const [added, setAdded] = useState(false)
   const [selectedModel, setSelectedModel] = useState<Model | null>(preselectedModel ?? null)
 
+  const isLlavero = product.category === 'llavero'
   const letterStyleId = product.letter_style
   const nombreValido = nombre.trim().length > 0 && nombre.trim().length <= 12
-  const isComplete = !!selectedBroche && nombreValido
+  const isComplete = isLlavero ? nombreValido : (!!selectedBroche && nombreValido)
 
   function handleNombreChange(val: string) {
     const clean = val.replace(/[^a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]/g, '').slice(0, 12)
@@ -198,15 +199,17 @@ export default function PersonalizationForm({ product, preselectedModel = null }
   }
 
   function handleAdd() {
-    if (!isComplete || !selectedBroche) return
+    if (!isComplete) return
 
-    const personalization: CartItemPersonalization = {
-      broche: selectedBroche.id,
-      brocheName: `${selectedBroche.material === 'plastico' ? 'Plástico' : 'Madera'} ${selectedBroche.name}`,
-      modelRef: selectedModel?.photo,
-      modelNombre: selectedModel?.name || undefined,
-      nombre: nombre.trim(),
-    }
+    const personalization: CartItemPersonalization = isLlavero
+      ? { nombre: nombre.trim() }
+      : {
+          broche: selectedBroche!.id,
+          brocheName: `${selectedBroche!.material === 'plastico' ? 'Plástico' : 'Madera'} ${selectedBroche!.name}`,
+          modelRef: selectedModel?.photo,
+          modelNombre: selectedModel?.name || undefined,
+          nombre: nombre.trim(),
+        }
 
     addItem(product, personalization, quantity)
     setAdded(true)
@@ -214,7 +217,9 @@ export default function PersonalizationForm({ product, preselectedModel = null }
   }
 
   const whatsappMsg = encodeURIComponent(
-    `Hola! Me interesa el ${product.name}. Quiero coordinar la decoración 🤍`
+    isLlavero
+      ? `Hola! Me interesa el ${product.name}. Quiero coordinar el modelo del llavero 🔑`
+      : `Hola! Me interesa el ${product.name}. Quiero coordinar la decoración 🤍`
   )
 
   const brochesByMaterial = {
@@ -226,92 +231,96 @@ export default function PersonalizationForm({ product, preselectedModel = null }
     <div className="space-y-5">
       <BpaBadge />
 
-      {/* ── Modelo de referencia ────────────────────────────────────── */}
-      <div>
-        <p className="text-sm font-semibold text-[#2B1A20] mb-2">
-          ¿Tenés un modelo favorito?
-          <span className="text-xs font-normal text-[#A58494] ml-1.5">opcional</span>
-        </p>
+      {!isLlavero && (
+        <>
+          {/* ── Modelo de referencia ────────────────────────────────────── */}
+          <div>
+            <p className="text-sm font-semibold text-[#2B1A20] mb-2">
+              ¿Tenés un modelo favorito?
+              <span className="text-xs font-normal text-[#A58494] ml-1.5">opcional</span>
+            </p>
 
-        {selectedModel ? (
-          <div className="flex items-center gap-3 p-3 rounded-xl border-2 border-[#C4687D] bg-[#FAF0F3]">
-            <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={selectedModel.photo} alt="" className="w-full h-full object-cover" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-[#A58494]">Modelo de referencia</p>
-              <p className="text-sm font-semibold text-[#2B1A20] truncate">
-                {selectedModel.name || 'Modelo seleccionado'}
-              </p>
+            {selectedModel ? (
+              <div className="flex items-center gap-3 p-3 rounded-xl border-2 border-[#C4687D] bg-[#FAF0F3]">
+                <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={selectedModel.photo} alt="" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-[#A58494]">Modelo de referencia</p>
+                  <p className="text-sm font-semibold text-[#2B1A20] truncate">
+                    {selectedModel.name || 'Modelo seleccionado'}
+                  </p>
+                  <Link
+                    href={`/modelos?returnTo=/shop/${product.slug}`}
+                    className="text-xs text-[#C4687D] hover:underline font-medium"
+                  >
+                    Cambiar modelo
+                  </Link>
+                </div>
+                <button
+                  onClick={() => setSelectedModel(null)}
+                  className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0 hover:bg-gray-100 cursor-pointer"
+                >
+                  <X size={13} className="text-gray-400" />
+                </button>
+              </div>
+            ) : (
               <Link
                 href={`/modelos?returnTo=/shop/${product.slug}`}
-                className="text-xs text-[#C4687D] hover:underline font-medium"
+                className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-[#EDCCD5] hover:border-[#C4687D] hover:bg-[#FFFAF7] transition-all group"
               >
-                Cambiar modelo
+                <div className="w-10 h-10 rounded-lg bg-[#F9EDF1] flex items-center justify-center flex-shrink-0 group-hover:bg-[#F0D4DC] transition-colors">
+                  <Images size={18} className="text-[#C4687D]" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-[#2B1A20]">Ver galería de modelos</p>
+                  <p className="text-xs text-[#A58494]">Elegí uno como referencia para tu pedido</p>
+                </div>
+                <span className="text-[#C4687D] text-xs font-semibold">Ver →</span>
               </Link>
-            </div>
-            <button
-              onClick={() => setSelectedModel(null)}
-              className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0 hover:bg-gray-100 cursor-pointer"
-            >
-              <X size={13} className="text-gray-400" />
-            </button>
+            )}
           </div>
-        ) : (
-          <Link
-            href={`/modelos?returnTo=/shop/${product.slug}`}
-            className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-[#EDCCD5] hover:border-[#C4687D] hover:bg-[#FFFAF7] transition-all group"
-          >
-            <div className="w-10 h-10 rounded-lg bg-[#F9EDF1] flex items-center justify-center flex-shrink-0 group-hover:bg-[#F0D4DC] transition-colors">
-              <Images size={18} className="text-[#C4687D]" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-[#2B1A20]">Ver galería de modelos</p>
-              <p className="text-xs text-[#A58494]">Elegí uno como referencia para tu pedido</p>
-            </div>
-            <span className="text-[#C4687D] text-xs font-semibold">Ver →</span>
-          </Link>
-        )}
-      </div>
 
-      {/* ── Broche ─────────────────────────────────────────────────── */}
-      <div>
-        <p className="text-sm font-semibold text-[#2B1A20] mb-3">1. Elegí el broche</p>
-        <div className="space-y-3">
+          {/* ── Broche ─────────────────────────────────────────────────── */}
           <div>
-            <p className="text-xs font-bold text-[#A58494] uppercase tracking-widest mb-2">Plástico</p>
-            <div className="grid grid-cols-4 gap-2">
-              {brochesByMaterial.plastico.map((b) => (
-                <BrocheCard
-                  key={b.id}
-                  option={b}
-                  selected={selectedBroche?.id === b.id}
-                  onSelect={() => setSelectedBroche(b)}
-                />
-              ))}
+            <p className="text-sm font-semibold text-[#2B1A20] mb-3">1. Elegí el broche</p>
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs font-bold text-[#A58494] uppercase tracking-widest mb-2">Plástico</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {brochesByMaterial.plastico.map((b) => (
+                    <BrocheCard
+                      key={b.id}
+                      option={b}
+                      selected={selectedBroche?.id === b.id}
+                      onSelect={() => setSelectedBroche(b)}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-[#A58494] uppercase tracking-widest mb-2">Madera</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {brochesByMaterial.madera.map((b) => (
+                    <BrocheCard
+                      key={b.id}
+                      option={b}
+                      selected={selectedBroche?.id === b.id}
+                      onSelect={() => setSelectedBroche(b)}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-          <div>
-            <p className="text-xs font-bold text-[#A58494] uppercase tracking-widest mb-2">Madera</p>
-            <div className="grid grid-cols-3 gap-2">
-              {brochesByMaterial.madera.map((b) => (
-                <BrocheCard
-                  key={b.id}
-                  option={b}
-                  selected={selectedBroche?.id === b.id}
-                  onSelect={() => setSelectedBroche(b)}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
 
       {/* ── Nombre ─────────────────────────────────────────────────── */}
       <div>
         <label className="block text-sm font-semibold text-[#2B1A20] mb-2">
-          2. Nombre del bebé
+          {isLlavero ? 'Nombre para el llavero' : '2. Nombre del bebé'}
         </label>
         <input
           type="text"
@@ -331,10 +340,12 @@ export default function PersonalizationForm({ product, preselectedModel = null }
       {/* ── WhatsApp note ────────────────────────────────────────────── */}
       <div className="bg-[#e8f7f0] rounded-2xl p-4 border border-[#C8EFE3]/60">
         <p className="text-sm font-semibold text-[#2d7a5e] mb-1">
-          🤍 El resto lo coordinamos por WhatsApp
+          {isLlavero ? '🔑 El modelo lo coordinamos por WhatsApp' : '🤍 El resto lo coordinamos por WhatsApp'}
         </p>
         <p className="text-xs text-[#4a9a7a] mb-3">
-          Colores de cuentas, cantidad de letras decorativas, disposición... ¡Nos encanta ayudarte a crear algo único!
+          {isLlavero
+            ? 'Una vez que comprés, te contactamos para elegir juntas el modelo del llavero. ¡Hay muchísimas opciones!'
+            : 'Colores de cuentas, cantidad de letras decorativas, disposición... ¡Nos encanta ayudarte a crear algo único!'}
         </p>
         <a
           href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMsg}`}
@@ -383,6 +394,8 @@ export default function PersonalizationForm({ product, preselectedModel = null }
               <ShoppingBag size={18} className="mr-2" />
               {isComplete
                 ? 'Agregar al carrito'
+                : isLlavero
+                ? 'Escribí el nombre para continuar'
                 : !selectedBroche
                 ? 'Elegí un broche para continuar'
                 : 'Escribí el nombre del bebé'}

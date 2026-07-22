@@ -5,7 +5,7 @@ import { Product } from '@/types'
 import ProductCard from '@/components/shop/ProductCard'
 import { Sparkles, Package } from 'lucide-react'
 
-type Category = 'all' | 'portachupete' | 'funda'
+type Category = 'all' | 'portachupete' | 'llavero' | 'funda'
 
 interface Tab {
   id: Category
@@ -27,6 +27,12 @@ const TABS: Tab[] = [
     label: 'Portachupetes',
     icon: <Package size={15} />,
     description: 'El portachupete de letras más personalizable del mercado. Con nombre, broche y colores a tu elección.',
+  },
+  {
+    id: 'llavero',
+    label: 'Llaveros',
+    icon: <span className="text-[13px] leading-none">🔑</span>,
+    description: 'Llaveros personalizados con el nombre que quieras. El modelo se coordina por WhatsApp — ¡un regalo único!',
   },
   {
     id: 'funda',
@@ -102,13 +108,13 @@ export default function ShopClient({ initialProducts, modelParams }: { initialPr
       <div className="max-w-6xl mx-auto px-5 py-10">
 
         {/* Promo banner */}
-        {(activeTab === 'all' || activeTab === 'portachupete') && (
+        {(activeTab === 'all' || activeTab === 'portachupete' || activeTab === 'llavero') && (
           <div className="mb-6 rounded-2xl bg-gradient-to-r from-[#FAE8EC] to-[#FFF0F3] border border-[#EDCCD5]/60 px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <span className="text-xl flex-shrink-0">🏷️</span>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-[#2B1A20]">
-                  20% OFF en portachupetes · 25% OFF si agregás una funda
+                  20% OFF en portachupetes · 25% OFF en combo con funda o llavero
                 </p>
                 <p className="text-xs text-[#A58494] mt-0.5 hidden sm:block">
                   El descuento se aplica automáticamente en el carrito. ¡Armá el combo y ahorrá más!

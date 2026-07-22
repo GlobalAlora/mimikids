@@ -43,7 +43,10 @@ export default async function ShopPage({ searchParams }: Props) {
 
   if (error) console.error('[shop] Supabase error:', error.message)
 
-  const productList = (products ?? []) as Product[]
+  const CATEGORY_ORDER: Record<string, number> = { portachupete: 0, llavero: 1, promo: 2, funda: 3 }
+  const productList = (products ?? []).sort(
+    (a, b) => (CATEGORY_ORDER[a.category] ?? 10) - (CATEGORY_ORDER[b.category] ?? 10)
+  ) as Product[]
 
   const itemListJsonLd = {
     '@context': 'https://schema.org',
