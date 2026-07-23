@@ -149,10 +149,21 @@ export default async function ProductPage({ params, searchParams }: Props) {
     ],
   }
 
-  // Fundas para upsell en portachupetes
-  const fundas = isPortachupete
-    ? (await supabase.from('products').select('id, name, slug, price, images').eq('category', 'funda').eq('is_active', true).limit(3)).data ?? []
-    : []
+  // Fundas + llaveros para upsell en portachupetes
+  const [fundasRes, llaveroUpsellRes] = isPortachupete
+    ? await Promise.all([
+        supabase.from('products').select('id, name, slug, price, images').eq('category', 'funda').eq('is_active', true).limit(2),
+        supabase.from('products').select('id, name, slug, price, images').eq('category', 'llavero').eq('is_active', true).limit(1),
+      ])
+    : [{ data: [] }, { data: [] }]
+  const comboUpsellItems = [...(fundasRes.data ?? []), ...(llaveroUpsellRes.data ?? [])]
+
+  // Portachupetes para upsell en llaveros
+  const isLlavero = p.category === 'llavero'
+  const portaUpsellRes = isLlavero
+    ? await supabase.from('products').select('id, name, slug, price, images').eq('category', 'portachupete').eq('is_active', true).limit(3)
+    : { data: [] }
+  const portaUpsellItems = portaUpsellRes.data ?? []
 
   // Modelo pre-seleccionado si el cliente viene desde /modelos
   const preselectedModel: Model | null =
@@ -168,8 +179,13 @@ export default async function ProductPage({ params, searchParams }: Props) {
       <div className="max-w-6xl mx-auto px-5 py-10 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
 
-          {/* Galería de imágenes */}
-          <ProductGallery images={p.images} name={p.name} badge={p.badge} />
+          {/* Galería + descripción */}
+          <div>
+            <ProductGallery images={p.images} name={p.name} badge={p.badge} />
+            {p.description && (
+              <p className="mt-6 text-[#6D4D5A] leading-relaxed text-sm">{p.description}</p>
+            )}
+          </div>
 
           {/* Info + formulario */}
           <div className="space-y-6">
@@ -194,7 +210,6 @@ export default async function ProductPage({ params, searchParams }: Props) {
                   {formatPrice(p.price)}
                 </p>
               )}
-              <p className="text-[#6D4D5A] leading-relaxed text-sm">{p.description}</p>
             </div>
 
             {/* Trust pills */}
@@ -215,27 +230,54 @@ export default async function ProductPage({ params, searchParams }: Props) {
               </div>
             </div>
 
-            {/* Upsell combo — va ANTES del formulario para ser visible sin scroll */}
-            {isPortachupete && fundas.length > 0 && (
+            {/* Upsell combo portachupete → funda o llavero */}
+            {isPortachupete && comboUpsellItems.length > 0 && (
               <div className="bg-gradient-to-r from-[#FFF0F3] to-[#FFF8F5] rounded-2xl border border-[#EDCCD5]/60">
                 <div className="px-4 py-3 flex items-center gap-2 border-b border-[#EDCCD5]/40">
                   <Gift size={15} className="text-[#C4687D] flex-shrink-0" />
                   <p className="text-sm font-semibold text-[#2B1A20]">¡Armá el combo y ahorrá <span className="text-[#C4687D]">25%</span>!</p>
-                  <p className="text-xs text-[#A58494] ml-auto hidden sm:block">Agregá una funda al carrito</p>
+                  <p className="text-xs text-[#A58494] ml-auto hidden sm:block">Agregá una funda o un llavero</p>
                 </div>
                 <div className="p-3 flex gap-2 overflow-x-auto">
-                  {fundas.map((funda) => (
+                  {comboUpsellItems.map((item) => (
                     <Link
-                      key={funda.id}
-                      href={`/shop/${funda.slug}`}
+                      key={item.id}
+                      href={`/shop/${item.slug}`}
                       className="flex-shrink-0 flex items-center gap-2 bg-white rounded-xl px-3 py-2 border border-[#EDCCD5]/50 hover:border-[#C4687D]/50 transition-colors group min-w-0"
                     >
-                      {funda.images?.[0] && (
-                        <img src={funda.images[0]} alt={funda.name} className="w-9 h-9 object-cover rounded-lg flex-shrink-0" />
+                      {item.images?.[0] && (
+                        <img src={item.images[0]} alt={item.name} className="w-9 h-9 object-cover rounded-lg flex-shrink-0" />
                       )}
                       <div className="min-w-0">
-                        <p className="text-[0.7rem] font-semibold text-[#2B1A20] truncate max-w-[100px] group-hover:text-[#C4687D] transition-colors">{funda.name}</p>
-                        <p className="text-[0.65rem] text-[#A58494]">{formatPrice(funda.price)}</p>
+                        <p className="text-[0.7rem] font-semibold text-[#2B1A20] truncate max-w-[100px] group-hover:text-[#C4687D] transition-colors">{item.name}</p>
+                        <p className="text-[0.65rem] text-[#A58494]">{formatPrice(item.price)}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Upsell llavero → portachupete */}
+            {isLlavero && portaUpsellItems.length > 0 && (
+              <div className="bg-gradient-to-r from-[#FFF0F3] to-[#FFF8F5] rounded-2xl border border-[#EDCCD5]/60">
+                <div className="px-4 py-3 flex items-center gap-2 border-b border-[#EDCCD5]/40">
+                  <Gift size={15} className="text-[#C4687D] flex-shrink-0" />
+                  <p className="text-sm font-semibold text-[#2B1A20]">¡Combinalo con un portachupete y ahorrá <span className="text-[#C4687D]">25%</span>!</p>
+                </div>
+                <div className="p-3 flex gap-2 overflow-x-auto">
+                  {portaUpsellItems.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={`/shop/${item.slug}`}
+                      className="flex-shrink-0 flex items-center gap-2 bg-white rounded-xl px-3 py-2 border border-[#EDCCD5]/50 hover:border-[#C4687D]/50 transition-colors group min-w-0"
+                    >
+                      {item.images?.[0] && (
+                        <img src={item.images[0]} alt={item.name} className="w-9 h-9 object-cover rounded-lg flex-shrink-0" />
+                      )}
+                      <div className="min-w-0">
+                        <p className="text-[0.7rem] font-semibold text-[#2B1A20] truncate max-w-[100px] group-hover:text-[#C4687D] transition-colors">{item.name}</p>
+                        <p className="text-[0.65rem] text-[#A58494]">{formatPrice(item.price)}</p>
                       </div>
                     </Link>
                   ))}

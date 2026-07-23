@@ -44,8 +44,9 @@ export default function CartPage() {
   const couponDiscount = couponAmount()
   const hasPortachupete = items.some(i => i.product.category === 'portachupete')
   const hasFunda = items.some(i => i.product.category === 'funda')
-  const showComboUpsell = hasPortachupete && !hasFunda
-  const showFundaUpsell = hasFunda && !hasPortachupete
+  const hasLlavero = items.some(i => i.product.category === 'llavero')
+  const showComboUpsell = hasPortachupete && !hasFunda && !hasLlavero
+  const showComplementUpsell = (hasFunda || hasLlavero) && !hasPortachupete
 
   if (items.length === 0) {
     return (
@@ -79,8 +80,8 @@ export default function CartPage() {
           {/* Items list */}
           <div className="lg:col-span-2 space-y-4">
 
-            {/* Upsell: solo funda → agregar portachupete */}
-            {showFundaUpsell && (
+            {/* Upsell: funda o llavero sin portachupete */}
+            {showComplementUpsell && (
               <div className="bg-gradient-to-r from-[#FFF0F3] to-[#FFF8F5] border border-[#EDCCD5] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[#C4687D]/15 flex items-center justify-center flex-shrink-0">
                   <Gift size={20} className="text-[#C4687D]" />
@@ -92,7 +93,7 @@ export default function CartPage() {
                   </p>
                 </div>
                 <Link
-                  href="/shop?cat=portachupete"
+                  href="/shop"
                   className="flex-shrink-0 inline-flex items-center gap-1.5 bg-[#C4687D] text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-[#A8546A] transition-colors whitespace-nowrap"
                 >
                   Ver portachupetes <ArrowRight size={12} />
@@ -100,7 +101,7 @@ export default function CartPage() {
               </div>
             )}
 
-            {/* Combo upsell: portachupete sin funda */}
+            {/* Combo upsell: portachupete sin funda ni llavero */}
             {showComboUpsell && (
               <div className="bg-gradient-to-r from-[#FFF0F3] to-[#FFF8F5] border border-[#EDCCD5] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[#C4687D]/15 flex items-center justify-center flex-shrink-0">
@@ -109,14 +110,14 @@ export default function CartPage() {
                 <div className="flex-1">
                   <p className="text-sm font-bold text-[#2B1A20]">¡Armá el combo y ahorrá 25%!</p>
                   <p className="text-xs text-[#6D4D5A] mt-0.5">
-                    Tenés 20% de desc. en portachupetes. Agregá una funda y el descuento sube al <strong>25% en todo el pedido</strong>.
+                    Tenés 20% de desc. en portachupetes. Agregá una funda o un llavero y el descuento sube al <strong>25% en todo el pedido</strong>.
                   </p>
                 </div>
                 <Link
                   href="/shop"
                   className="flex-shrink-0 inline-flex items-center gap-1.5 bg-[#C4687D] text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-[#A8546A] transition-colors whitespace-nowrap"
                 >
-                  Ver fundas <ArrowRight size={12} />
+                  Ver tienda <ArrowRight size={12} />
                 </Link>
               </div>
             )}
