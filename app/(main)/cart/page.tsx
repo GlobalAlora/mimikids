@@ -321,7 +321,7 @@ export default function CartPage() {
                   <div className="flex justify-between items-start text-green-600 font-medium">
                     <span className="flex items-center gap-1">
                       <Tag size={12} />
-                      {discountInfo.type === 'combo' ? 'Descuento combo (25%)' : 'Desc. portachupetes (20%)'}
+                      {discountInfo.type === 'combo' ? 'Descuento combo (25%)' : discountInfo.type === 'llavero' ? 'Desc. llaveros (20%)' : 'Desc. portachupetes (20%)'}
                     </span>
                     <span>-{formatPrice(discountInfo.amount)}</span>
                   </div>

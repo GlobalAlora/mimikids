@@ -193,7 +193,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
               <h1 className="font-playfair text-[2rem] md:text-[2.5rem] font-bold text-[#2B1A20] leading-[1.15] mb-3">
                 {p.name}
               </h1>
-              {isPortachupete ? (
+              {(isPortachupete || isLlavero) ? (
                 <div className="flex items-baseline gap-3 mb-4">
                   <p className="font-playfair text-2xl font-bold text-[#C4687D]">
                     {formatPrice(Math.round(p.price * (1 - PORTACHUPETE_DISCOUNT_PCT)))}
