@@ -39,6 +39,16 @@ interface Order {
   created_at: string
 }
 
+function inferDiscountLabel(subtotal: number, discountAmount: number): string {
+  if (subtotal <= 0) return 'Descuento aplicado'
+  const pct = discountAmount / subtotal
+  if (Math.abs(pct - 0.20) < 0.015) return 'Descuento 20% (portachupetes o llaveros)'
+  if (Math.abs(pct - 0.25) < 0.015) return 'Descuento combo (25%)'
+  if (Math.abs(pct - 0.28) < 0.02)  return 'Descuento 20% + Cupón BIENVENIDA10 (10%)'
+  if (Math.abs(pct - 0.325) < 0.02) return 'Descuento combo 25% + Cupón BIENVENIDA10 (10%)'
+  return `Descuento aplicado (${Math.round(pct * 100)}%)`
+}
+
 export default function OrdersClient({ initialOrders }: { initialOrders: Order[] }) {
   const [orders, setOrders] = useState<Order[]>(initialOrders)
   const [expandedId, setExpandedId] = useState<string | null>(null)
@@ -225,7 +235,7 @@ export default function OrdersClient({ initialOrders }: { initialOrders: Order[]
                                 </div>
                                 <div className="flex justify-between text-xs text-green-700 font-medium">
                                   <span>
-                                    {order.discount_label ? order.discount_label : 'Descuento aplicado'}
+                                    {order.discount_label || inferDiscountLabel(subtotal, effectiveDiscount)}
                                   </span>
                                   <span>-{formatPrice(effectiveDiscount)}</span>
                                 </div>
