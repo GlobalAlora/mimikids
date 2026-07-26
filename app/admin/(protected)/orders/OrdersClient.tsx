@@ -27,8 +27,11 @@ interface Order {
   buyer: { name: string; email: string; phone: string }
   total: number
   subtotal?: number
+  shipping_cost?: number
   discount_amount?: number
   discount_label?: string
+  coupon_code?: string
+  coupon_discount?: number
   status: string
   payment_method: string
   items: OrderItem[]
@@ -202,10 +205,44 @@ export default function OrdersClient({ initialOrders }: { initialOrders: Order[]
                         <div className="mt-3 space-y-1">
                           <p className="text-xs text-gray-500">Envío: {order.shipping_method?.name} ({formatPrice(order.shipping_method?.price || 0)})</p>
                           <p className="text-xs text-gray-500">Pago: Transferencia bancaria</p>
-                          {order.discount_amount ? (
-                            <p className="text-xs text-green-600 font-medium">Descuento: -{formatPrice(order.discount_amount)} ({order.discount_label})</p>
-                          ) : null}
                         </div>
+                        {(() => {
+                          const subtotal = order.subtotal || 0
+                          const shipping = order.shipping_method?.price || 0
+                          const total = order.total || 0
+                          const storedDiscount = order.discount_amount || 0
+                          const effectiveDiscount = storedDiscount > 0
+                            ? storedDiscount
+                            : Math.max(0, subtotal + shipping - total)
+                          if (effectiveDiscount <= 0 || subtotal <= 0) return null
+                          return (
+                            <div className="mt-3 p-3 bg-green-50 rounded-xl border border-green-100">
+                              <p className="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-wider mb-2">Desglose del precio</p>
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-xs text-gray-500">
+                                  <span>Subtotal</span>
+                                  <span>{formatPrice(subtotal)}</span>
+                                </div>
+                                <div className="flex justify-between text-xs text-green-700 font-medium">
+                                  <span>
+                                    {order.discount_label ? order.discount_label : 'Descuento aplicado'}
+                                  </span>
+                                  <span>-{formatPrice(effectiveDiscount)}</span>
+                                </div>
+                                {shipping > 0 && (
+                                  <div className="flex justify-between text-xs text-gray-500">
+                                    <span>Envío</span>
+                                    <span>+{formatPrice(shipping)}</span>
+                                  </div>
+                                )}
+                                <div className="flex justify-between text-xs font-bold text-gray-700 pt-1 border-t border-green-200 mt-1">
+                                  <span>Total pagado</span>
+                                  <span>{formatPrice(total)}</span>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })()}
                       </div>
 
                       <div>

@@ -14,6 +14,10 @@ export async function POST(req: NextRequest) {
       subtotal,
       shipping_cost,
       total,
+      discount_amount,
+      discount_label,
+      coupon_code,
+      coupon_discount,
     } = body
 
     const orderItems = items.map((item: {
@@ -47,6 +51,10 @@ export async function POST(req: NextRequest) {
           subtotal,
           shipping_cost,
           total,
+          discount_amount: discount_amount || null,
+          discount_label: discount_label || null,
+          coupon_code: coupon_code || null,
+          coupon_discount: coupon_discount || null,
         })
         .select('id')
         .single()
