@@ -1,9 +1,5 @@
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  alternates: { canonical: 'https://mimikids.com.ar' },
-}
-
 import Hero from '@/components/home/Hero'
 import WhyMimikids from '@/components/home/WhyMimikids'
 import HomeShopSection from '@/components/home/HomeShopSection'
@@ -21,8 +17,11 @@ const DDN_DATE = new Date('2026-08-10T00:00:00-03:00')
 export function generateMetadata(): Metadata {
   const isDdN = new Date() < DDN_DATE
 
+  const canonical = { alternates: { canonical: 'https://mimikids.com.ar' } }
+
   if (isDdN) {
     return {
+      ...canonical,
       title: 'Regalo Día del Niño para Bebés · Portachupetes Personalizados · Mimikids',
       description: 'El mejor regalo para el Día del Niño: portachupetes artesanales personalizados con el nombre de tu bebé. 20% OFF · Pedí antes del 5/8 y recibís a tiempo · Envíos a toda Argentina.',
       keywords: [
@@ -41,7 +40,7 @@ export function generateMetadata(): Metadata {
     }
   }
 
-  return {}
+  return canonical
 }
 
 export default function HomePage() {
