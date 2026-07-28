@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: 'Política de Cookies | Mimikids',
   description: 'Información sobre el uso de cookies en el sitio web de Mimikids.',
   robots: { index: true, follow: true },
+  alternates: { canonical: 'https://mimikids.com.ar/politica-de-cookies' },
 }
 
 export default function PoliticaCookies() {

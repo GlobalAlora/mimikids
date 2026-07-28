@@ -1,4 +1,9 @@
 import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  alternates: { canonical: 'https://mimikids.com.ar' },
+}
+
 import Hero from '@/components/home/Hero'
 import WhyMimikids from '@/components/home/WhyMimikids'
 import HomeShopSection from '@/components/home/HomeShopSection'

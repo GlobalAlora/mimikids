@@ -24,30 +24,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   return [
-    {
-      url: siteUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1,
-    },
-    {
-      url: `${siteUrl}/shop`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${siteUrl}/modelos`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${siteUrl}/guia`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
+    { url: siteUrl,                                    lastModified: new Date(), changeFrequency: 'daily',   priority: 1   },
+    { url: `${siteUrl}/shop`,                          lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
+    { url: `${siteUrl}/modelos`,                       lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.8 },
+    { url: `${siteUrl}/guia`,                          lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${siteUrl}/politica-devoluciones`,         lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
+    { url: `${siteUrl}/politica-de-privacidad`,        lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
+    { url: `${siteUrl}/politica-de-cookies`,           lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
     ...productRoutes,
   ]
 }

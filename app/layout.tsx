@@ -43,7 +43,6 @@ export const metadata: Metadata = {
   authors: [{ name: 'Mimikids', url: siteUrl }],
   creator: 'Mimikids',
   publisher: 'Mimikids',
-  alternates: { canonical: siteUrl },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
   },
