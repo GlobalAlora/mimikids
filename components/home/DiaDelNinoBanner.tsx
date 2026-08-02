@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { X, Gift } from 'lucide-react'
 
-const EVENT_DATE     = new Date('2026-08-10T00:00:00-03:00')
-const ORDER_DEADLINE = new Date('2026-08-05T23:59:59-03:00')
+const EVENT_DATE     = new Date('2026-08-16T00:00:00-03:00')
+const ORDER_DEADLINE = new Date('2026-08-10T23:59:59-03:00')
 const DISMISS_KEY    = 'mk_ddn26_dismissed'
 
 export default function DiaDelNinoBanner() {
@@ -41,13 +41,13 @@ export default function DiaDelNinoBanner() {
         <Gift size={14} className="text-[#f0b8c8] flex-shrink-0" />
 
         <span className="text-center leading-snug">
-          <strong className="text-[#f0b8c8]">🎁 Día del Niño · 10 de agosto</strong>
+          <strong className="text-[#f0b8c8]">🎁 Día del Niño · 16 de agosto</strong>
           {daysLeft > 0 && (
             <span className="text-white/60 mx-1">· Quedan <strong className="text-white">{daysLeft} días</strong></span>
           )}
           {!orderDeadlinePassed ? (
             <span className="text-white/75 mx-1">
-              · Pedí antes del <strong className="text-[#f0b8c8]">5/8</strong> para recibirlo a tiempo
+              · Pedí antes del <strong className="text-[#f0b8c8]">10/8</strong> para recibirlo a tiempo
             </span>
           ) : (
             <span className="text-white/75 mx-1">· ¡Último momento! Consultá disponibilidad</span>
