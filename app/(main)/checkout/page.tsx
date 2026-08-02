@@ -8,7 +8,7 @@ import { calcDiscount, COUPON_STORAGE_KEY } from '@/lib/discounts'
 import { PROVINCES } from '@/lib/data'
 import Button from '@/components/ui/Button'
 import Link from 'next/link'
-import { Building2, ShieldCheck, ArrowLeft } from 'lucide-react'
+import { Building2, ShieldCheck, ArrowLeft, CreditCard } from 'lucide-react'
 import type { BuyerInfo, ShippingAddress, PaymentMethod } from '@/types'
 
 const INPUT_CLS =
@@ -21,7 +21,7 @@ export default function CheckoutPage() {
   const router = useRouter()
   const { items, shippingMethod, total, clearCart, coupon, couponAmount } = useCartStore()
 
-  const [paymentMethod] = useState<PaymentMethod>('transferencia')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('mercadopago')
   const [loading, setLoading] = useState(false)
 
   const [buyer, setBuyer] = useState<BuyerInfo>({
@@ -91,8 +91,9 @@ export default function CheckoutPage() {
     setLoading(true)
 
     try {
+      const orderNumber = generateOrderNumber()
       const orderData = {
-        order_number: generateOrderNumber(),
+        order_number: orderNumber,
         items,
         buyer,
         shipping_address: address,
@@ -114,12 +115,30 @@ export default function CheckoutPage() {
       })
 
       const data = await res.json()
-
       if (!data.success) throw new Error(data.error || 'Error al crear el pedido')
 
-      // Marcar cupón como usado — nunca más disponible en este navegador
       if (coupon) localStorage.setItem(COUPON_STORAGE_KEY, '1')
 
+      if (paymentMethod === 'mercadopago') {
+        const mpRes = await fetch('/api/checkout/mercadopago', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            order_id: data.order_id,
+            order_number: data.order_number,
+            items,
+            buyer,
+            shipping_method: shippingMethod,
+          }),
+        })
+        const mpData = await mpRes.json()
+        if (!mpData.success || !mpData.init_point) throw new Error(mpData.error || 'Error al conectar con MercadoPago')
+        clearCart()
+        window.location.href = mpData.init_point
+        return
+      }
+
+      // Transferencia
       clearCart()
       router.push(`/order/${data.order_id}?method=transferencia&order_number=${data.order_number}`)
     } catch (err) {
@@ -289,14 +308,50 @@ export default function CheckoutPage() {
                 <h2 className="font-playfair font-bold text-[#2B1A20] mb-5">
                   Método de pago
                 </h2>
-                <div className="flex items-center gap-4 p-4 rounded-xl border-2 border-[#C4687D] bg-[#C4687D]/5">
-                  <Building2 size={20} className="text-[#4caf50] flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-sm text-[#2B1A20]">Transferencia bancaria</p>
-                    <p className="text-xs text-[#A58494]">
-                      Te enviamos los datos por email. Producción inicia al confirmar el pago.
-                    </p>
-                  </div>
+                <div className="space-y-3">
+                  {/* MercadoPago */}
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('mercadopago')}
+                    className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-colors text-left ${
+                      paymentMethod === 'mercadopago'
+                        ? 'border-[#009EE3] bg-[#009EE3]/5'
+                        : 'border-[#EDCCD5]/50 hover:border-[#EDCCD5]'
+                    }`}
+                  >
+                    <CreditCard size={20} className="text-[#009EE3] flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-sm text-[#2B1A20]">MercadoPago</p>
+                      <p className="text-xs text-[#A58494]">
+                        Tarjeta de crédito, débito, cuotas sin interés
+                      </p>
+                    </div>
+                    {paymentMethod === 'mercadopago' && (
+                      <span className="ml-auto w-4 h-4 rounded-full bg-[#009EE3] flex-shrink-0" />
+                    )}
+                  </button>
+
+                  {/* Transferencia */}
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('transferencia')}
+                    className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-colors text-left ${
+                      paymentMethod === 'transferencia'
+                        ? 'border-[#C4687D] bg-[#C4687D]/5'
+                        : 'border-[#EDCCD5]/50 hover:border-[#EDCCD5]'
+                    }`}
+                  >
+                    <Building2 size={20} className="text-[#4caf50] flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-sm text-[#2B1A20]">Transferencia bancaria</p>
+                      <p className="text-xs text-[#A58494]">
+                        Producción inicia al confirmar el pago
+                      </p>
+                    </div>
+                    {paymentMethod === 'transferencia' && (
+                      <span className="ml-auto w-4 h-4 rounded-full bg-[#C4687D] flex-shrink-0" />
+                    )}
+                  </button>
                 </div>
               </div>
             </div>
@@ -373,7 +428,11 @@ export default function CheckoutPage() {
                   className="w-full mt-5"
                   disabled={!isFormValid || loading}
                 >
-                  {loading ? 'Procesando...' : 'Confirmar pedido'}
+                  {loading
+                    ? 'Procesando...'
+                    : paymentMethod === 'mercadopago'
+                      ? 'Ir a MercadoPago'
+                      : 'Confirmar pedido'}
                 </Button>
 
                 <div className="flex items-center gap-2 justify-center mt-3">

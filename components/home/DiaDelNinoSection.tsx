@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
-const DDN_DATE = new Date('2026-08-10T00:00:00-03:00')
+const DDN_DATE = new Date('2026-08-16T00:00:00-03:00')
 
 export default function DiaDelNinoSection() {
   if (new Date() >= DDN_DATE) return null
@@ -14,7 +14,7 @@ export default function DiaDelNinoSection() {
       <div className="max-w-6xl mx-auto px-5">
 
         <div className="text-center mb-10">
-          <p className="label-caps text-[#C4687D] mb-3">🎁 Regalo Día del Niño · 10 de agosto</p>
+          <p className="label-caps text-[#C4687D] mb-3">🎁 Regalo Día del Niño · 16 de agosto</p>
           <h2
             id="ddn-heading"
             className="font-playfair text-[1.875rem] md:text-[2.5rem] font-bold text-[#2B1A20] leading-tight mb-4"
@@ -45,7 +45,7 @@ export default function DiaDelNinoSection() {
             {
               icon: '🚚',
               title: 'Lo recibís a tiempo',
-              desc: 'Producción en 1-2 días hábiles + envío a todo Argentina. Pedí antes del 5/8.',
+              desc: 'Producción en 1-2 días hábiles + envío a todo Argentina. Pedí antes del 10/8.',
             },
           ].map((item) => (
             <div
@@ -69,7 +69,7 @@ export default function DiaDelNinoSection() {
             <ArrowRight size={15} />
           </Link>
           <p className="text-xs text-[#A58494]">
-            ⏳ Pedí antes del <strong className="text-[#6D4D5A]">5 de agosto</strong> para recibirlo a tiempo para el Día del Niño
+            ⏳ Pedí antes del <strong className="text-[#6D4D5A]">10 de agosto</strong> para recibirlo a tiempo para el Día del Niño
           </p>
         </div>
 

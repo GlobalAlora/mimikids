@@ -19,7 +19,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  serverExternalPackages: ['resend', 'svix', 'standardwebhooks'],
+  serverExternalPackages: ['resend', 'svix', 'standardwebhooks', 'mercadopago'],
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },

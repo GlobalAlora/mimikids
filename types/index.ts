@@ -62,7 +62,7 @@ export type OrderStatus =
   | 'entregado'
   | 'cancelado'
 
-export type PaymentMethod = 'transferencia'
+export type PaymentMethod = 'transferencia' | 'mercadopago'
 
 export interface Order {
   id: string
