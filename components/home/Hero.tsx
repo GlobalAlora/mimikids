@@ -31,7 +31,7 @@ export default function Hero() {
 
   const isDdN = typeof window === 'undefined'
     ? true
-    : Date.now() < new Date('2026-08-10T00:00:00-03:00').getTime()
+    : Date.now() < new Date('2026-08-16T00:00:00-03:00').getTime()
 
   return (
     <section className="relative bg-[#FFFAF7] overflow-hidden">
@@ -42,7 +42,7 @@ export default function Hero() {
           {isDdN ? (
             <div className="inline-flex items-center gap-2 mb-5">
               <span className="text-lg">🎁</span>
-              <span className="label-caps text-[#C4687D]">Día del Niño · 10 de agosto</span>
+              <span className="label-caps text-[#C4687D]">Día del Niño · 16 de agosto</span>
             </div>
           ) : (
             <p className="label-caps mb-5">Artesanal · 100% personalizado · Argentina</p>
@@ -94,7 +94,7 @@ export default function Hero() {
 
           {isDdN && (
             <p className="text-xs text-[#A58494] mb-6">
-              ⏳ Pedí antes del <strong className="text-[#6D4D5A]">5 de agosto</strong> para recibirlo a tiempo
+              ⏳ Pedí antes del <strong className="text-[#6D4D5A]">10 de agosto</strong> para recibirlo a tiempo
             </p>
           )}
 
