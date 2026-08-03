@@ -18,12 +18,56 @@ async function getTransferSettings() {
   }
 }
 
+async function confirmMercadoPagoOrder(orderId: string) {
+  try {
+    const supabase = createServerClient()
+
+    // Sólo actualizamos si todavía está pendiente (evita email duplicado en reloads)
+    const { data: order } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', orderId)
+      .single()
+
+    if (!order || order.payment_status === 'confirmado') return
+
+    await supabase
+      .from('orders')
+      .update({ payment_status: 'confirmado', status: 'pago_confirmado' })
+      .eq('id', orderId)
+
+    // Enviar emails al comprador y a la tienda
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
+    await fetch(`${appUrl}/api/orders/notify-mercadopago`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        order_number: order.order_number,
+        buyer: order.buyer,
+        items: order.items,
+        shipping_method: order.shipping_method,
+        shipping_address: order.shipping_address,
+        subtotal: order.subtotal,
+        shipping_cost: order.shipping_cost,
+        total: order.total,
+      }),
+    }).catch(() => {})
+  } catch {
+    // silencioso — el webhook también actualiza
+  }
+}
+
 export default async function OrderConfirmationPage({ params, searchParams }: Props) {
   const { id } = await params
   const { order_number, method, status } = await searchParams
 
   const isMercadoPago = method === 'mercadopago'
   const mpStatus = status // 'success' | 'failure' | 'pending'
+
+  // Pago aprobado por MP → confirmamos el pedido inmediatamente
+  if (isMercadoPago && mpStatus === 'success') {
+    await confirmMercadoPagoOrder(id)
+  }
 
   const settings = isMercadoPago ? {} : await getTransferSettings()
   const cbu = settings.transfer_cbu || '—'
