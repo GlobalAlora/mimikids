@@ -65,6 +65,20 @@ export async function POST(req: NextRequest) {
       orderId = `mock-${Date.now()}`
     }
 
+    // Marcar carrito abandonado como recuperado en cuanto se crea el pedido
+    // (evita que el cron envíe email de carrito abandonado aunque el pago quede pendiente)
+    if (buyer?.email) {
+      try {
+        const supabase = createServerClient()
+        await supabase
+          .from('abandoned_carts')
+          .update({ recovery_sent: true })
+          .eq('email', buyer.email)
+      } catch {
+        // No crítico
+      }
+    }
+
     if (payment_method === 'transferencia') {
       try {
         await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/orders/notify-transfer`, {
