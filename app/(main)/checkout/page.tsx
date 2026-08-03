@@ -44,6 +44,14 @@ export default function CheckoutPage() {
   const discountInfo = calcDiscount(items)
   const couponDiscount = couponAmount()
 
+  // MercadoPago cobra comisión, los descuentos solo aplican con transferencia
+  const isMp = paymentMethod === 'mercadopago'
+  const effectiveDiscount = isMp ? 0 : discountInfo.amount
+  const effectiveCoupon = isMp ? 0 : couponDiscount
+  const effectiveTotal = isMp
+    ? subtotal + (shippingMethod?.price ?? 0)
+    : total()
+
   function updateBuyer(field: keyof BuyerInfo, value: string) {
     setBuyer((prev) => ({ ...prev, [field]: value }))
   }
@@ -100,12 +108,12 @@ export default function CheckoutPage() {
         shipping_method: shippingMethod,
         payment_method: paymentMethod,
         subtotal,
-        discount_amount: discountInfo.amount + couponDiscount,
-        discount_label: [discountInfo.label, coupon ? `Cupón ${coupon} (10%)` : null].filter(Boolean).join(' + ') || null,
-        coupon_code: coupon ?? null,
-        coupon_discount: couponDiscount,
+        discount_amount: effectiveDiscount + effectiveCoupon,
+        discount_label: isMp ? null : [discountInfo.label, coupon ? `Cupón ${coupon} (10%)` : null].filter(Boolean).join(' + ') || null,
+        coupon_code: isMp ? null : (coupon ?? null),
+        coupon_discount: effectiveCoupon,
         shipping_cost: shippingMethod.price,
-        total: total(),
+        total: effectiveTotal,
       }
 
       const res = await fetch('/api/orders', {
@@ -324,6 +332,9 @@ export default function CheckoutPage() {
                       <p className="font-semibold text-sm text-[#2B1A20]">MercadoPago</p>
                       <p className="text-xs text-[#A58494]">
                         Tarjeta de crédito, débito, cuotas sin interés
+                        {(discountInfo.amount > 0 || couponDiscount > 0) && (
+                          <span className="text-amber-600"> · Sin descuento</span>
+                        )}
                       </p>
                     </div>
                     {paymentMethod === 'mercadopago' && (
@@ -346,6 +357,9 @@ export default function CheckoutPage() {
                       <p className="font-semibold text-sm text-[#2B1A20]">Transferencia bancaria</p>
                       <p className="text-xs text-[#A58494]">
                         Producción inicia al confirmar el pago
+                        {(discountInfo.amount > 0 || couponDiscount > 0) && (
+                          <span className="text-green-600"> · Descuento aplicado</span>
+                        )}
                       </p>
                     </div>
                     {paymentMethod === 'transferencia' && (
@@ -392,17 +406,22 @@ export default function CheckoutPage() {
                     <span>Subtotal</span>
                     <span>{formatPrice(subtotal)}</span>
                   </div>
-                  {discountInfo.amount > 0 && (
+                  {!isMp && effectiveDiscount > 0 && (
                     <div className="flex justify-between text-green-600 font-medium">
                       <span>{discountInfo.type === 'combo' ? '🎁 Combo (25% off)' : '🏷️ Portachupetes (20% off)'}</span>
-                      <span>-{formatPrice(discountInfo.amount)}</span>
+                      <span>-{formatPrice(effectiveDiscount)}</span>
                     </div>
                   )}
-                  {couponDiscount > 0 && (
+                  {!isMp && effectiveCoupon > 0 && (
                     <div className="flex justify-between text-green-600 font-medium">
                       <span>🎟️ Cupón {coupon} (10% off)</span>
-                      <span>-{formatPrice(couponDiscount)}</span>
+                      <span>-{formatPrice(effectiveCoupon)}</span>
                     </div>
+                  )}
+                  {isMp && (discountInfo.amount > 0 || couponDiscount > 0) && (
+                    <p className="text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2">
+                      Los descuentos aplican solo con transferencia bancaria
+                    </p>
                   )}
                   <div className="flex justify-between text-[#A58494]">
                     <span>Envío</span>
@@ -417,7 +436,7 @@ export default function CheckoutPage() {
                   <div className="flex justify-between font-bold text-[#2B1A20] pt-1 border-t border-[#EDCCD5]/40">
                     <span>Total</span>
                     <span className="text-[#C4687D] font-playfair text-lg">
-                      {formatPrice(total())}
+                      {formatPrice(effectiveTotal)}
                     </span>
                   </div>
                 </div>
