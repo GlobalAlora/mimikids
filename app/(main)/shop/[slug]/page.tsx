@@ -286,7 +286,21 @@ export default async function ProductPage({ params, searchParams }: Props) {
             )}
 
             <div className="bg-white rounded-2xl p-6 border border-[#EDCCD5]/40 shadow-[0_2px_16px_rgba(43,26,32,0.05)]">
-              {isFunda ? (
+              {p.stock != null && p.stock === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-2xl mb-3">😔</p>
+                  <p className="font-semibold text-[#2B1A20] mb-1">Sin stock disponible</p>
+                  <p className="text-sm text-[#A58494] mb-4">Este producto no tiene unidades disponibles por el momento.</p>
+                  <a
+                    href="https://wa.me/543388673629?text=Hola!%20Me%20interesa%20este%20producto%20pero%20no%20tiene%20stock.%20%C2%BFPuedo%20hacer%20una%20reserva%3F"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-[#25D366] text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-[#20b858] transition-colors"
+                  >
+                    Consultar disponibilidad
+                  </a>
+                </div>
+              ) : isFunda ? (
                 <>
                   <h2 className="font-playfair text-lg font-bold text-[#2B1A20] mb-5">
                     Agregar al carrito
