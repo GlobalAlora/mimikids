@@ -21,12 +21,13 @@ const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const supabase = createServerClient()
-  const { data } = await supabase.from('products').select('name, description, price, images, category').eq('slug', slug).single()
+  const { data } = await supabase.from('products').select('name, description, price, images, category, meta_title, meta_description').eq('slug', slug).single()
   if (!data) return {}
 
   const isPortachupete = data.category === 'portachupete' || slug.includes('portachupete')
   const priceDesc = isPortachupete ? ` con 20% OFF` : ''
-  const description = data.description || `Comprá ${data.name}${priceDesc}. Artesanal, personalizado con el nombre de tu bebé. Envíos a todo Argentina.`
+  const autoDescription = `Comprá ${data.name}${priceDesc}. Artesanal, personalizado con el nombre de tu bebé. Envíos a todo Argentina.`
+  const description = data.meta_description || data.description || autoDescription
   const canonicalUrl = `${SITE_URL}/shop/${slug}`
   const ogImage = data.images?.[0] ?? `${SITE_URL}/mimikids.jpg`
 
@@ -36,7 +37,8 @@ export async function generateMetadata({ params }: Props) {
     llavero: 'Llavero Personalizado',
     promo: 'Combo Portachupete + Funda',
   }
-  const pageTitle = `${data.name} — ${catLabel[data.category] ?? 'Accesorio Artesanal'} | Mimikids`
+  const autoTitle = `${data.name} — ${catLabel[data.category] ?? 'Accesorio Artesanal'} | Mimikids`
+  const pageTitle = data.meta_title || autoTitle
 
   return {
     title: { absolute: pageTitle },
