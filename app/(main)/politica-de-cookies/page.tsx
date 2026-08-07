@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Política de Cookies | Mimikids',
+  title: { absolute: 'Política de Cookies | Mimikids' },
   description: 'Información sobre el uso de cookies en el sitio web de Mimikids.',
   robots: { index: true, follow: true },
   alternates: { canonical: 'https://mimikids.com.ar/politica-de-cookies' },
