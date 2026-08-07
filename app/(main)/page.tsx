@@ -22,7 +22,7 @@ export function generateMetadata(): Metadata {
   if (isDdN) {
     return {
       ...canonical,
-      title: 'Regalo Día del Niño para Bebés · Portachupetes Personalizados · Mimikids',
+      title: { absolute: 'Regalo Día del Niño para Bebés — Portachupetes Personalizados | Mimikids' },
       description: 'El mejor regalo para el Día del Niño: portachupetes artesanales personalizados con el nombre de tu bebé. 20% OFF · Pedí antes del 10/8 y recibís a tiempo · Envíos a toda Argentina.',
       keywords: [
         'regalo día del niño bebé',
@@ -33,7 +33,7 @@ export function generateMetadata(): Metadata {
         'portachupete artesanal argentina',
       ],
       openGraph: {
-        title: 'Regalo Día del Niño · Portachupetes Personalizados con el nombre de tu bebé · Mimikids',
+        title: 'Regalo Día del Niño — Portachupetes Personalizados con el nombre de tu bebé | Mimikids',
         description: 'Portachupetes artesanales personalizados con 20% OFF para el Día del Niño. Pedí antes del 10/8 y recibís a tiempo. Envíos a toda Argentina.',
         type: 'website',
       },
