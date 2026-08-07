@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
 
 export const metadata = {
-  title: 'Modelos de Portachupetes · Inspirate · Mimikids',
+  title: { absolute: 'Modelos de Portachupetes Personalizados — Inspirate | Mimikids' },
   description: 'Explorá todos los modelos y combinaciones de colores disponibles. Elegí el diseño de portachupete que más te guste y lo personalizamos con el nombre de tu bebé.',
   keywords: [
     'modelos portachupete',
@@ -18,7 +18,7 @@ export const metadata = {
   ],
   alternates: { canonical: `${SITE_URL}/modelos` },
   openGraph: {
-    title: 'Modelos de Portachupetes · Mimikids',
+    title: 'Modelos de Portachupetes Personalizados | Mimikids',
     description: 'Explorá combinaciones y elegí el diseño perfecto. Personalizamos con el nombre de tu bebé.',
     url: `${SITE_URL}/modelos`,
     images: [{ url: `${SITE_URL}/mimikids.jpg`, width: 1080, height: 1080, alt: 'Modelos Mimikids' }],
