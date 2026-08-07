@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
 
 export const metadata: Metadata = {
-  title: 'Tienda de Portachupetes Personalizados · Mimikids',
+  title: { absolute: 'Comprar Portachupetes Personalizados con Nombre | Mimikids' },
   description: 'Comprá portachupetes personalizados con el nombre de tu bebé. Letras en silicona o madera, 100% artesanales, con 20% OFF. Envíos a todo Argentina.',
   keywords: [
     'portachupete personalizado',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: `${SITE_URL}/shop` },
   openGraph: {
-    title: 'Tienda · Portachupetes Personalizados · Mimikids',
+    title: 'Comprar Portachupetes Personalizados con Nombre | Mimikids',
     description: 'Portachupetes artesanales personalizados con el nombre de tu bebé. 20% OFF. Envíos a todo Argentina.',
     url: `${SITE_URL}/shop`,
     images: [{ url: `${SITE_URL}/mimikids.jpg`, width: 1080, height: 1080, alt: 'Tienda Mimikids' }],
