@@ -30,12 +30,20 @@ export async function generateMetadata({ params }: Props) {
   const canonicalUrl = `${SITE_URL}/shop/${slug}`
   const ogImage = data.images?.[0] ?? `${SITE_URL}/mimikids.jpg`
 
+  const catLabel: Record<string, string> = {
+    portachupete: 'Portachupete Personalizado con Nombre',
+    funda: 'Funda Guardachupete Artesanal',
+    llavero: 'Llavero Personalizado',
+    promo: 'Combo Portachupete + Funda',
+  }
+  const pageTitle = `${data.name} — ${catLabel[data.category] ?? 'Accesorio Artesanal'} | Mimikids`
+
   return {
-    title: `${data.name} · Mimikids`,
+    title: { absolute: pageTitle },
     description,
     alternates: { canonical: canonicalUrl },
     openGraph: {
-      title: `${data.name} · Portachupete personalizado · Mimikids`,
+      title: pageTitle,
       description,
       url: canonicalUrl,
       type: 'website',
@@ -43,7 +51,7 @@ export async function generateMetadata({ params }: Props) {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${data.name} · Mimikids`,
+      title: pageTitle,
       description,
       images: [ogImage],
     },
