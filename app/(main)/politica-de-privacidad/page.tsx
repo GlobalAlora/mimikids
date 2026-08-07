@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Política de Privacidad | Mimikids',
+  title: { absolute: 'Política de Privacidad | Mimikids' },
   description: 'Política de privacidad y protección de datos personales de Mimikids.',
   robots: { index: true, follow: true },
   alternates: { canonical: 'https://mimikids.com.ar/politica-de-privacidad' },
