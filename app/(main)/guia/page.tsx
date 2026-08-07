@@ -5,7 +5,7 @@ import { ChevronRight, Shield, Clock, Truck, Heart } from 'lucide-react'
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
 
 export const metadata: Metadata = {
-  title: 'Guía de Portachupetes Personalizados · Materiales, Cuidados y Más · Mimikids',
+  title: { absolute: 'Guía de Portachupetes Personalizados: Materiales, Cuidados y Cómo Elegir | Mimikids' },
   description: 'Todo lo que necesitás saber sobre portachupetes personalizados: materiales seguros para bebés, cómo elegir el diseño, cómo cuidarlos y cómo hacer tu pedido. Guía completa de Mimikids.',
   keywords: [
     'guía portachupete personalizado',
