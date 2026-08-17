@@ -99,10 +99,11 @@ export async function GET(_req: NextRequest) {
 
   // Filter out emails that completed an order after the cart was saved
   const emails = carts.map((c) => c.email)
+  // Exclude any non-cancelled order in the last 7 days — including pendiente_pago
   const { data: completedOrders } = await supabase
     .from('orders')
     .select('buyer')
-    .in('status', ['pago_confirmado', 'en_produccion', 'enviado', 'entregado'])
+    .neq('status', 'cancelado')
     .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
 
   const completedEmails = new Set(
