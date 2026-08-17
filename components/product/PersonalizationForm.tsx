@@ -176,9 +176,10 @@ function BrocheCard({
 interface PersonalizationFormProps {
   product: Product
   preselectedModel?: Model | null
+  effectivePrice?: number
 }
 
-export default function PersonalizationForm({ product, preselectedModel = null }: PersonalizationFormProps) {
+export default function PersonalizationForm({ product, preselectedModel = null, effectivePrice }: PersonalizationFormProps) {
   const router = useRouter()
   const addItem = useCartStore((s) => s.addItem)
 
@@ -379,7 +380,7 @@ export default function PersonalizationForm({ product, preselectedModel = null }
             </button>
           </div>
           <p className="font-playfair text-2xl font-bold text-[#C4687D]">
-            {formatPrice(product.price * quantity)}
+            {formatPrice((effectivePrice ?? product.price) * quantity)}
           </p>
         </div>
 
