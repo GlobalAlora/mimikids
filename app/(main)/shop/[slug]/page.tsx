@@ -325,6 +325,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
                   <PersonalizationForm
                     product={p}
                     preselectedModel={preselectedModel}
+                    effectivePrice={(isPortachupete || isLlavero) ? Math.round(p.price * (1 - PORTACHUPETE_DISCOUNT_PCT)) : p.price}
                   />
                 </>
               )}
