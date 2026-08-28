@@ -33,7 +33,7 @@ export default function SettingsClient({ initial }: { initial: Settings }) {
   const LABEL = 'text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5 block'
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-4 md:p-8 max-w-2xl">
       <h1 className="font-playfair text-2xl font-bold text-[#6b3d50] mb-2">Configuración</h1>
       <p className="text-sm text-gray-400 mb-8">Estos datos se muestran al comprador en la página de confirmación del pedido.</p>
 
