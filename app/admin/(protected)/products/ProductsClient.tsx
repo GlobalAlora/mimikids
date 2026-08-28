@@ -333,8 +333,8 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
 
   return (
     <>
-      <div className="p-8">
-        <div className="flex items-center justify-between mb-8">
+      <div className="p-4 md:p-8">
+        <div className="flex items-center justify-between mb-6 md:mb-8">
           <h1 className="font-playfair text-2xl font-bold text-[#6b3d50]">
             Productos <span className="text-base font-normal text-gray-400">({products.length})</span>
           </h1>
@@ -355,7 +355,8 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
           </div>
         ) : (
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <table className="w-full">
+            <div className="overflow-x-auto">
+            <table className="w-full min-w-[480px]">
               <thead>
                 <tr className="border-b border-gray-100">
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Producto</th>
@@ -426,6 +427,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>
