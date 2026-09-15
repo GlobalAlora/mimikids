@@ -25,6 +25,7 @@ interface Order {
   id: string
   order_number: string
   buyer: { name: string; email: string; phone: string }
+  shipping_address?: { street?: string; number?: string; floor?: string; city?: string; province?: string; postal_code?: string; notes?: string }
   total: number
   subtotal?: number
   shipping_cost?: number
@@ -37,6 +38,7 @@ interface Order {
   items: OrderItem[]
   shipping_method: { name: string; price: number }
   created_at: string
+  tracking_code?: string
 }
 
 function inferDiscountLabel(subtotal: number, discountAmount: number): string {
@@ -55,6 +57,8 @@ export default function OrdersClient({ initialOrders }: { initialOrders: Order[]
   const [updating, setUpdating] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
   const [filterStatus, setFilterStatus] = useState<string>('all')
+  const [trackingModal, setTrackingModal] = useState<{ orderId: string; orderNumber: string } | null>(null)
+  const [trackingCodeInput, setTrackingCodeInput] = useState('')
   const router = useRouter()
 
   const stats = useMemo(() => {
@@ -71,20 +75,39 @@ export default function OrdersClient({ initialOrders }: { initialOrders: Order[]
 
   const filtered = filterStatus === 'all' ? orders : orders.filter((o) => o.status === filterStatus)
 
-  async function updateStatus(orderId: string, newStatus: string) {
+  async function updateStatus(orderId: string, newStatus: string, trackingCode?: string) {
     setUpdating(orderId)
     try {
+      const body: { status: string; tracking_code?: string } = { status: newStatus }
+      if (trackingCode) body.tracking_code = trackingCode
       const res = await fetch(`/api/admin/orders/${orderId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify(body),
       })
       if (res.ok) {
-        setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)))
+        setOrders((prev) => prev.map((o) =>
+          o.id === orderId ? { ...o, status: newStatus, ...(trackingCode ? { tracking_code: trackingCode } : {}) } : o
+        ))
       }
     } finally {
       setUpdating(null)
     }
+  }
+
+  function handleStatusClick(orderId: string, orderNumber: string, newStatus: string) {
+    if (newStatus === 'enviado') {
+      setTrackingCodeInput('')
+      setTrackingModal({ orderId, orderNumber })
+    } else {
+      updateStatus(orderId, newStatus)
+    }
+  }
+
+  async function confirmTrackingModal() {
+    if (!trackingModal) return
+    await updateStatus(trackingModal.orderId, 'enviado', trackingCodeInput.trim() || undefined)
+    setTrackingModal(null)
   }
 
   async function deleteOrder(orderId: string, orderNumber: string) {
@@ -212,6 +235,18 @@ export default function OrdersClient({ initialOrders }: { initialOrders: Order[]
                         <p className="text-sm text-gray-700">{order.buyer?.name}</p>
                         <p className="text-xs text-gray-400">{order.buyer?.email}</p>
                         <p className="text-xs text-gray-400">{order.buyer?.phone}</p>
+                        {order.shipping_address && (
+                          <div className="mt-2 p-2.5 bg-blue-50 rounded-xl border border-blue-100">
+                            <p className="text-[0.65rem] font-semibold text-blue-400 uppercase tracking-wider mb-1">Dirección de envío</p>
+                            <p className="text-xs font-semibold text-gray-700">
+                              {[order.shipping_address.street, order.shipping_address.number, order.shipping_address.floor].filter(Boolean).join(' ')}
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              {[order.shipping_address.city, order.shipping_address.province, order.shipping_address.postal_code].filter(Boolean).join(', ')}
+                            </p>
+                            {order.shipping_address.notes && <p className="text-xs text-gray-400 mt-0.5">Nota: {order.shipping_address.notes}</p>}
+                          </div>
+                        )}
                         <div className="mt-3 space-y-1">
                           <p className="text-xs text-gray-500">Envío: {order.shipping_method?.name} ({formatPrice(order.shipping_method?.price || 0)})</p>
                           <p className="text-xs text-gray-500">Pago: Transferencia bancaria</p>
@@ -287,13 +322,20 @@ export default function OrdersClient({ initialOrders }: { initialOrders: Order[]
                       </div>
                     </div>
 
+                    {order.tracking_code && (
+                      <div className="mt-3 p-2.5 bg-green-50 rounded-xl border border-green-100">
+                        <p className="text-[0.65rem] font-semibold text-green-500 uppercase tracking-wider mb-1">Código de seguimiento</p>
+                        <p className="text-sm font-mono font-bold text-green-700">{order.tracking_code}</p>
+                      </div>
+                    )}
+
                     <div className="mt-4 pt-4 border-t border-gray-50 flex items-center gap-3 flex-wrap">
                       <p className="text-xs font-semibold text-gray-500">Cambiar estado:</p>
                       <div className="flex flex-wrap gap-2">
                         {STATUS_OPTIONS.map((opt) => (
                           <button
                             key={opt.value}
-                            onClick={() => updateStatus(order.id, opt.value)}
+                            onClick={() => handleStatusClick(order.id, order.order_number, opt.value)}
                             disabled={updating === order.id}
                             className={`text-xs font-medium px-3 py-1.5 rounded-full transition-all cursor-pointer disabled:opacity-50 ${
                               order.status === opt.value
@@ -311,6 +353,43 @@ export default function OrdersClient({ initialOrders }: { initialOrders: Order[]
               </div>
             )
           })}
+        </div>
+      )}
+
+      {trackingModal && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+            <h3 className="font-playfair text-lg font-bold text-[#6b3d50] mb-1">Marcar como Enviado</h3>
+            <p className="text-xs text-gray-400 mb-4">Pedido #{trackingModal.orderNumber}</p>
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5 block">
+              Código de seguimiento <span className="text-gray-300 font-normal normal-case">(opcional)</span>
+            </label>
+            <input
+              type="text"
+              value={trackingCodeInput}
+              onChange={(e) => setTrackingCodeInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && confirmTrackingModal()}
+              placeholder="Ej: 12345678901234"
+              className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#d4768a] transition-colors font-mono"
+              autoFocus
+            />
+            <p className="text-xs text-gray-400 mt-2 mb-5">Si ingresás el código, se lo enviamos al cliente por email.</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setTrackingModal(null)}
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmTrackingModal}
+                disabled={updating === trackingModal.orderId}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                {updating === trackingModal.orderId ? 'Guardando...' : 'Confirmar envío'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

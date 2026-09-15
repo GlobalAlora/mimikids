@@ -21,10 +21,12 @@ function statusEmailHtml({
   order_number,
   buyerName,
   status,
+  tracking_code,
 }: {
   order_number: string
   buyerName: string
   status: string
+  tracking_code?: string
 }) {
   const info = STATUS_INFO[status]
   if (!info) return ''
@@ -33,6 +35,16 @@ function statusEmailHtml({
   const card = `background:#fff;border-radius:16px;padding:24px;margin:20px 0;border:1px solid #edccd5;`
   const waMsg = encodeURIComponent(`Hola! Tengo una consulta sobre mi pedido #${order_number}`)
   const firstName = buyerName.split(' ')[0]
+
+  const trackingBlock = tracking_code && status === 'enviado' ? `
+  <div style="${card}text-align:center;">
+    <p style="font-size:13px;color:#6d4d5a;margin:0 0 8px;">Tu número de seguimiento:</p>
+    <p style="font-family:monospace;font-size:24px;font-weight:700;color:#2d7a5e;letter-spacing:.05em;margin:0 0 12px;">${tracking_code}</p>
+    <a href="https://andreani.com/envios/seguimiento?codigoAndreani=${tracking_code}"
+       style="display:inline-block;background:#e8f5f0;color:#2d7a5e;font-size:13px;font-weight:600;padding:10px 24px;border-radius:100px;text-decoration:none;border:1px solid #b6ddd0;">
+      🔍 Rastrear mi envío en Andreani
+    </a>
+  </div>` : ''
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Actualización pedido #${order_number}</title></head>
 <body style="${base}background:#f9f0f3;">
@@ -50,6 +62,8 @@ function statusEmailHtml({
     <p style="font-size:15px;font-weight:700;color:#c4687d;margin:0 0 12px;">Tu pedido #${order_number} — ${info.label}</p>
     <p style="color:#6d4d5a;font-size:14px;margin:0;line-height:1.6;">${info.message}</p>
   </div>
+
+  ${trackingBlock}
 
   <div style="text-align:center;padding:8px 0 20px;">
     <a href="https://wa.me/${WA_NUMBER}?text=${waMsg}"
@@ -73,9 +87,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const body = await req.json()
   const supabase = createServerClient()
 
+  const updatePayload: { status: string; tracking_code?: string } = { status: body.status }
+  if (body.tracking_code) updatePayload.tracking_code = body.tracking_code
+
   const { error } = await supabase
     .from('orders')
-    .update({ status: body.status })
+    .update(updatePayload)
     .eq('id', id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -94,6 +111,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           order_number: order.order_number,
           buyerName: order.buyer.name || 'Cliente',
           status: body.status,
+          tracking_code: body.tracking_code,
         })
         const info = STATUS_INFO[body.status]
         await resend.emails.send({
