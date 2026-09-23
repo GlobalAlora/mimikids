@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Política de Devoluciones | Mimikids',
+  title: { absolute: 'Política de Devoluciones | Mimikids' },
   description: 'Conocé nuestra política de devoluciones, cambios y garantía para portachupetes personalizados Mimikids.',
   robots: { index: true, follow: true },
   alternates: { canonical: 'https://mimikids.com.ar/politica-devoluciones' },

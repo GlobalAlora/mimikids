@@ -21,21 +21,31 @@ const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const supabase = createServerClient()
-  const { data } = await supabase.from('products').select('name, description, price, images, category').eq('slug', slug).single()
+  const { data } = await supabase.from('products').select('name, description, price, images, category, meta_title, meta_description').eq('slug', slug).single()
   if (!data) return {}
 
   const isPortachupete = data.category === 'portachupete' || slug.includes('portachupete')
   const priceDesc = isPortachupete ? ` con 20% OFF` : ''
-  const description = data.description || `Comprá ${data.name}${priceDesc}. Artesanal, personalizado con el nombre de tu bebé. Envíos a todo Argentina.`
+  const autoDescription = `Comprá ${data.name}${priceDesc}. Artesanal, personalizado con el nombre de tu bebé. Envíos a todo Argentina.`
+  const description = data.meta_description || data.description || autoDescription
   const canonicalUrl = `${SITE_URL}/shop/${slug}`
   const ogImage = data.images?.[0] ?? `${SITE_URL}/mimikids.jpg`
 
+  const catLabel: Record<string, string> = {
+    portachupete: 'Portachupete Personalizado con Nombre',
+    funda: 'Funda Guardachupete Artesanal',
+    llavero: 'Llavero Personalizado',
+    promo: 'Combo Portachupete + Funda',
+  }
+  const autoTitle = `${data.name} — ${catLabel[data.category] ?? 'Accesorio Artesanal'} | Mimikids`
+  const pageTitle = data.meta_title || autoTitle
+
   return {
-    title: `${data.name} · Mimikids`,
+    title: { absolute: pageTitle },
     description,
     alternates: { canonical: canonicalUrl },
     openGraph: {
-      title: `${data.name} · Portachupete personalizado · Mimikids`,
+      title: pageTitle,
       description,
       url: canonicalUrl,
       type: 'website',
@@ -43,7 +53,7 @@ export async function generateMetadata({ params }: Props) {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${data.name} · Mimikids`,
+      title: pageTitle,
       description,
       images: [ogImage],
     },
@@ -179,11 +189,11 @@ export default async function ProductPage({ params, searchParams }: Props) {
       <div className="max-w-6xl mx-auto px-5 py-10 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
 
-          {/* Galería + descripción */}
+          {/* Galería + descripción (descripción oculta en mobile, visible en desktop) */}
           <div>
             <ProductGallery images={p.images} name={p.name} badge={p.badge} />
             {p.description && (
-              <p className="mt-6 text-[#6D4D5A] leading-relaxed text-sm">{p.description}</p>
+              <p className="mt-6 text-[#6D4D5A] leading-relaxed text-sm hidden lg:block">{p.description}</p>
             )}
           </div>
 
@@ -194,21 +204,30 @@ export default async function ProductPage({ params, searchParams }: Props) {
                 {p.name}
               </h1>
               {(isPortachupete || isLlavero) ? (
-                <div className="flex items-baseline gap-3 mb-4">
-                  <p className="font-playfair text-2xl font-bold text-[#C4687D]">
-                    {formatPrice(Math.round(p.price * (1 - PORTACHUPETE_DISCOUNT_PCT)))}
+                <>
+                  <div className="flex items-baseline gap-3 mb-1">
+                    <p className="font-playfair text-2xl font-bold text-[#C4687D]">
+                      {formatPrice(Math.round(p.price * (1 - PORTACHUPETE_DISCOUNT_PCT)))}
+                    </p>
+                    <p className="text-base text-[#A58494] line-through">
+                      {formatPrice(p.price)}
+                    </p>
+                    <span className="text-xs font-bold text-white bg-[#C4687D] px-2 py-0.5 rounded-full">
+                      20% OFF
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#A58494] mb-4 flex items-center gap-1">
+                    ⏰ Descuento por tiempo limitado
                   </p>
-                  <p className="text-base text-[#A58494] line-through">
-                    {formatPrice(p.price)}
-                  </p>
-                  <span className="text-xs font-bold text-white bg-[#C4687D] px-2 py-0.5 rounded-full">
-                    20% OFF
-                  </span>
-                </div>
+                </>
               ) : (
                 <p className="font-playfair text-2xl font-bold text-[#C4687D] mb-4">
                   {formatPrice(p.price)}
                 </p>
+              )}
+              {/* Descripción visible solo en mobile, después del precio */}
+              {p.description && (
+                <p className="text-[#6D4D5A] leading-relaxed text-sm lg:hidden mb-2">{p.description}</p>
               )}
             </div>
 
@@ -286,7 +305,21 @@ export default async function ProductPage({ params, searchParams }: Props) {
             )}
 
             <div className="bg-white rounded-2xl p-6 border border-[#EDCCD5]/40 shadow-[0_2px_16px_rgba(43,26,32,0.05)]">
-              {isFunda ? (
+              {p.stock != null && p.stock === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-2xl mb-3">😔</p>
+                  <p className="font-semibold text-[#2B1A20] mb-1">Sin stock disponible</p>
+                  <p className="text-sm text-[#A58494] mb-4">Este producto no tiene unidades disponibles por el momento.</p>
+                  <a
+                    href="https://wa.me/543388673629?text=Hola!%20Me%20interesa%20este%20producto%20pero%20no%20tiene%20stock.%20%C2%BFPuedo%20hacer%20una%20reserva%3F"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-[#25D366] text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-[#20b858] transition-colors"
+                  >
+                    Consultar disponibilidad
+                  </a>
+                </div>
+              ) : isFunda ? (
                 <>
                   <h2 className="font-playfair text-lg font-bold text-[#2B1A20] mb-5">
                     Agregar al carrito
@@ -301,6 +334,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
                   <PersonalizationForm
                     product={p}
                     preselectedModel={preselectedModel}
+                    effectivePrice={(isPortachupete || isLlavero) ? Math.round(p.price * (1 - PORTACHUPETE_DISCOUNT_PCT)) : p.price}
                   />
                 </>
               )}
@@ -316,6 +350,47 @@ export default async function ProductPage({ params, searchParams }: Props) {
               <div className="bg-[#FFFAF7] rounded-xl p-5 border border-[#EDCCD5]/30">
                 <h3 className="font-semibold text-[#2B1A20] mb-1.5 text-sm">Cuidados</h3>
                 <p className="text-sm text-[#A58494]">{p.care_instructions}</p>
+              </div>
+            )}
+
+            {/* Reseñas — solo en portachupetes y llaveros */}
+            {(isPortachupete || isLlavero) && (
+              <div>
+                <h2 className="font-playfair text-xl font-bold text-[#2B1A20] mb-4">
+                  Lo que dicen las mamás
+                </h2>
+                <div className="space-y-3">
+                  {[
+                    {
+                      text: '"Increíble la calidad! Lo recibí en 4 días y la personalización quedó perfecta. Mi bebé lo usa todos los días y se ve hermoso. 100% recomendable."',
+                      name: 'Valentina M.',
+                      context: 'Mamá de Salvador',
+                    },
+                    {
+                      text: '"Compré el de letras celestes para mi nene y quedó divino. La atención fue hermosa, me ayudaron a elegir el diseño por WhatsApp. Ya pedí el segundo!"',
+                      name: 'Lucía R.',
+                      context: 'Mamá de Olivia',
+                    },
+                    {
+                      text: '"Súper atenta la atención al cliente. Me ayudaron a elegir las cuentas y quedó espectacular. El envío llegó muy bien empaquetado."',
+                      name: 'Martina G.',
+                      context: 'Mamá de Benicio',
+                    },
+                  ].map((r, i) => (
+                    <div key={i} className="bg-white rounded-2xl p-4 border border-[#EDCCD5]/40 shadow-[0_1px_8px_rgba(43,26,32,0.04)]">
+                      <div className="flex gap-0.5 mb-2">
+                        {Array.from({ length: 5 }).map((_, j) => (
+                          <span key={j} className="text-[#F5A623] text-sm">★</span>
+                        ))}
+                      </div>
+                      <p className="text-sm text-[#6D4D5A] leading-relaxed mb-3">{r.text}</p>
+                      <div>
+                        <p className="text-sm font-semibold text-[#2B1A20]">{r.name}</p>
+                        <p className="text-xs text-[#A58494]">{r.context}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>

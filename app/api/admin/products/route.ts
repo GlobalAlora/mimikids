@@ -24,6 +24,8 @@ export async function POST(req: NextRequest) {
       production_days_min: Number(body.production_days_min) || 3,
       production_days_max: Number(body.production_days_max) || 5,
       available_colors: body.available_colors || [],
+      meta_title: body.meta_title || null,
+      meta_description: body.meta_description || null,
       is_active: body.is_active ?? true,
     })
     .select('id, slug, name, price, images, badge, is_active, category')

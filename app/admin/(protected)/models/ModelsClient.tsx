@@ -339,8 +339,8 @@ export default function ModelsClient({ initialModels }: { initialModels: Model[]
 
   return (
     <>
-      <div className="p-8">
-        <div className="flex items-center justify-between mb-8">
+      <div className="p-4 md:p-8">
+        <div className="flex items-center justify-between mb-6 md:mb-8">
           <div>
             <h1 className="font-playfair text-2xl font-bold text-[#6b3d50]">
               Modelos <span className="text-base font-normal text-gray-400">({models.filter(m => m.is_active).length} activos)</span>

@@ -32,6 +32,7 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
     (!isPromo && product.category !== 'funda' &&
       (product.slug?.includes('portachupete') || product.name?.toLowerCase().includes('portachupete')))
   const imgBg = (product.letter_style && LETTER_STYLE_BG[product.letter_style]) || (isPromo ? '#FFF8EC' : '#F6EEE9')
+  const outOfStock = product.stock != null && product.stock === 0
 
   const canUseModel = product.category !== 'funda' && modelParams?.modeloFoto
   const modelQuery = canUseModel
@@ -41,8 +42,9 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
   return (
     <Link
       href={`/shop/${product.slug}${modelQuery}`}
-      className={`group block cursor-pointer ${isPromo ? 'ring-2 ring-[#F5CC7A]/60 rounded-2xl' : ''}`}
+      className={`group block cursor-pointer ${isPromo ? 'ring-2 ring-[#F5CC7A]/60 rounded-2xl' : ''} ${outOfStock ? 'opacity-60 pointer-events-none' : ''}`}
       aria-label={`Ver ${product.name}`}
+      aria-disabled={outOfStock}
     >
       {/* Image */}
       <div
@@ -59,6 +61,15 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-4xl opacity-20">🧸</div>
+        )}
+
+        {/* Sin stock overlay */}
+        {outOfStock && (
+          <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-10">
+            <span className="bg-white text-[#A58494] text-xs font-semibold px-4 py-1.5 rounded-full border border-[#EDCCD5] shadow-sm">
+              Sin stock
+            </span>
+          </div>
         )}
 
         {/* Badges */}

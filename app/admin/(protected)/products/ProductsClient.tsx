@@ -38,13 +38,16 @@ interface ProductForm {
   production_days_min: string
   production_days_max: string
   stock: string  // '' = unlimited (null), number = limited
+  meta_title: string
+  meta_description: string
   is_active: boolean
 }
 
 const EMPTY_FORM: ProductForm = {
   name: '', slug: '', description: '', price: '',
   images: [], category: 'portachupete', letter_style: '', badge: '', materials: '', care_instructions: '',
-  production_days_min: '1', production_days_max: '2', stock: '', is_active: true,
+  production_days_min: '1', production_days_max: '2', stock: '',
+  meta_title: '', meta_description: '', is_active: true,
 }
 
 const CATEGORIES: { value: ProductCategory; label: string }[] = [
@@ -193,21 +196,24 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
   }
 
   function openEdit(product: Product) {
+    const p = product as Product & { description?: string; materials?: string; care_instructions?: string; meta_title?: string | null; meta_description?: string | null }
     setForm({
-      name: product.name,
-      slug: product.slug,
-      description: '',
-      price: String(product.price),
-      images: product.images ?? [],
-      category: (product.category as ProductCategory) || 'portachupete',
-      letter_style: product.letter_style || '',
-      badge: product.badge || '',
-      materials: '',
-      care_instructions: '',
-      production_days_min: String(product.production_days_min ?? 1),
-      production_days_max: String(product.production_days_max ?? 2),
-      stock: product.stock != null ? String(product.stock) : '',
-      is_active: product.is_active,
+      name: p.name,
+      slug: p.slug,
+      description: p.description || '',
+      price: String(p.price),
+      images: p.images ?? [],
+      category: (p.category as ProductCategory) || 'portachupete',
+      letter_style: p.letter_style || '',
+      badge: p.badge || '',
+      materials: p.materials || '',
+      care_instructions: p.care_instructions || '',
+      production_days_min: String(p.production_days_min ?? 1),
+      production_days_max: String(p.production_days_max ?? 2),
+      stock: p.stock != null ? String(p.stock) : '',
+      meta_title: p.meta_title || '',
+      meta_description: p.meta_description || '',
+      is_active: p.is_active,
     })
     setEditingId(product.id)
     setShowModal(true)
@@ -268,6 +274,8 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
       production_days_min: form.production_days_min,
       production_days_max: form.production_days_max,
       stock: form.stock !== '' ? Number(form.stock) : null,
+      meta_title: form.meta_title || null,
+      meta_description: form.meta_description || null,
       is_active: form.is_active,
     }
 
@@ -325,8 +333,8 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
 
   return (
     <>
-      <div className="p-8">
-        <div className="flex items-center justify-between mb-8">
+      <div className="p-4 md:p-8">
+        <div className="flex items-center justify-between mb-6 md:mb-8">
           <h1 className="font-playfair text-2xl font-bold text-[#6b3d50]">
             Productos <span className="text-base font-normal text-gray-400">({products.length})</span>
           </h1>
@@ -347,7 +355,8 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
           </div>
         ) : (
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <table className="w-full">
+            <div className="overflow-x-auto">
+            <table className="w-full min-w-[480px]">
               <thead>
                 <tr className="border-b border-gray-100">
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Producto</th>
@@ -418,6 +427,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>
@@ -565,6 +575,68 @@ export default function ProductsClient({ initialProducts }: { initialProducts: P
                 <p className="text-xs text-gray-400 mt-1">
                   Para fundas: ponés la cantidad real. Cuando llega a 0 se muestra "Sin stock".
                 </p>
+              </div>
+
+              {/* SEO */}
+              <div className="border-t border-gray-100 pt-4">
+                <p className="text-xs font-black text-[#d4768a] uppercase tracking-widest mb-4">SEO — Cómo aparece en Google</p>
+
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <label className={LABEL + ' mb-0'}>Título SEO</label>
+                    <span className={`text-xs font-medium ${
+                      form.meta_title.length === 0 ? 'text-gray-300' :
+                      form.meta_title.length <= 60 ? 'text-green-500' :
+                      form.meta_title.length <= 70 ? 'text-yellow-500' : 'text-red-500'
+                    }`}>
+                      {form.meta_title.length}/60
+                    </span>
+                  </div>
+                  <input
+                    className={INPUT}
+                    value={form.meta_title}
+                    onChange={(e) => updateField('meta_title', e.target.value)}
+                    placeholder={`Automático: "${form.name || 'Nombre del producto'} — ${form.category === 'portachupete' ? 'Portachupete Personalizado con Nombre' : form.category === 'funda' ? 'Funda Guardachupete Artesanal' : 'Llavero Personalizado'} | Mimikids"`}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Dejalo vacío para usar el título automático. Ideal: 50–60 caracteres.</p>
+                </div>
+
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <label className={LABEL + ' mb-0'}>Meta descripción</label>
+                    <span className={`text-xs font-medium ${
+                      form.meta_description.length === 0 ? 'text-gray-300' :
+                      form.meta_description.length <= 160 ? 'text-green-500' :
+                      form.meta_description.length <= 180 ? 'text-yellow-500' : 'text-red-500'
+                    }`}>
+                      {form.meta_description.length}/160
+                    </span>
+                  </div>
+                  <textarea
+                    className={INPUT + ' resize-none'}
+                    rows={3}
+                    value={form.meta_description}
+                    onChange={(e) => updateField('meta_description', e.target.value)}
+                    placeholder="Comprá [nombre del producto]. Artesanal, personalizado con el nombre de tu bebé. Envíos a todo Argentina."
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Dejala vacía para usar el texto automático. Ideal: 140–160 caracteres.</p>
+                </div>
+
+                {/* Google SERP preview */}
+                {(form.meta_title || form.name || form.meta_description) && (
+                  <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Vista previa en Google</p>
+                    <p className="text-xs text-green-700 mb-0.5">mimikids.com.ar › shop › {form.slug || '...'}</p>
+                    <p className="text-sm text-[#1a0dab] font-medium leading-snug mb-1 line-clamp-2">
+                      {form.meta_title ||
+                        (form.name ? `${form.name} — ${form.category === 'portachupete' ? 'Portachupete Personalizado con Nombre' : form.category === 'funda' ? 'Funda Guardachupete Artesanal' : 'Llavero Personalizado'} | Mimikids` : '...')}
+                    </p>
+                    <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">
+                      {form.meta_description || form.description ||
+                        `Comprá ${form.name || '[nombre]'} con 20% OFF. Artesanal, personalizado con el nombre de tu bebé. Envíos a todo Argentina.`}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <label className="flex items-center gap-2 cursor-pointer">
