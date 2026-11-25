@@ -79,6 +79,15 @@ const ARTICLES = [
     date: '2026-09-01',
     readTime: '5 min',
   },
+  {
+    slug: 'regalo-navidad-bebe-portachupete-personalizado',
+    href: null,
+    title: 'El mejor regalo de Navidad para bebés: portachupete personalizado',
+    excerpt: '¿Buscás el regalo de Navidad ideal para un bebé? Un portachupete personalizado con su nombre es único, artesanal y llega a tiempo para el 25 de diciembre.',
+    category: 'Regalos',
+    date: '2026-11-25',
+    readTime: '4 min',
+  },
 ]
 
 export default function BlogPage() {

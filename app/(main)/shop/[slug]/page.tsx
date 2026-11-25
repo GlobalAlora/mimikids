@@ -7,7 +7,6 @@ import { formatPrice } from '@/lib/utils'
 import { Clock, Shield, Truck, Gift } from 'lucide-react'
 import Link from 'next/link'
 import type { Product, Model } from '@/types'
-import { PORTACHUPETE_DISCOUNT_PCT } from '@/lib/discounts'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,8 +26,7 @@ export async function generateMetadata({ params }: Props) {
   if (!data) return {}
 
   const isPortachupete = data.category === 'portachupete' || slug.includes('portachupete')
-  const priceDesc = isPortachupete ? ` con 20% OFF` : ''
-  const autoDescription = `Comprá ${data.name}${priceDesc}. Artesanal, personalizado con el nombre de tu bebé. Envíos a todo Argentina.`
+  const autoDescription = `Comprá ${data.name}. Artesanal, personalizado con el nombre de tu bebé. Envíos a todo Argentina.`
   const description = data.meta_description || data.description || autoDescription
   const canonicalUrl = `${SITE_URL}/shop/${slug}`
   const ogImage = data.images?.[0] ?? `${SITE_URL}/mimikids.jpg`
@@ -118,7 +116,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
     offers: {
       '@type': 'Offer',
       priceCurrency: 'ARS',
-      price: isPortachupete ? Math.round(p.price * (1 - PORTACHUPETE_DISCOUNT_PCT)) : p.price,
+      price: p.price,
       priceValidFrom: new Date().toISOString().split('T')[0],
       priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       availability: 'https://schema.org/InStock',
@@ -205,34 +203,14 @@ export default async function ProductPage({ params, searchParams }: Props) {
               <h1 className="font-playfair text-[2rem] md:text-[2.5rem] font-bold text-[#2B1A20] leading-[1.15] mb-3">
                 {p.name}
               </h1>
-              {(isPortachupete || isLlavero) ? (
-                <>
-                  <div className="flex items-baseline gap-3 mb-1">
-                    <p className="font-playfair text-2xl font-bold text-[#C4687D]">
-                      {formatPrice(Math.round(p.price * (1 - PORTACHUPETE_DISCOUNT_PCT)))}
-                    </p>
-                    <p className="text-base text-[#A58494] line-through">
-                      {formatPrice(p.price)}
-                    </p>
-                    <span className="text-xs font-bold text-white bg-[#C4687D] px-2 py-0.5 rounded-full">
-                      20% OFF
-                    </span>
-                  </div>
-                  {new Date() < NAVIDAD_DATE ? (
-                    <p className="text-xs text-[#4a8c56] font-semibold mb-4 flex items-center gap-1">
-                      🎄 {new Date() < NAVIDAD_DEADLINE
-                        ? `Pedí antes del 20/12 y lo recibís para Navidad`
-                        : `¡Último momento! Consultá disponibilidad`}
-                    </p>
-                  ) : (
-                    <p className="text-xs text-[#A58494] mb-4 flex items-center gap-1">
-                      ⏰ Descuento por tiempo limitado
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p className="font-playfair text-2xl font-bold text-[#C4687D] mb-4">
-                  {formatPrice(p.price)}
+              <p className="font-playfair text-2xl font-bold text-[#C4687D] mb-1">
+                {formatPrice(p.price)}
+              </p>
+              {new Date() < NAVIDAD_DATE && (
+                <p className="text-xs text-[#4a8c56] font-semibold mb-4 flex items-center gap-1">
+                  🎄 {new Date() < NAVIDAD_DEADLINE
+                    ? `Usá NAVIDAD15 en el carrito y llevate 15% OFF`
+                    : `¡Último momento! Consultá disponibilidad`}
                 </p>
               )}
               {/* Descripción visible solo en mobile, después del precio */}
@@ -344,7 +322,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
                   <PersonalizationForm
                     product={p}
                     preselectedModel={preselectedModel}
-                    effectivePrice={(isPortachupete || isLlavero) ? Math.round(p.price * (1 - PORTACHUPETE_DISCOUNT_PCT)) : p.price}
+                    effectivePrice={p.price}
                   />
                 </>
               )}

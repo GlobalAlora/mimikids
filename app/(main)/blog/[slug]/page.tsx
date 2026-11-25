@@ -67,6 +67,16 @@ const ARTICLES: Record<string, Article> = {
     category: 'Seguridad',
     content: null,
   },
+  'regalo-navidad-bebe-portachupete-personalizado': {
+    slug: 'regalo-navidad-bebe-portachupete-personalizado',
+    title: 'El mejor regalo de Navidad para bebés: portachupete personalizado',
+    description: 'Buscás el regalo de Navidad ideal para un bebé? Un portachupete personalizado con su nombre es único, artesanal y llega a tiempo. Pedilo antes del 20 de diciembre.',
+    keywords: ['regalo navidad bebé', 'portachupete personalizado navidad', 'regalo navidad personalizado bebé argentina', 'ideas regalo navidad bebé', 'regalo original navidad bebé'],
+    date: '2026-11-25',
+    readTime: '4 min',
+    category: 'Regalos',
+    content: null,
+  },
 }
 
 const ARTICLE_CONTENT: Record<string, () => React.ReactNode> = {
@@ -382,6 +392,101 @@ const ARTICLE_CONTENT: Record<string, () => React.ReactNode> = {
         (libre de BPA, madera certificada, dimensiones seguras). Si tenés alguna duda puntual sobre
         los materiales, escribinos por WhatsApp y te respondemos con detalle.
       </p>
+    </div>
+  ),
+
+  'regalo-navidad-bebe-portachupete-personalizado': () => (
+    <div className="prose-mimikids">
+      <p>
+        Llega Navidad y la pregunta es siempre la misma: <em>¿qué le regalo a un bebé?</em> Los juguetes
+        genéricos abundan, pero pocas cosas se quedan en el corazón de una familia como un objeto hecho
+        especialmente para su hijo. Un <strong>portachupete personalizado con el nombre del bebé</strong> es
+        exactamente eso: un regalo artesanal, único y de uso diario.
+      </p>
+
+      <h2>¿Por qué un portachupete personalizado es el mejor regalo de Navidad para bebés?</h2>
+      <p>
+        A diferencia de la ropa (que queda chica) o los juguetes (que se olvidan), un portachupete
+        personalizado tiene tres cualidades que lo hacen especial:
+      </p>
+      <ul>
+        <li><strong>Es único:</strong> tiene el nombre del bebé, nadie más en el mundo tiene uno igual.</li>
+        <li><strong>Es útil:</strong> se usa todos los días desde que llega a casa hasta que el bebé deja el chupete.</li>
+        <li><strong>Es artesanal:</strong> cada uno se hace a mano en Argentina, con materiales seguros y libres de BPA.</li>
+      </ul>
+
+      <h2>¿Qué edades son las ideales para regalarlo?</h2>
+      <p>
+        El portachupete es el regalo perfecto para bebés de <strong>0 a 2 años</strong>, que son las edades
+        en que el chupete es parte de la rutina diaria. También es el regalo más buscado para baby showers,
+        nacimientos y primeros cumpleaños.
+      </p>
+      <p>
+        Para bebés más grandes que ya no usan chupete, el{' '}
+        <Link href="/shop" className="text-[#C4687D] hover:underline">llavero personalizado</Link>{' '}
+        con nombre es otra opción preciosa.
+      </p>
+
+      <h2>¿Llega a tiempo para Navidad?</h2>
+      <p>
+        Esta es la pregunta clave. En Mimikids fabricamos cada portachupete en <strong>1 a 2 días hábiles</strong>{' '}
+        desde que confirmamos tu pedido. Para que llegue para el 25 de diciembre, recomendamos pedirlo
+        antes del <strong>20 de diciembre</strong>.
+      </p>
+      <p>
+        El envío se hace por Andreani a todo el país (2 a 4 días hábiles). Si estás cerca de Trenque Lauquen,
+        Buenos Aires, también podés pasar a buscarlo sin costo de envío.
+      </p>
+
+      <h2>¿Cómo personalizo el portachupete?</h2>
+      <p>
+        El proceso es muy simple:
+      </p>
+      <ul>
+        <li>Elegís el modelo y los colores en nuestra <Link href="/shop" className="text-[#C4687D] hover:underline">tienda online</Link>.</li>
+        <li>Escribís el nombre del bebé al personalizar.</li>
+        <li>Elegís el tipo de letras (silicona de colores o madera natural).</li>
+        <li>Pagás con tarjeta, transferencia o MercadoPago y listo.</li>
+      </ul>
+      <p>
+        En 24 a 48 horas ya está en camino a tu casa.
+      </p>
+
+      <h2>Ideas de regalo navideño con portachupete</h2>
+      <p>
+        Si querés armar un regalo más completo, podés combinar el portachupete con otros productos de Mimikids:
+      </p>
+      <ul>
+        <li><strong>Portachupete + llavero:</strong> el llavero con el nombre del bebé queda perfecto junto al portachupete. Muchos papás lo usan para las llaves de la casa y el auto.</li>
+        <li><strong>Portachupete + funda de chupete:</strong> protege el chupete cuando no está en uso. Un combo completo y práctico.</li>
+        <li><strong>Pack regalo:</strong> pedinos por WhatsApp si querés packaging especial para regalo.</li>
+      </ul>
+
+      <h2>¿Cuánto cuesta un portachupete personalizado?</h2>
+      <p>
+        Los portachupetes personalizados de Mimikids tienen un precio accesible para ser un producto artesanal
+        y hecho a mano. Podés ver los precios actualizados en nuestra{' '}
+        <Link href="/shop" className="text-[#C4687D] hover:underline">tienda online</Link>.
+        Actualmente hay un descuento especial de Navidad disponible.
+      </p>
+
+      <h2>¿Es seguro para bebés?</h2>
+      <p>
+        Todos los materiales son <strong>libres de BPA, PVC y ftalatos</strong>. Las cuentas de silicona
+        son grado alimentario, las letras de madera son de haya natural certificada, y el hilo es nylon
+        resistente. Podés leer más sobre los materiales en nuestro artículo{' '}
+        <Link href="/blog/portachupete-seguro-bebe" className="text-[#C4687D] hover:underline">
+          ¿Es seguro un portachupete personalizado para bebés?
+        </Link>
+      </p>
+
+      <div style={{ background: '#FFF0F3', borderRadius: 16, padding: '1.25rem 1.5rem', margin: '2rem 0', borderLeft: '4px solid #C4687D' }}>
+        <p style={{ margin: 0, fontWeight: 700, color: '#2B1A20' }}>🎄 Oferta especial de Navidad</p>
+        <p style={{ margin: '0.5rem 0 0', color: '#6D4D5A' }}>
+          Usá el código <strong>NAVIDAD15</strong> en el carrito y llevate un 15% de descuento en tu pedido.
+          Válido hasta el 25 de diciembre.
+        </p>
+      </div>
     </div>
   ),
 }

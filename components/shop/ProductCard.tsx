@@ -4,7 +4,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Product } from '@/types'
 import { formatPrice } from '@/lib/utils'
-import { PORTACHUPETE_DISCOUNT_PCT } from '@/lib/discounts'
 import { ArrowUpRight } from 'lucide-react'
 
 interface ModelParams {
@@ -82,11 +81,6 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
               🔥 COMBO
             </span>
           )}
-          {isPortachupete && (
-            <span className="bg-[#C4687D] text-white text-[0.625rem] font-black px-2.5 py-1 rounded-full tracking-wide uppercase shadow-sm">
-              20% OFF
-            </span>
-          )}
           {product.badge && (
             <span className="bg-white/90 backdrop-blur-sm text-[#2B1A20] text-[0.6875rem] font-semibold px-3 py-1 rounded-full border border-[#EDCCD5]/60">
               {product.badge}
@@ -123,20 +117,9 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
           {product.name}
         </h3>
         <div className="flex items-center justify-between gap-2">
-          {isPortachupete ? (
-            <div className="flex items-baseline gap-1.5">
-              <p className="font-playfair text-lg font-bold text-[#C4687D]">
-                {formatPrice(Math.round(product.price * (1 - PORTACHUPETE_DISCOUNT_PCT)))}
-              </p>
-              <p className="text-xs text-[#A58494] line-through">
-                {formatPrice(product.price)}
-              </p>
-            </div>
-          ) : (
-            <p className={`font-playfair text-lg font-bold ${isPromo ? 'text-[#D4850A]' : 'text-[#C4687D]'}`}>
-              {formatPrice(product.price)}
-            </p>
-          )}
+          <p className={`font-playfair text-lg font-bold ${isPromo ? 'text-[#D4850A]' : 'text-[#C4687D]'}`}>
+            {formatPrice(product.price)}
+          </p>
           {product.category !== 'funda' && (
             <p className="text-xs text-[#A58494]">
               {product.production_days_min}–{product.production_days_max}d hábiles

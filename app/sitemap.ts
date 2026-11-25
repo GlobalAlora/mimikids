@@ -36,6 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/blog/regalo-baby-shower-portachupete`,             lastModified: new Date('2026-08-01'), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${siteUrl}/blog/diferencia-letras-silicona-madera`,           lastModified: new Date('2026-08-10'), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${siteUrl}/blog/portachupete-seguro-bebe`,                    lastModified: new Date('2026-09-01'), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${siteUrl}/blog/regalo-navidad-bebe-portachupete-personalizado`, lastModified: new Date('2026-11-25'), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${siteUrl}/modelos`,                       lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.7 },
     { url: `${siteUrl}/guia`,                          lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${siteUrl}/politica-devoluciones`,         lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
