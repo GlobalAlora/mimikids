@@ -41,18 +41,24 @@ export default function NavidadBanner() {
         <span className="text-base flex-shrink-0" aria-hidden="true">🎄</span>
 
         <span className="text-center leading-snug">
-          <strong className="text-[#a8e0b0]">Navidad · 25 de diciembre</strong>
-          {!deadlinePassed && daysLeft > 0 && (
-            <span className="text-white/60 mx-1">
-              · Quedan <strong className="text-white">{daysLeft} días</strong> para pedirlo a tiempo
-            </span>
-          )}
           {!deadlinePassed ? (
-            <span className="text-white/75 mx-1">
-              · Pedí antes del <strong className="text-[#a8e0b0]">20/12</strong> y llegás para Navidad
-            </span>
+            <>
+              <strong className="text-[#a8e0b0]">🎁 15% OFF</strong>
+              <span className="text-white/60 mx-1">con el código</span>
+              <strong className="text-white bg-white/10 px-1.5 py-0.5 rounded font-mono tracking-wide">NAVIDAD15</strong>
+              {daysLeft > 0 && (
+                <span className="text-white/60 mx-1">
+                  · <strong className="text-white">{daysLeft} días</strong> para pedirlo a tiempo
+                </span>
+              )}
+            </>
           ) : (
-            <span className="text-white/75 mx-1">· ¡Último momento! Consultá disponibilidad</span>
+            <>
+              <strong className="text-[#a8e0b0]">🎁 15% OFF</strong>
+              <span className="text-white/60 mx-1">con el código</span>
+              <strong className="text-white bg-white/10 px-1.5 py-0.5 rounded font-mono tracking-wide">NAVIDAD15</strong>
+              <span className="text-white/75 mx-1">· ¡Último momento! Consultá disponibilidad</span>
+            </>
           )}
         </span>
 
