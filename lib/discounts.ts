@@ -3,8 +3,8 @@ import type { CartItem } from '@/types'
 export const PORTACHUPETE_DISCOUNT_PCT = 0.20
 export const COMBO_DISCOUNT_PCT = 0.25
 
-export const WELCOME_COUPON_CODE = 'BIENVENIDA10'
-export const COUPON_DISCOUNT_PCT = 0.10
+export const WELCOME_COUPON_CODE = 'NAVIDAD15'
+export const COUPON_DISCOUNT_PCT = 0.15
 export const COUPON_STORAGE_KEY = 'mk_coupon_used'
 // Toggle desde Vercel env vars — sin redespliegue cuando se desactiva
 export const COUPON_ACTIVE = process.env.NEXT_PUBLIC_COUPON_ACTIVE === 'true'

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useCartStore } from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
-import { calcDiscount, COUPON_ACTIVE, COUPON_STORAGE_KEY } from '@/lib/discounts'
+import { calcDiscount, COUPON_ACTIVE, COUPON_STORAGE_KEY, COUPON_DISCOUNT_PCT } from '@/lib/discounts'
 import Button from '@/components/ui/Button'
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Truck, Tag, Gift, X, Check } from 'lucide-react'
 import { ShippingMethod } from '@/types'
@@ -273,7 +273,7 @@ export default function CartPage() {
                     <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-3 py-2.5">
                       <Check size={14} className="text-green-600 flex-shrink-0" />
                       <span className="text-sm font-semibold text-green-700 flex-1">
-                        {coupon} · 10% OFF aplicado
+                        {coupon} · {Math.round(COUPON_DISCOUNT_PCT * 100)}% OFF aplicado 🎄
                       </span>
                       <button
                         onClick={handleRemoveCoupon}
@@ -330,7 +330,7 @@ export default function CartPage() {
                   <div className="flex justify-between items-center text-green-600 font-medium">
                     <span className="flex items-center gap-1">
                       <Tag size={12} />
-                      Cupón {coupon} (10%)
+                      Cupón {coupon} ({Math.round(COUPON_DISCOUNT_PCT * 100)}%)
                     </span>
                     <span>-{formatPrice(couponDiscount)}</span>
                   </div>
