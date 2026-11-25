@@ -40,7 +40,7 @@ const ARTICLES = [
     title: '¿Qué es un portachupete personalizado y cómo se hace?',
     excerpt: 'Desde la elección de las cuentas de silicona hasta las letras con el nombre del bebé: así fabricamos cada portachupete de manera artesanal en Mimikids.',
     category: 'Productos',
-    date: null,
+    date: '2026-07-15',
     readTime: '4 min',
   },
   {
@@ -49,7 +49,7 @@ const ARTICLES = [
     title: 'Cómo limpiar un portachupete de silicona correctamente',
     excerpt: 'Consejos para mantener el portachupete de tu bebé limpio e higiénico sin dañar las cuentas ni las letras. Paso a paso.',
     category: 'Cuidados',
-    date: null,
+    date: '2026-07-22',
     readTime: '3 min',
   },
   {
@@ -58,7 +58,7 @@ const ARTICLES = [
     title: 'El mejor regalo para un baby shower: portachupete personalizado',
     excerpt: 'Por qué un portachupete con el nombre del bebé es el regalo más especial para un baby shower. Ideas, consejos y cómo elegir el modelo ideal.',
     category: 'Regalos',
-    date: null,
+    date: '2026-08-01',
     readTime: '4 min',
   },
   {
@@ -67,7 +67,7 @@ const ARTICLES = [
     title: 'Letras de silicona vs. letras de madera en portachupetes: ¿cuál elegir?',
     excerpt: 'Comparamos los dos estilos de letras disponibles en Mimikids para que puedas elegir el que más se adapta al bebé y a tu gusto personal.',
     category: 'Guía',
-    date: null,
+    date: '2026-08-10',
     readTime: '3 min',
   },
   {
@@ -76,7 +76,7 @@ const ARTICLES = [
     title: '¿Es seguro un portachupete personalizado para bebés?',
     excerpt: 'Todos los materiales que usamos en Mimikids son seguros y libres de BPA. Te explicamos qué certificaciones tienen y por qué importan.',
     category: 'Seguridad',
-    date: null,
+    date: '2026-09-01',
     readTime: '5 min',
   },
 ]
