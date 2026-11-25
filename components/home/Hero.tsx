@@ -29,9 +29,10 @@ export default function Hero() {
     return () => clearInterval(id)
   }, [next])
 
-  const isDdN = typeof window === 'undefined'
+  const isDdN      = typeof window === 'undefined'
     ? true
     : Date.now() < new Date('2026-08-16T00:00:00-03:00').getTime()
+  const isNavidad  = Date.now() < new Date('2026-12-25T00:00:00-03:00').getTime()
 
   return (
     <section className="relative bg-[#FFFAF7] overflow-hidden">
@@ -96,6 +97,16 @@ export default function Hero() {
             <p className="text-xs text-[#A58494] mb-6">
               ⏳ Pedí antes del <strong className="text-[#6D4D5A]">10 de agosto</strong> para recibirlo a tiempo
             </p>
+          )}
+
+          {/* Cupón navideño */}
+          {isNavidad && (
+            <div className="inline-flex items-center gap-2.5 bg-[#1C2B1E] text-white text-xs font-medium px-4 py-2.5 rounded-full mb-6 w-fit">
+              <span aria-hidden="true">🎄</span>
+              <span>15% OFF con el código</span>
+              <span className="font-mono font-bold bg-white/15 px-2 py-0.5 rounded tracking-wider">NAVIDAD15</span>
+              <span className="text-[#a8e0b0]">en el carrito</span>
+            </div>
           )}
 
           {/* Stats */}
