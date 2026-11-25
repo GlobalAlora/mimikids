@@ -2,14 +2,15 @@ import { createServerClient } from '@/lib/supabase-server'
 import ShopClient from './ShopClient'
 import type { Metadata } from 'next'
 import type { Product } from '@/types'
+import { MOCK_PRODUCTS } from '@/lib/data'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
 
 export const metadata: Metadata = {
   title: { absolute: 'Comprar Portachupetes Personalizados con Nombre | Mimikids' },
-  description: 'Comprá portachupetes personalizados con el nombre de tu bebé. Letras en silicona o madera, 100% artesanales, con 20% OFF. Envíos a todo Argentina.',
+  description: 'Comprá portachupetes personalizados con el nombre de tu bebé. Letras en silicona o madera, 100% artesanales. Envíos a todo Argentina.',
   keywords: [
     'portachupete personalizado',
     'portachupete con nombre',
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/shop` },
   openGraph: {
     title: 'Comprar Portachupetes Personalizados con Nombre | Mimikids',
-    description: 'Portachupetes artesanales personalizados con el nombre de tu bebé. 20% OFF. Envíos a todo Argentina.',
+    description: 'Portachupetes artesanales personalizados con el nombre de tu bebé. Envíos a todo Argentina.',
     url: `${SITE_URL}/shop`,
     images: [{ url: `${SITE_URL}/mimikids.jpg`, width: 1080, height: 1080, alt: 'Tienda Mimikids' }],
   },
@@ -44,7 +45,7 @@ export default async function ShopPage({ searchParams }: Props) {
   if (error) console.error('[shop] Supabase error:', error.message)
 
   const CATEGORY_ORDER: Record<string, number> = { portachupete: 0, llavero: 1, promo: 2, funda: 3 }
-  const productList = (products ?? []).sort(
+  const productList = (products?.length ? products : MOCK_PRODUCTS).sort(
     (a, b) => (CATEGORY_ORDER[a.category] ?? 10) - (CATEGORY_ORDER[b.category] ?? 10)
   ) as Product[]
 

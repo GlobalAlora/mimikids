@@ -7,8 +7,13 @@ import { formatPrice } from '@/lib/utils'
 import { Clock, Shield, Truck, Gift } from 'lucide-react'
 import Link from 'next/link'
 import type { Product, Model } from '@/types'
+import { MOCK_PRODUCTS } from '@/lib/data'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
+
+export async function generateStaticParams() {
+  return MOCK_PRODUCTS.map(p => ({ slug: p.slug }))
+}
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -22,7 +27,8 @@ const NAVIDAD_DATE     = new Date('2026-12-25T00:00:00-03:00')
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const supabase = createServerClient()
-  const { data } = await supabase.from('products').select('name, description, price, images, category, meta_title, meta_description').eq('slug', slug).single()
+  const { data: dbMeta } = await supabase.from('products').select('name, description, price, images, category, meta_title, meta_description').eq('slug', slug).single()
+  const data = dbMeta ?? MOCK_PRODUCTS.find(p => p.slug === slug) ?? null
   if (!data) return {}
 
   const isPortachupete = data.category === 'portachupete' || slug.includes('portachupete')
@@ -65,13 +71,14 @@ export default async function ProductPage({ params, searchParams }: Props) {
   const sp = await searchParams
 
   const supabase = createServerClient()
-  const { data: product } = await supabase
+  const { data: dbProduct } = await supabase
     .from('products')
     .select('*')
     .eq('slug', slug)
     .eq('is_active', true)
     .single()
 
+  const product = dbProduct ?? MOCK_PRODUCTS.find(mp => mp.slug === slug) ?? null
   if (!product) notFound()
 
   const p = product as Product
@@ -159,21 +166,29 @@ export default async function ProductPage({ params, searchParams }: Props) {
     ],
   }
 
+  type UpsellItem = { id: string; name: string; slug: string; price: number; images: string[] }
+  const toUpsell = (p: Product): UpsellItem => ({ id: p.id, name: p.name, slug: p.slug ?? '', price: p.price, images: p.images ?? [] })
+
   // Fundas + llaveros para upsell en portachupetes
-  const [fundasRes, llaveroUpsellRes] = isPortachupete
-    ? await Promise.all([
-        supabase.from('products').select('id, name, slug, price, images').eq('category', 'funda').eq('is_active', true).limit(2),
-        supabase.from('products').select('id, name, slug, price, images').eq('category', 'llavero').eq('is_active', true).limit(1),
-      ])
-    : [{ data: [] }, { data: [] }]
-  const comboUpsellItems = [...(fundasRes.data ?? []), ...(llaveroUpsellRes.data ?? [])]
+  let fundasData: UpsellItem[] = []
+  let llaveroData: UpsellItem[] = []
+  if (isPortachupete) {
+    const [fundasRes, llaveroRes] = await Promise.all([
+      supabase.from('products').select('id, name, slug, price, images').eq('category', 'funda').eq('is_active', true).limit(2),
+      supabase.from('products').select('id, name, slug, price, images').eq('category', 'llavero').eq('is_active', true).limit(1),
+    ])
+    fundasData = fundasRes.data ?? MOCK_PRODUCTS.filter(mp => mp.category === 'funda').slice(0, 2).map(toUpsell)
+    llaveroData = llaveroRes.data ?? MOCK_PRODUCTS.filter(mp => mp.category === 'llavero').slice(0, 1).map(toUpsell)
+  }
+  const comboUpsellItems = [...fundasData, ...llaveroData]
 
   // Portachupetes para upsell en llaveros
   const isLlavero = p.category === 'llavero'
-  const portaUpsellRes = isLlavero
-    ? await supabase.from('products').select('id, name, slug, price, images').eq('category', 'portachupete').eq('is_active', true).limit(3)
-    : { data: [] }
-  const portaUpsellItems = portaUpsellRes.data ?? []
+  let portaUpsellItems: UpsellItem[] = []
+  if (isLlavero) {
+    const portaRes = await supabase.from('products').select('id, name, slug, price, images').eq('category', 'portachupete').eq('is_active', true).limit(3)
+    portaUpsellItems = portaRes.data ?? MOCK_PRODUCTS.filter(mp => mp.category === 'portachupete').slice(0, 3).map(toUpsell)
+  }
 
   // Modelo pre-seleccionado si el cliente viene desde /modelos
   const preselectedModel: Model | null =
