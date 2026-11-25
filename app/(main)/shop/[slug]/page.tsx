@@ -17,6 +17,8 @@ interface Props {
 }
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://mimikids.com.ar'
+const NAVIDAD_DEADLINE = new Date('2026-12-20T23:59:59-03:00')
+const NAVIDAD_DATE     = new Date('2026-12-25T00:00:00-03:00')
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
@@ -216,9 +218,17 @@ export default async function ProductPage({ params, searchParams }: Props) {
                       20% OFF
                     </span>
                   </div>
-                  <p className="text-xs text-[#A58494] mb-4 flex items-center gap-1">
-                    ⏰ Descuento por tiempo limitado
-                  </p>
+                  {new Date() < NAVIDAD_DATE ? (
+                    <p className="text-xs text-[#4a8c56] font-semibold mb-4 flex items-center gap-1">
+                      🎄 {new Date() < NAVIDAD_DEADLINE
+                        ? `Pedí antes del 20/12 y lo recibís para Navidad`
+                        : `¡Último momento! Consultá disponibilidad`}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-[#A58494] mb-4 flex items-center gap-1">
+                      ⏰ Descuento por tiempo limitado
+                    </p>
+                  )}
                 </>
               ) : (
                 <p className="font-playfair text-2xl font-bold text-[#C4687D] mb-4">

@@ -26,6 +26,8 @@ const LETTER_STYLE_BG: Record<string, string> = {
   madera:             '#EDE3D5',
 }
 
+const NAVIDAD_BADGE_END = new Date('2026-12-24T23:59:59-03:00')
+
 export default function ProductCard({ product, modelParams }: ProductCardProps) {
   const isPromo = product.category === 'promo'
   const isPortachupete = product.category === 'portachupete' ||
@@ -33,6 +35,7 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
       (product.slug?.includes('portachupete') || product.name?.toLowerCase().includes('portachupete')))
   const imgBg = (product.letter_style && LETTER_STYLE_BG[product.letter_style]) || (isPromo ? '#FFF8EC' : '#F6EEE9')
   const outOfStock = product.stock != null && product.stock === 0
+  const showNavidadBadge = new Date() < NAVIDAD_BADGE_END && (isPortachupete || product.category === 'llavero')
 
   const canUseModel = product.category !== 'funda' && modelParams?.modeloFoto
   const modelQuery = canUseModel
@@ -87,6 +90,11 @@ export default function ProductCard({ product, modelParams }: ProductCardProps) 
           {product.badge && (
             <span className="bg-white/90 backdrop-blur-sm text-[#2B1A20] text-[0.6875rem] font-semibold px-3 py-1 rounded-full border border-[#EDCCD5]/60">
               {product.badge}
+            </span>
+          )}
+          {showNavidadBadge && (
+            <span className="bg-[#1C2B1E]/85 backdrop-blur-sm text-[#a8e0b0] text-[0.625rem] font-black px-2.5 py-1 rounded-full tracking-wide uppercase shadow-sm">
+              🎄 Regalo ideal
             </span>
           )}
         </div>
