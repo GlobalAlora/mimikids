@@ -6,6 +6,16 @@ import { ShoppingBag, Menu, X } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
 import { useState, useEffect } from 'react'
 
+const NAVIDAD_DATE  = new Date('2026-12-25T00:00:00-03:00')
+const LIGHT_COLORS  = ['#E84040', '#F5D020', '#3DAA5C', '#4A88D9', '#F07820', '#C050C8']
+const LIGHTS = Array.from({ length: 20 }, (_, i) => ({
+  id:       i,
+  color:    LIGHT_COLORS[i % LIGHT_COLORS.length],
+  left:     (i * 5.3 + 1.5) % 100,
+  delay:    (i * 0.27)       % 2.4,
+  duration: 1.2 + (i * 0.21) % 1.5,
+}))
+
 const NAV = [
   { href: '/',               label: 'Inicio' },
   { href: '/shop',           label: 'Tienda' },
@@ -33,6 +43,7 @@ export default function Header() {
           ? 'bg-[#FFFAF7]/95 backdrop-blur-md border-b border-[#EDCCD5]/60 shadow-[0_1px_12px_rgba(43,26,32,0.06)]'
           : 'bg-[#FFFAF7]/80 backdrop-blur-sm border-b border-transparent'
       }`}
+      style={{ overflow: 'visible' }}
     >
       <div className="max-w-6xl mx-auto px-5 h-[68px] flex items-center justify-between gap-6">
 
@@ -95,6 +106,54 @@ export default function Header() {
           </button>
         </div>
       </div>
+
+      {/* Luces de Navidad — cuelgan del borde inferior del header */}
+      {new Date() < NAVIDAD_DATE && (
+        <>
+          <style>{`
+            @keyframes mk-luz-glow {
+              0%, 100% { opacity: 0.75; filter: brightness(0.85); }
+              50%       { opacity: 1;    filter: brightness(1.4);  }
+            }
+            @media (prefers-reduced-motion: reduce) {
+              .mk-luz { animation: none !important; }
+            }
+          `}</style>
+          <div
+            className="absolute left-0 right-0 pointer-events-none"
+            style={{ bottom: -18, zIndex: 48, height: 20 }}
+            aria-hidden="true"
+          >
+            {/* Hilo */}
+            <div
+              className="absolute left-0 right-0"
+              style={{ top: 0, height: 2, background: 'rgba(40,24,8,0.35)' }}
+            />
+            {LIGHTS.map((l) => (
+              <div key={l.id} className="absolute" style={{ left: `${l.left}%`, top: 0 }}>
+                {/* Capuchón */}
+                <div style={{
+                  width: 4, height: 5,
+                  background: 'rgba(40,24,8,0.4)',
+                  margin: '0 auto',
+                  borderRadius: '1px 1px 0 0',
+                }} />
+                {/* Bulbo */}
+                <div
+                  className="mk-luz"
+                  style={{
+                    width: 10, height: 14,
+                    background: l.color,
+                    borderRadius: '50% 50% 45% 45%',
+                    boxShadow: `0 0 7px 3px ${l.color}70`,
+                    animation: `mk-luz-glow ${l.duration}s ${l.delay}s ease-in-out infinite`,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Mobile nav */}
       {mobileOpen && (

@@ -15,7 +15,9 @@ interface Flake {
   char: string
 }
 
-const CHARS = ['❄', '❅', '❆', '·', '·', '·']
+// alternamos 4 colores que se ven bien sobre el fondo crema #FFFAF7
+const FLAKE_COLORS = ['#5B9DD9', '#8BC4E8', '#5B9DD9', '#C47090', '#7BADD4', '#8BC4E8']
+const CHARS        = ['❄',       '❅',       '❆',       '·',       '❄',       '❅'      ]
 
 export default function Nieve() {
   const [flakes, setFlakes] = useState<Flake[]>([])
@@ -23,13 +25,13 @@ export default function Nieve() {
   useEffect(() => {
     if (new Date() >= NAVIDAD_DATE) return
 
-    const generated: Flake[] = Array.from({ length: 22 }, (_, i) => ({
+    const generated: Flake[] = Array.from({ length: 24 }, (_, i) => ({
       id: i,
-      left:     (i * 4.71 + 1.3)   % 100,
-      size:     6  + (i * 2.9)      % 10,
-      duration: 12 + (i * 3.7)      % 14,
+      left:     (i * 4.31 + 1.3)   % 100,
+      size:     7  + (i * 2.9)      % 11,
+      duration: 11 + (i * 3.7)      % 14,
       delay:    (i * 2.13)          % 18,
-      opacity:  0.25 + (i * 0.027)  % 0.45,
+      opacity:  0.45 + (i * 0.021)  % 0.40,
       drift:    ((i % 2 === 0) ? 1 : -1) * (8 + (i * 3.1) % 22),
       char:     CHARS[i % CHARS.length],
     }))
@@ -59,14 +61,15 @@ export default function Nieve() {
         {flakes.map((f) => (
           <span
             key={f.id}
-            className="mk-snowflake absolute top-0 select-none text-white"
+            className="mk-snowflake absolute top-0 select-none"
             style={{
               left:      `${f.left}%`,
               fontSize:  `${f.size}px`,
               opacity:   f.opacity,
+              color:     FLAKE_COLORS[f.id % FLAKE_COLORS.length],
               animation: `mk-snowfall ${f.duration}s ${f.delay}s linear infinite`,
               '--mk-drift': `${f.drift}px`,
-              textShadow: '0 0 4px rgba(255,255,255,0.4)',
+              textShadow: `0 0 6px ${FLAKE_COLORS[f.id % FLAKE_COLORS.length]}66`,
             } as React.CSSProperties}
           >
             {f.char}
