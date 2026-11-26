@@ -1,107 +1,261 @@
 import { Product, Testimonial } from '@/types'
 
+const FUNDA_DESC = `Funda de silicona para chupete
+
+Mantené el chupete de tu bebé siempre limpio y protegido con nuestra funda de silicona para chupete. Es práctica, liviana y fácil de transportar, ideal para llevar en el bolso maternal, la mochila o el cochecito.
+
+Está confeccionada en silicona de grado alimenticio, libre de BPA, y cuenta con una tira para colgarla donde te resulte más cómodo, manteniendo el chupete siempre al alcance de la mano.
+
+Completá el conjunto con nuestro combo de portachupete personalizado + funda para chupete, una opción práctica y funcional para el día a día o un regalo ideal para un recién nacido.`
+
 export const MOCK_PRODUCTS: Product[] = [
   {
-    id: '1',
+    id: '71447254-8d70-4ff2-bd98-9c4cd9c52561',
     slug: 'portachupete-letras-blancas',
     name: 'Portachupete · Letras Blancas',
-    description:
-      'El clásico atemporal. Letras de silicona blanca pura que combinan con cualquier estilo. Delicadas, luminosas y perfectas para nenas y nenes por igual.',
-    price: 4500,
+    description: `🤍 Portachupete personalizado de silicona - Letras blancas
+
+Nuestro portachupete personalizado con letras blancas combina un diseño delicado y atemporal con la practicidad que necesitás para el día a día. Está confeccionado con letras de silicona libre de BPA, personalizadas con el nombre de tu bebé, para mantener el chupete siempre al alcance de la mano.
+
+Completá tu compra con nuestros combos de portachupete + llavero personalizado o portachupete + funda de silicona para chupete, ideales para lograr un conjunto práctico y armonioso.
+
+Cada portachupete se confecciona artesanalmente en Argentina, especialmente para vos.`,
+    price: 25000,
     images: [
-      'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600&q=80',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784067611835-tzs8hzfiugo.jpeg',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784067708481-pygacvx7l68.jpeg',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784067744912-d2urp714i8.jpeg',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784067784909-n22a6k6suse.jpeg',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784067796933-4lvk8nfxltx.jpeg',
     ],
     category: 'portachupete',
     badge: 'Más vendido',
-    letter_style: 'silicona-blanca',
-    materials: 'Cuentas de silicona grado alimentario, letras de silicona blanca, clip de madera de haya',
-    care_instructions: 'Limpiar con paño húmedo. No sumergir en agua. Revisar regularmente el estado del clip y las cuentas.',
-    production_days_min: 3,
-    production_days_max: 5,
+    production_days_min: 1,
+    production_days_max: 2,
     available_colors: [],
+    stock: null,
+    meta_title: 'Portachupete con Nombre Letras Blancas — Más Vendido | Mimikids',
+    meta_description: 'Nuestro portachupete más vendido: nombre personalizado en letras silicona blanca. Artesanal, seguro y único. Enviamos a todo el país.',
     is_active: true,
     created_at: new Date().toISOString(),
   },
   {
-    id: '2',
+    id: '3a83f7bf-2f3f-4840-9b26-5a32463079c8',
     slug: 'portachupete-letras-beige',
     name: 'Portachupete · Letras Beige',
-    description:
-      'Suaves y cálidas. Las letras beige le dan un tono natural y neutro, perfecto para combinar con paletas tierra, nude o arcoíris.',
-    price: 4500,
+    description: `🤎 Portachupete personalizado de silicona - Letras beige
+
+Nuestro portachupete personalizado con letras beige es una opción elegante y cálida para acompañar a tu bebé todos los días. Está realizado con silicona libre de BPA y personalizado con el nombre que elijas, creando un accesorio único y funcional.
+
+También podés elegir uno de nuestros combos personalizados: portachupete + llavero o portachupete + funda de silicona para chupete, diseñados para combinar perfectamente.
+
+Cada pieza está hecha artesanalmente en Argentina con mucho amor.`,
+    price: 25000,
     images: [
-      'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=600&q=80',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784206834172-atc3l394i9w.jpeg',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784206848156-n2re09azeu.jpeg',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784206860293-y7aj1bs83h.jpeg',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784206866984-8vjar88ibcs.jpeg',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784206872955-lo8er91h7x.jpeg',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784206881059-8o66tvhhq2y.jpeg',
     ],
     category: 'portachupete',
-    letter_style: 'silicona-beige',
-    materials: 'Cuentas de silicona grado alimentario, letras de silicona beige, clip de madera de haya',
-    care_instructions: 'Limpiar con paño húmedo. No sumergir en agua. Revisar regularmente el estado del clip y las cuentas.',
-    production_days_min: 3,
-    production_days_max: 5,
+    production_days_min: 1,
+    production_days_max: 2,
     available_colors: [],
+    stock: null,
+    meta_title: 'Portachupete con Nombre Letras Beige | Mimikids',
+    meta_description: 'Portachupete artesanal personalizado con el nombre de tu bebé en letras silicona beige. Hecho a mano en Argentina. Envíos a todo el país.',
     is_active: true,
     created_at: new Date().toISOString(),
   },
   {
-    id: '3',
+    id: '20446d65-f7c1-425e-bdee-96b780ab19ef',
     slug: 'portachupete-letras-rosas',
     name: 'Portachupete · Letras Rosas',
-    description:
-      'El favorito para nenas. Las letras de silicona rosa suave le dan ese toque dulce y romántico que hace suspirar a todas las mamás.',
-    price: 4500,
+    description: `🩷 Portachupete personalizado de silicona - Letras rosas
+
+Nuestro portachupete personalizado con letras rosas combina dulzura, diseño y funcionalidad. Está confeccionado con letras de silicona libre de BPA y personalizado con el nombre de tu bebé, creando un accesorio único para acompañarlo en cada momento.
+
+Completá el conjunto con nuestros combos de portachupete + llavero personalizado o portachupete + funda de silicona para chupete, pensados para quienes buscan accesorios que combinen entre sí.
+
+Cada pieza se confecciona artesanalmente en Argentina con dedicación y mucho amor.`,
+    price: 25000,
     images: [
-      'https://images.unsplash.com/photo-1491013516836-7db643ee125a?w=600&q=80',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784223420813-k78ehxbr6wr.jpeg',
     ],
     category: 'portachupete',
     badge: '💕 Para nenas',
-    letter_style: 'silicona-rosa',
-    materials: 'Cuentas de silicona grado alimentario, letras de silicona rosa, clip de madera de haya',
-    care_instructions: 'Limpiar con paño húmedo. No sumergir en agua. Revisar regularmente el estado del clip y las cuentas.',
-    production_days_min: 3,
-    production_days_max: 5,
+    production_days_min: 1,
+    production_days_max: 2,
     available_colors: [],
+    stock: null,
+    meta_title: 'Portachupete con Nombre Letras Rosas — Para Nenas | Mimikids',
+    meta_description: 'Portachupete artesanal con nombre en letras rosas, ideal para nenas. Hecho a mano con amor en Argentina. Regalá algo único y especial.',
     is_active: true,
     created_at: new Date().toISOString(),
   },
   {
-    id: '4',
+    id: '2efb72da-6c06-44d7-bb82-23cf88c63e71',
     slug: 'portachupete-letras-celeste',
     name: 'Portachupete · Letras Celeste',
-    description:
-      'Fresco y tierno. Las letras celeste pastel aportan suavidad y un toque aéreo. Ideal para nenes o para un look neutro con personalidad.',
-    price: 4500,
+    description: `💙 Portachupete personalizado de silicona - Letras celestes
+
+Nuestro portachupete personalizado con letras celestes es ideal para quienes buscan un diseño tierno y personalizado. Confeccionado con letras de silicona libre de BPA, ayuda a mantener el chupete limpio, seguro y siempre cerca de tu bebé.
+
+Podés completar el conjunto con nuestro llavero personalizado o elegir el combo con funda de silicona para chupete, una opción práctica para llevar el chupete protegido.
+
+Cada portachupete se realiza artesanalmente en Argentina especialmente para vos.`,
+    price: 25000,
     images: [
-      'https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=600&q=80',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784223948786-3bexmchz77n.jpeg',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784223959832-b6262nsz1mu.jpeg',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784223971155-a8tpj9bpb1i.jpeg',
     ],
     category: 'portachupete',
     badge: '💙 Para nenes',
-    letter_style: 'silicona-celeste',
-    materials: 'Cuentas de silicona grado alimentario, letras de silicona celeste, clip de madera de haya',
-    care_instructions: 'Limpiar con paño húmedo. No sumergir en agua. Revisar regularmente el estado del clip y las cuentas.',
-    production_days_min: 3,
-    production_days_max: 5,
+    production_days_min: 1,
+    production_days_max: 2,
     available_colors: [],
+    stock: null,
+    meta_title: 'Portachupete con Nombre Letras Celeste — Para Nenes | Mimikids',
+    meta_description: 'Portachupete artesanal con nombre en letras celeste, ideal para nenes. Hecho a mano y seguro. Personalizado con el nombre de tu bebé. Envíos a todo Argentina.',
     is_active: true,
     created_at: new Date().toISOString(),
   },
   {
-    id: '5',
-    slug: 'portachupete-letras-madera',
-    name: 'Portachupete · Letras Madera',
-    description:
-      'El premium de la colección. Letras de madera natural que le dan un estilo cálido, orgánico y súper sofisticado. Se combina con todo.',
-    price: 5200,
+    id: '0c132c1a-7b09-45b9-85f4-ab9c34981fcb',
+    slug: 'llavero-personalizado',
+    name: 'Llavero Personalizado',
+    description: 'Llavero artesanal personalizado con el nombre que elijas. Ideal como regalo único para bebés y mamás. Hecho a mano en Argentina. Envíos a todo el país.',
+    price: 21000,
     images: [
-      'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=600&q=80',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784763858173-yvx6lzqd0lo.jpeg',
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784763866335-vjtnu0zgf2m.jpeg',
     ],
-    category: 'portachupete',
-    badge: '🌿 Premium',
-    letter_style: 'madera',
-    materials: 'Cuentas de silicona grado alimentario, letras de madera de haya natural, clip de madera',
-    care_instructions: 'Limpiar con paño seco. La madera no debe mojarse. Revisar regularmente el estado de las cuentas.',
-    production_days_min: 3,
-    production_days_max: 5,
+    category: 'llavero',
+    badge: 'Ideales',
+    production_days_min: 1,
+    production_days_max: 2,
     available_colors: [],
+    stock: null,
+    meta_title: 'Llavero Personalizado con Nombre | Mimikids',
+    meta_description: 'Llavero artesanal personalizado con el nombre que elijas. Ideal como regalo único para bebés y mamás. Hecho a mano en Argentina. Envíos a todo el país.',
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'a74ef931-b84e-4ee1-be82-829ee676c257',
+    slug: 'guardachupetes---oso---avena-claro',
+    name: 'Guardachupetes - Oso - AVENA CLARO',
+    description: FUNDA_DESC,
+    price: 14900,
+    images: [
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784056592049-mfy6s214zxr.jpeg',
+    ],
+    category: 'funda',
+    badge: 'Mas vendido',
+    production_days_min: 1,
+    production_days_max: 2,
+    available_colors: [],
+    stock: 1,
+    meta_title: 'Guardachupete Oso Avena — El Más Vendido | Mimikids',
+    meta_description: 'La funda guardachupete más vendida: oso artesanal en avena claro. Color neutro y cálido, hecho a mano en Argentina. ¡El favorito de las mamás!',
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '04972043-f771-4d4e-8713-2f65fded667f',
+    slug: 'guardachupetes--oso--azul-seco',
+    name: 'Guardachupetes - Oso - AZUL SECO',
+    description: FUNDA_DESC,
+    price: 14900,
+    images: [
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784059218606-93lr6tk0qfl.jpg',
+    ],
+    category: 'funda',
+    production_days_min: 1,
+    production_days_max: 2,
+    available_colors: [],
+    stock: 1,
+    meta_title: 'Guardachupete Artesanal Oso Azul Seco | Mimikids',
+    meta_description: 'Funda guardachupete oso azul seco, perfecto para nenes. Artesanal y único. Protege el chupete de tu bebé con estilo. Envíos a todo Argentina.',
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'dcea0d41-aa70-47e0-8e0c-26a38a2de5b2',
+    slug: 'guardachupetes--oso--gris-claro',
+    name: 'Guardachupetes - Oso - GRIS CLARO',
+    description: FUNDA_DESC,
+    price: 14900,
+    images: [
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784059282416-27jji7xuyp4.jpeg',
+    ],
+    category: 'funda',
+    production_days_min: 1,
+    production_days_max: 2,
+    available_colors: [],
+    stock: 1,
+    meta_title: 'Guardachupete Artesanal Oso Gris Claro | Mimikids',
+    meta_description: 'Funda guardachupete oso gris claro, unisex y elegante. Protege el chupete de tu bebé con estilo. Hecho a mano en Argentina. Envíos a todo el país.',
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '64282127-1f71-411c-8b9d-eb042142dce6',
+    slug: 'guardachupetes--oso--rosa-bebe',
+    name: 'Guardachupetes - Oso - ROSA BEBE',
+    description: FUNDA_DESC,
+    price: 14898,
+    images: [
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784060385024-sm4a0v8k0za.jpeg',
+    ],
+    category: 'funda',
+    production_days_min: 1,
+    production_days_max: 2,
+    available_colors: [],
+    stock: 1,
+    meta_title: 'Guardachupete Artesanal Oso Rosa Bebé | Mimikids',
+    meta_description: 'Funda guardachupete oso rosa bebé, ideal para nenas. Artesanal y única. Protege el chupete con estilo. Hecho a mano, envíos a todo el país.',
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'eb142914-3bfd-4fb6-9f65-ff2f2e92e306',
+    slug: 'guardachupetes--oso--rosa-rubor',
+    name: 'Guardachupetes - Oso - ROSA RUBOR (*)',
+    description: FUNDA_DESC,
+    price: 14900,
+    images: [
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784066602418-4cym1ulvoiv.jpeg',
+    ],
+    category: 'funda',
+    production_days_min: 1,
+    production_days_max: 2,
+    available_colors: [],
+    stock: 1,
+    meta_title: 'Guardachupete Artesanal Oso Rosa Rubor | Mimikids',
+    meta_description: 'Funda guardachupete artesanal oso rosa rubor. Protege el chupete de tu bebé con una pieza única hecha a mano. Envíos a todo Argentina.',
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '6a7810ed-f0b8-4fb7-98de-72a5e8ef4ff5',
+    slug: 'guardachupetes--oso--verde-musgo',
+    name: 'Guardachupetes - Oso - VERDE MUSGO',
+    description: FUNDA_DESC,
+    price: 14900,
+    images: [
+      'https://gmetfnlyyjzasprpjtid.supabase.co/storage/v1/object/public/product-images/1784066671809-x4gb6c6kkxc.jpeg',
+    ],
+    category: 'funda',
+    production_days_min: 1,
+    production_days_max: 2,
+    available_colors: [],
+    stock: 1,
+    meta_title: 'Guardachupete Artesanal Oso Verde Musgo | Mimikids',
+    meta_description: 'Funda guardachupete artesanal con forma de oso en verde musgo. Protege el chupete de tu bebé con estilo. Hecho a mano en Argentina. Envíos a todo el país.',
     is_active: true,
     created_at: new Date().toISOString(),
   },
