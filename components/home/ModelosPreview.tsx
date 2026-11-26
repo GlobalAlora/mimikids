@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { createServerClient } from '@/lib/supabase-server'
+import { MOCK_MODELS } from '@/lib/data'
 import { ArrowRight } from 'lucide-react'
 import ModelosPreviewGrid from './ModelosPreviewGrid'
 
 export default async function ModelosPreview() {
   const supabase = createServerClient()
-  const [{ data: models }, { count }] = await Promise.all([
+  const [{ data: dbModels }, { count }] = await Promise.all([
     supabase
       .from('models')
       .select('id, name, photo')
@@ -19,7 +20,9 @@ export default async function ModelosPreview() {
       .eq('is_active', true),
   ])
 
-  if (!models || models.length === 0) return null
+  const models = dbModels ?? MOCK_MODELS
+
+  if (models.length === 0) return null
 
   const total = count ?? models.length
   const countLabel = total >= 100 ? '+100' : total >= 10 ? `+${total}` : String(total)

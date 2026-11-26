@@ -1,4 +1,4 @@
-import { Product, Testimonial } from '@/types'
+import { Model, Product, Testimonial } from '@/types'
 
 const FUNDA_DESC = `Funda de silicona para chupete
 
@@ -259,6 +259,25 @@ Cada portachupete se realiza artesanalmente en Argentina especialmente para vos.
     is_active: true,
     created_at: new Date().toISOString(),
   },
+]
+
+// Fallback para cuando Supabase está caído — usa imágenes de productos ya en /public/products/
+export const MOCK_MODELS: Model[] = [
+  { id: 'f245cb3a-2722-45c0-ac2c-79aa926cb28a', name: '', photo: '/products/portachupete-blancas-1.webp', color: 'blanco' },
+  { id: 'b430a96d-fa09-4e2d-af33-71b18f9f9839', name: '', photo: '/products/portachupete-blancas-2.webp', color: 'blanco' },
+  { id: '43a097b9-19c3-46ed-a637-25fee7e6057d', name: '', photo: '/products/portachupete-blancas-3.webp', color: 'blanco' },
+  { id: '652863eb-6e16-4f37-ad48-52af8780eb08', name: '', photo: '/products/portachupete-blancas-4.webp', color: 'blanco' },
+  { id: 'de0a567d-4c9e-4104-aa47-2d4a1736e286', name: '', photo: '/products/portachupete-blancas-5.webp', color: 'blanco' },
+  { id: 'e5656188-25a9-49c2-8fe0-04c93677486a', name: '', photo: '/products/portachupete-beige-1.webp',   color: 'beige' },
+  { id: '1a365594-a241-4e2b-9fce-6ead80167d18', name: '', photo: '/products/portachupete-beige-2.webp',   color: 'beige' },
+  { id: '5c50ccd9-cf22-415b-977c-b599c6c71f82', name: '', photo: '/products/portachupete-beige-3.webp',   color: 'beige' },
+  { id: '75e8d3f3-7b0c-4d68-984d-33923f044205', name: '', photo: '/products/portachupete-beige-4.webp',   color: 'beige' },
+  { id: 'ffdea1a6-09bd-46b3-8748-9355a193b9b9', name: '', photo: '/products/portachupete-beige-5.webp',   color: 'beige' },
+  { id: 'd856fa3f-ea45-439a-8228-3f19f086e930', name: '', photo: '/products/portachupete-beige-6.webp',   color: 'beige' },
+  { id: '87f964e3-fbe6-489a-8385-e9d7ff1b529c', name: '', photo: '/products/portachupete-rosas-1.webp',   color: 'rosa' },
+  { id: 'e325a421-5594-4e5b-86b6-92ad085f2249', name: '', photo: '/products/portachupete-celeste-1.webp', color: 'celeste' },
+  { id: '3074163b-0bd7-462b-9f83-cc24c0b91da1', name: '', photo: '/products/portachupete-celeste-2.webp', color: 'celeste' },
+  { id: '064f920b-a38b-44fc-b464-6c4bbc4450de', name: '', photo: '/products/portachupete-celeste-3.webp', color: 'celeste' },
 ]
 
 export const MOCK_TESTIMONIALS: Testimonial[] = [

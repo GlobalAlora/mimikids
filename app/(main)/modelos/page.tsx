@@ -1,4 +1,5 @@
 import { createServerClient } from '@/lib/supabase-server'
+import { MOCK_MODELS, MOCK_PRODUCTS } from '@/lib/data'
 import ModelsGallery from './ModelsGallery'
 
 export const revalidate = 3600
@@ -42,10 +43,14 @@ export default async function ModelosPage() {
       .eq('category', 'portachupete'),
   ])
 
+  const mockProductRefs = MOCK_PRODUCTS
+    .filter(p => p.category === 'portachupete')
+    .map(p => ({ slug: p.slug, letter_style: null as string | null }))
+
   return (
     <ModelsGallery
-      models={modelsResult.data ?? []}
-      products={productsResult.data ?? []}
+      models={modelsResult.data ?? MOCK_MODELS}
+      products={productsResult.data ?? mockProductRefs}
     />
   )
 }
