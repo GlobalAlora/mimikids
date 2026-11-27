@@ -454,6 +454,12 @@ export default function CheckoutPage() {
                       : 'Confirmar pedido'}
                 </Button>
 
+                {!isFormValid && (
+                  <p className="text-xs text-center text-[#A58494] mt-2">
+                    Completá todos los campos para continuar
+                  </p>
+                )}
+
                 <div className="flex items-center gap-2 justify-center mt-3">
                   <ShieldCheck size={14} className="text-[#3d9e78]" />
                   <p className="text-xs text-[#A58494]">Compra 100% segura</p>
